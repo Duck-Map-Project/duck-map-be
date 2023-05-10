@@ -1,29 +1,38 @@
 package com.teamddd.duckmap.entity;
 
-import lombok.*;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Entity @Getter
+@Entity
+@Getter
 public class Artist {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_id")
-    private Artist group;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "group_id")
+	private Artist group;
 
-    private String username;
-    private String image;
+	private String username;
+	private String image;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="artist_type_id")
-    private ArtistType artistType;
-
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "artist_type_id")
+	private ArtistType artistType;
 
 }
