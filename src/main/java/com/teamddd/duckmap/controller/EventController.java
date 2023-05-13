@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -81,4 +82,9 @@ public class EventController {
 			.build();
 	}
 
+	@Operation(summary = "이벤트 삭제")
+	@DeleteMapping("/{id}")
+	public Result<Void> deleteEvent(@PathVariable Long id) {
+		return Result.<Void>builder().build();
+	}
 }
