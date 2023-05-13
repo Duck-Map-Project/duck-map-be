@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Entity
 @Getter
-public class EventBookmarkFolder {
+public class EventBookmarkFolder extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;

@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Entity
 @Getter
-public class EventCategory {
+public class EventCategory extends BaseByEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
