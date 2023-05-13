@@ -1,6 +1,7 @@
 package com.teamddd.duckmap.dto;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import lombok.Getter;
 
@@ -13,4 +14,7 @@ public class CreateEventReq {
 	private String businessHour;
 	private String hashtag;
 	private String twitterUrl;
+	private List<Long> artistIds;
+	private List<Long> categoryIds;
+	private List<String> imageFilenames;
 }
