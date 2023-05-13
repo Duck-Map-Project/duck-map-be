@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +17,8 @@ import com.teamddd.duckmap.dto.CreateEventRes;
 import com.teamddd.duckmap.dto.EventRes;
 import com.teamddd.duckmap.dto.ImageRes;
 import com.teamddd.duckmap.dto.Result;
+import com.teamddd.duckmap.dto.UpdateEventReq;
+import com.teamddd.duckmap.dto.UpdateEventRes;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -65,4 +68,17 @@ public class EventController {
 			)
 			.build();
 	}
+
+	@Operation(summary = "이벤트 수정")
+	@PutMapping("/{id}")
+	public Result<UpdateEventRes> updateEvent(@PathVariable Long id, @RequestBody UpdateEventReq updateEventReq) {
+		return Result.<UpdateEventRes>builder()
+			.data(
+				UpdateEventRes.builder()
+					.id(id)
+					.build()
+			)
+			.build();
+	}
+
 }
