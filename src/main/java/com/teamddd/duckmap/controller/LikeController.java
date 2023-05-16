@@ -36,7 +36,7 @@ public class LikeController {
 
 	@Operation(summary = "이벤트 좋아요 취소")
 	@DeleteMapping
-	public Result<Void> dislikeEvent(@PathVariable Long id) {
+	public Result<Void> deleteLikeEvent(@PathVariable Long id) {
 		return Result.<Void>builder().build();
 	}
 }
