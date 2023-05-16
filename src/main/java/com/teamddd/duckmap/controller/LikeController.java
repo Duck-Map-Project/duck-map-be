@@ -1,6 +1,7 @@
 package com.teamddd.duckmap.controller;
 
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/events/{id}/likes")
 public class LikeController {
 
-	@Operation(summary = "이벤트 좋아요", description = "이벤트 좋아요 기능")
+	@Operation(summary = "이벤트 좋아요")
 	@PostMapping
 	public Result<LikeRes> likeEvent(@Validated @RequestBody LikeReq likeReq) {
 		return Result.<LikeRes>builder()
@@ -30,5 +31,10 @@ public class LikeController {
 					.build()
 			)
 			.build();
+	}
+
+	@Operation(summary = "이벤트 좋아요 취소")
+	public Result<Void> dislikeEvent(@PathVariable Long id) {
+		return Result.<Void>builder().build();
 	}
 }
