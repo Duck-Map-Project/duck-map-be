@@ -1,6 +1,7 @@
 package com.teamddd.duckmap.controller;
 
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,6 +35,7 @@ public class LikeController {
 	}
 
 	@Operation(summary = "이벤트 좋아요 취소")
+	@DeleteMapping
 	public Result<Void> dislikeEvent(@PathVariable Long id) {
 		return Result.<Void>builder().build();
 	}
