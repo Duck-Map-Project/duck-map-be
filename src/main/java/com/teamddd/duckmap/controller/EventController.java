@@ -3,6 +3,9 @@ package com.teamddd.duckmap.controller;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +20,7 @@ import com.teamddd.duckmap.dto.CreateEventReq;
 import com.teamddd.duckmap.dto.CreateEventRes;
 import com.teamddd.duckmap.dto.EventRes;
 import com.teamddd.duckmap.dto.ImageRes;
+import com.teamddd.duckmap.dto.MyEventsRes;
 import com.teamddd.duckmap.dto.Result;
 import com.teamddd.duckmap.dto.UpdateEventReq;
 import com.teamddd.duckmap.dto.UpdateEventRes;
@@ -86,5 +90,38 @@ public class EventController {
 	@DeleteMapping("/{id}")
 	public Result<Void> deleteEvent(@PathVariable Long id) {
 		return Result.<Void>builder().build();
+	}
+
+	@Operation(summary = "로그인한 회원이 생성한 이벤트 목록 조회")
+	@GetMapping("/myevent")
+	public Page<MyEventsRes> getMyEvents(Pageable pageable) {
+		return new PageImpl<>(List.of(
+			MyEventsRes.builder()
+				.id(1L)
+				.storeName("이벤트1")
+				.address("서울 서초동")
+				.artists(List.of())
+				.categories(List.of())
+				.image(
+					ImageRes.builder()
+						.apiUrl("/images/")
+						.filename("event_image.jpg")
+						.build()
+				)
+				.build(),
+			MyEventsRes.builder()
+				.id(2L)
+				.storeName("이벤트2")
+				.address("서울 한남동")
+				.artists(List.of())
+				.categories(List.of())
+				.image(
+					ImageRes.builder()
+						.apiUrl("/images/")
+						.filename("event_image2.jpg")
+						.build()
+				)
+				.build()
+		));
 	}
 }
