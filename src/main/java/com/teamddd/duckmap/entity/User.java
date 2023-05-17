@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @Table(name = "users")
-public class User {
+public class User extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +31,6 @@ public class User {
 	private String password;
 	private String salt;
 	private String image;
-	private LocalDateTime createdAt;
 	private LocalDateTime loginAt;
 
 }

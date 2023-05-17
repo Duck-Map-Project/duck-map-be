@@ -1,6 +1,6 @@
 package com.teamddd.duckmap.entity;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,18 +26,17 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @Table(name = "event_info")
-public class Event {
+public class Event extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String storeName;
-	private LocalDateTime fromDate;
-	private LocalDateTime toDate;
+	private LocalDate fromDate;
+	private LocalDate toDate;
 	private String address;
 	private String businessHour;
 	private String hashtag;
 	private String twitterUrl;
-	private LocalDateTime createdAt;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
