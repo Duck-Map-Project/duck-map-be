@@ -77,7 +77,8 @@ public class ArtistTypeController {
 
 	@Operation(summary = "아티스트 구분 수정")
 	@PutMapping("/{id}")
-	public Result<Void> updateArtistType(@PathVariable Long id, @RequestBody UpdateArtistTypeReq updateArtistTypeReq) {
+	public Result<Void> updateArtistType(@PathVariable Long id,
+		@Validated @RequestBody UpdateArtistTypeReq updateArtistTypeReq) {
 		return Result.<Void>builder().build();
 	}
 

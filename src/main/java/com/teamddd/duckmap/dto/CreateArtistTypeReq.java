@@ -1,11 +1,11 @@
 package com.teamddd.duckmap.dto;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 
 import lombok.Getter;
 
 @Getter
 public class CreateArtistTypeReq {
-	@NotEmpty
+	@NotBlank
 	private String type;
 }
