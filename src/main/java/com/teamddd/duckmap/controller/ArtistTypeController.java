@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,7 +45,7 @@ public class ArtistTypeController {
 
 	@Operation(summary = "아티스트 구분 모두 조회")
 	@GetMapping
-	public Page<ArtistTypeRes> getAllArtistType() {
+	public Page<ArtistTypeRes> getAllArtistType(Pageable pageable) {
 		return new PageImpl<>(List.of(
 			ArtistTypeRes.builder()
 				.id(1L)
@@ -62,12 +63,12 @@ public class ArtistTypeController {
 	}
 
 	@Operation(summary = "아티스트 구분 pk로 조회")
-	@PutMapping("/{id}")
+	@GetMapping("/{id}")
 	public Result<ArtistTypeRes> getArtistType(@PathVariable Long id) {
 		return Result.<ArtistTypeRes>builder()
 			.data(
 				ArtistTypeRes.builder()
-					.id(1L)
+					.id(id)
 					.type("아이돌")
 					.build()
 			)

@@ -6,7 +6,6 @@ import lombok.Getter;
 
 @Getter
 public class CreateArtistTypeReq {
-	private Long id;
 	@NotEmpty
 	private String type;
 }
