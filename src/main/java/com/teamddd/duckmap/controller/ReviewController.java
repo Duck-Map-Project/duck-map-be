@@ -6,6 +6,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +16,7 @@ import com.teamddd.duckmap.dto.CreateReviewRes;
 import com.teamddd.duckmap.dto.ImageRes;
 import com.teamddd.duckmap.dto.Result;
 import com.teamddd.duckmap.dto.ReviewRes;
+import com.teamddd.duckmap.dto.UpdateReviewReq;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -61,5 +63,11 @@ public class ReviewController {
 					.build()
 			)
 			.build();
+	}
+
+	@Operation(summary = "리뷰 수정")
+	@PutMapping("/{id}")
+	public Result<Void> updateReview(@PathVariable Long id, @Validated @RequestBody UpdateReviewReq updateReviewReq) {
+		return Result.<Void>builder().build();
 	}
 }
