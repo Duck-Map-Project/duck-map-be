@@ -75,7 +75,7 @@ public class EventController {
 
 	@Operation(summary = "이벤트 수정")
 	@PutMapping("/{id}")
-	public Result<Void> updateEvent(@PathVariable Long id, @RequestBody UpdateEventReq updateEventReq) {
+	public Result<Void> updateEvent(@PathVariable Long id, @Validated @RequestBody UpdateEventReq updateEventReq) {
 		return Result.<Void>builder().build();
 	}
 
