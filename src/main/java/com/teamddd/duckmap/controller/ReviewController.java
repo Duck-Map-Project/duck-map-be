@@ -3,6 +3,7 @@ package com.teamddd.duckmap.controller;
 import java.util.List;
 
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -68,6 +69,12 @@ public class ReviewController {
 	@Operation(summary = "리뷰 수정")
 	@PutMapping("/{id}")
 	public Result<Void> updateReview(@PathVariable Long id, @Validated @RequestBody UpdateReviewReq updateReviewReq) {
+		return Result.<Void>builder().build();
+	}
+
+	@Operation(summary = "리뷰 삭제")
+	@DeleteMapping("/{id}")
+	public Result<Void> deleteReview(@PathVariable Long id) {
 		return Result.<Void>builder().build();
 	}
 }
