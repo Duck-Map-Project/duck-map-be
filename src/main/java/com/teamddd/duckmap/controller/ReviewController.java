@@ -1,5 +1,6 @@
 package com.teamddd.duckmap.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.validation.annotation.Validated;
@@ -55,6 +56,7 @@ public class ReviewController {
 					.id(1L)
 					.userProfile(imageRes)
 					.username("user_nickname")
+					.createdAt(LocalDateTime.now().minusDays(4))
 					.score(5)
 					.content("review content")
 					.photos(List.of(
