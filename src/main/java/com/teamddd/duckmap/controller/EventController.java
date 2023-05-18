@@ -23,7 +23,6 @@ import com.teamddd.duckmap.dto.ImageRes;
 import com.teamddd.duckmap.dto.MyEventsRes;
 import com.teamddd.duckmap.dto.Result;
 import com.teamddd.duckmap.dto.UpdateEventReq;
-import com.teamddd.duckmap.dto.UpdateEventRes;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -76,14 +75,8 @@ public class EventController {
 
 	@Operation(summary = "이벤트 수정")
 	@PutMapping("/{id}")
-	public Result<UpdateEventRes> updateEvent(@PathVariable Long id, @RequestBody UpdateEventReq updateEventReq) {
-		return Result.<UpdateEventRes>builder()
-			.data(
-				UpdateEventRes.builder()
-					.id(id)
-					.build()
-			)
-			.build();
+	public Result<Void> updateEvent(@PathVariable Long id, @RequestBody UpdateEventReq updateEventReq) {
+		return Result.<Void>builder().build();
 	}
 
 	@Operation(summary = "이벤트 삭제")
