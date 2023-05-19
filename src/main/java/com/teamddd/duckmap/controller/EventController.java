@@ -78,7 +78,7 @@ public class EventController {
 							.id(1L)
 							.userProfile(imageRes)
 							.username("user_nickname")
-							.createAt(LocalDateTime.now().minusDays(2))
+							.createdAt(LocalDateTime.now().minusDays(2))
 							.score(5)
 							.content("review content")
 							.photos(List.of(
@@ -90,7 +90,7 @@ public class EventController {
 							.id(2L)
 							.userProfile(imageRes)
 							.username("user2_nickname")
-							.createAt(LocalDateTime.now().minusDays(3))
+							.createdAt(LocalDateTime.now().minusDays(3))
 							.score(4)
 							.content("review content")
 							.photos(List.of(imageRes))
