@@ -5,6 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class UpdateEventRes {
-	private Long id;
+public class ArtistSearchParam {
+	private Long artistTypeId;
+	private String artistName;
 }

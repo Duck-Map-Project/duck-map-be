@@ -20,4 +20,11 @@ public class EventRes {
 	private List<MockArtistRes> artists;
 	private List<MockCategoryRes> categories;
 	private List<ImageRes> images;
+
+	private double score;
+	private boolean like;
+	private int likeCount;
+	private boolean bookmark;
+
+	private List<ReviewRes> reviews;
 }
