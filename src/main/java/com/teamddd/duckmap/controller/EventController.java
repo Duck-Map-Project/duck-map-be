@@ -22,8 +22,8 @@ import com.teamddd.duckmap.dto.EventRes;
 import com.teamddd.duckmap.dto.ImageRes;
 import com.teamddd.duckmap.dto.MyEventsRes;
 import com.teamddd.duckmap.dto.Result;
+import com.teamddd.duckmap.dto.ReviewRes;
 import com.teamddd.duckmap.dto.UpdateEventReq;
-import com.teamddd.duckmap.dto.UpdateEventRes;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -50,6 +50,11 @@ public class EventController {
 	@Operation(summary = "이벤트 pk로 조회")
 	@GetMapping("/{id}")
 	public Result<EventRes> getEvent(@PathVariable Long id) {
+		ImageRes imageRes = ImageRes.builder()
+			.apiUrl("/images/")
+			.filename("filename.png")
+			.build();
+
 		return Result.<EventRes>builder()
 			.data(
 				EventRes.builder()
@@ -63,10 +68,32 @@ public class EventController {
 					.twitterUrl("https://twitter.com/home?lang=ko")
 					.artists(List.of())
 					.categories(List.of())
-					.images(List.of(
-						ImageRes.builder()
-							.apiUrl("/images/")
-							.filename("filename.jpg")
+					.images(List.of(imageRes))
+					.score(4.5)
+					.like(true)
+					.likeCount(23)
+					.bookmark(false)
+					.reviews(List.of(
+						ReviewRes.builder()
+							.id(1L)
+							.userProfile(imageRes)
+							.username("user_nickname")
+							.createAt(LocalDateTime.now().minusDays(2))
+							.score(5)
+							.content("review content")
+							.photos(List.of(
+								imageRes,
+								imageRes
+							))
+							.build(),
+						ReviewRes.builder()
+							.id(2L)
+							.userProfile(imageRes)
+							.username("user2_nickname")
+							.createAt(LocalDateTime.now().minusDays(3))
+							.score(4)
+							.content("review content")
+							.photos(List.of(imageRes))
 							.build()
 					))
 					.build()
@@ -76,14 +103,8 @@ public class EventController {
 
 	@Operation(summary = "이벤트 수정")
 	@PutMapping("/{id}")
-	public Result<UpdateEventRes> updateEvent(@PathVariable Long id, @RequestBody UpdateEventReq updateEventReq) {
-		return Result.<UpdateEventRes>builder()
-			.data(
-				UpdateEventRes.builder()
-					.id(id)
-					.build()
-			)
-			.build();
+	public Result<Void> updateEvent(@PathVariable Long id, @Validated @RequestBody UpdateEventReq updateEventReq) {
+		return Result.<Void>builder().build();
 	}
 
 	@Operation(summary = "이벤트 삭제")
