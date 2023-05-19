@@ -25,6 +25,10 @@ public class CreateEventReq {
 	@NotNull
 	@Size(min = 1)
 	private List<Long> artistIds;
+	@NotNull
+	@Size(min = 1)
 	private List<Long> categoryIds;
+	@NotNull
+	@Size(min = 1)
 	private List<String> imageFilenames;
 }
