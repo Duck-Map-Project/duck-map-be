@@ -1,6 +1,12 @@
 package com.teamddd.duckmap.controller;
 
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.teamddd.duckmap.dto.Result;
 import com.teamddd.duckmap.dto.event.category.CreateEventCategoryReq;
 import com.teamddd.duckmap.dto.event.category.CreateEventCategoryRes;
+import com.teamddd.duckmap.dto.event.category.EventCategoryRes;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -31,5 +38,28 @@ public class EventCategoryController {
 					.build()
 			)
 			.build();
+	}
+
+	@Operation(summary = "이벤트 카테고리 목록 조회")
+	@GetMapping
+	public Page<EventCategoryRes> getEventCategories(Pageable pageable) {
+		return new PageImpl<>(List.of(
+			EventCategoryRes.builder()
+				.id(1L)
+				.category("태연 생카")
+				.build(),
+			EventCategoryRes.builder()
+				.id(2L)
+				.category("윤아 생카")
+				.build(),
+			EventCategoryRes.builder()
+				.id(3L)
+				.category("서현 생카")
+				.build(),
+			EventCategoryRes.builder()
+				.id(4L)
+				.category("소녀시대 10주년")
+				.build()
+		));
 	}
 }
