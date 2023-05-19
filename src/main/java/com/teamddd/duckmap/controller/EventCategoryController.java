@@ -7,7 +7,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +18,7 @@ import com.teamddd.duckmap.dto.Result;
 import com.teamddd.duckmap.dto.event.category.CreateEventCategoryReq;
 import com.teamddd.duckmap.dto.event.category.CreateEventCategoryRes;
 import com.teamddd.duckmap.dto.event.category.EventCategoryRes;
+import com.teamddd.duckmap.dto.event.category.UpdateEventCategoryReq;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -61,5 +64,12 @@ public class EventCategoryController {
 				.category("소녀시대 10주년")
 				.build()
 		));
+	}
+
+	@Operation(summary = "이벤트 카테고리 수정")
+	@PutMapping("/{id}")
+	public Result<Void> updateEventCategory(@PathVariable Long id,
+		@Validated @RequestBody UpdateEventCategoryReq updateEventCategoryReq) {
+		return Result.<Void>builder().build();
 	}
 }
