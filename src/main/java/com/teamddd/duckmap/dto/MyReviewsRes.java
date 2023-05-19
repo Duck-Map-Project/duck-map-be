@@ -12,7 +12,7 @@ public class MyReviewsRes {
 	private Long eventId;
 	private ImageRes eventImage;
 	private String eventStoreName;
-	private LocalDateTime createAt;
+	private LocalDateTime createdAt;
 	private int score;
 	private ImageRes reviewImage;
 	private String content;
