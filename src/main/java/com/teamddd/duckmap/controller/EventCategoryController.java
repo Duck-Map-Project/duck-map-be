@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -70,6 +71,12 @@ public class EventCategoryController {
 	@PutMapping("/{id}")
 	public Result<Void> updateEventCategory(@PathVariable Long id,
 		@Validated @RequestBody UpdateEventCategoryReq updateEventCategoryReq) {
+		return Result.<Void>builder().build();
+	}
+
+	@Operation(summary = "이벤트 카테고리 삭제")
+	@DeleteMapping("/{id}")
+	public Result<Void> deleteEventCategory(@PathVariable Long id) {
 		return Result.<Void>builder().build();
 	}
 }
