@@ -28,7 +28,7 @@ public class Artist extends BaseByEntity {
 	@JoinColumn(name = "group_id")
 	private Artist group;
 
-	private String username;
+	private String name;
 	private String image;
 
 	@ManyToOne(fetch = FetchType.LAZY)
