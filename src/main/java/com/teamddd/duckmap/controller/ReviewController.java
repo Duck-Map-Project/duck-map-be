@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -22,6 +23,8 @@ import com.teamddd.duckmap.dto.ImageRes;
 import com.teamddd.duckmap.dto.MyReviewsRes;
 import com.teamddd.duckmap.dto.Result;
 import com.teamddd.duckmap.dto.ReviewRes;
+import com.teamddd.duckmap.dto.ReviewSearchParam;
+import com.teamddd.duckmap.dto.ReviewsRes;
 import com.teamddd.duckmap.dto.UpdateReviewReq;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -84,6 +87,32 @@ public class ReviewController {
 		return Result.<Void>builder().build();
 	}
 
+	@Operation(summary = "리뷰 목록 조회")
+	@GetMapping
+	public Page<ReviewsRes> getReviews(Pageable pageable, @ModelAttribute ReviewSearchParam reviewSearchParam) {
+		ImageRes imageRes = ImageRes.builder()
+			.apiUrl("/images/")
+			.filename("filename.png")
+			.build();
+		return new PageImpl<>(List.of(
+			ReviewsRes.builder()
+				.id(1L)
+				.inProgress(false)
+				.image(imageRes)
+				.build(),
+			ReviewsRes.builder()
+				.id(2L)
+				.inProgress(true)
+				.image(imageRes)
+				.build(),
+			ReviewsRes.builder()
+				.id(3L)
+				.inProgress(true)
+				.image(imageRes)
+				.build()
+		));
+	}
+
 	@Operation(summary = "나의 리뷰 목록 조회")
 	@GetMapping("/myreview")
 	public Page<MyReviewsRes> getMyReviews(Pageable pageable) {
@@ -115,4 +144,5 @@ public class ReviewController {
 				.build()
 		));
 	}
+
 }
