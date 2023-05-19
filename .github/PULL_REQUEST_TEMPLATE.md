@@ -1,7 +1,9 @@
 ## Description
+
 > 목적, 설명
 
-## Chages
+## Changes
+
 - 변경사항1
 - 변경사항2
 
