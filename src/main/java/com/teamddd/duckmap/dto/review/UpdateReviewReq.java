@@ -7,13 +7,10 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.Range;
-
 import lombok.Getter;
 
 @Getter
 public class UpdateReviewReq {
-	@Range
 	@Min(0)
 	@Max(5)
 	private int score;
