@@ -3,9 +3,9 @@ package com.teamddd.duckmap.dto.event.event;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.teamddd.duckmap.dto.ArtistRes;
 import com.teamddd.duckmap.dto.ImageRes;
 import com.teamddd.duckmap.dto.ReviewRes;
+import com.teamddd.duckmap.dto.artist.ArtistRes;
 import com.teamddd.duckmap.dto.event.category.EventCategoryRes;
 
 import lombok.Builder;
