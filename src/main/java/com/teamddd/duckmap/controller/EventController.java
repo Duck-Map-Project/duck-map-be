@@ -173,6 +173,8 @@ public class EventController {
 				.image(
 					imageRes
 				)
+				.like(true)
+				.bookmark(true)
 				.build(),
 			EventsRes.builder()
 				.id(2L)
@@ -204,6 +206,8 @@ public class EventController {
 						.filename("event_image2.jpg")
 						.build()
 				)
+				.like(true)
+				.bookmark(false)
 				.build()
 		));
 	}
@@ -244,6 +248,8 @@ public class EventController {
 				.image(
 					imageRes
 				)
+				.like(false)
+				.bookmark(true)
 				.build(),
 			EventsRes.builder()
 				.id(2L)
@@ -275,6 +281,8 @@ public class EventController {
 						.filename("event_image2.jpg")
 						.build()
 				)
+				.like(true)
+				.bookmark(true)
 				.build()
 		));
 	}

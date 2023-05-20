@@ -18,4 +18,6 @@ public class EventsRes {
 	private List<ArtistRes> artists;
 	private List<EventCategoryRes> categories;
 	private ImageRes image;
+	private boolean like;
+	private boolean bookmark;
 }
