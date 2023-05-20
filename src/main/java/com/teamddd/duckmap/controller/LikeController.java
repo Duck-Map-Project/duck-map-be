@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.teamddd.duckmap.dto.Result;
-import com.teamddd.duckmap.dto.event.likes.LikeRes;
+import com.teamddd.duckmap.dto.event.like.LikeRes;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
