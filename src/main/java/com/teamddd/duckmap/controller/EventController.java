@@ -113,7 +113,7 @@ public class EventController {
 		return Result.<Void>builder().build();
 	}
 
-	@Operation(summary = "로그인한 회원이 생성한 이벤트 목록 조회")
+	@Operation(summary = "나의 이벤트 목록 조회")
 	@GetMapping("/myevent")
 	public Page<MyEventsRes> getMyEvents(Pageable pageable) {
 		return new PageImpl<>(List.of(
