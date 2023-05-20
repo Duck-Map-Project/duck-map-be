@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.teamddd.duckmap.dto.BookmarkFolderRes;
-import com.teamddd.duckmap.dto.BookmarkedEventRes;
-import com.teamddd.duckmap.dto.CreateBookmarkFolderReq;
-import com.teamddd.duckmap.dto.CreateBookmarkFolderRes;
 import com.teamddd.duckmap.dto.ImageRes;
 import com.teamddd.duckmap.dto.Result;
-import com.teamddd.duckmap.dto.UpdateBookmarkFolderReq;
+import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderRes;
+import com.teamddd.duckmap.dto.event.bookmark.BookmarkedEventRes;
+import com.teamddd.duckmap.dto.event.bookmark.CreateBookmarkFolderReq;
+import com.teamddd.duckmap.dto.event.bookmark.CreateBookmarkFolderRes;
+import com.teamddd.duckmap.dto.event.bookmark.UpdateBookmarkFolderReq;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;

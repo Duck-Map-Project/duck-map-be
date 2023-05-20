@@ -1,4 +1,4 @@
-package com.teamddd.duckmap.dto;
+package com.teamddd.duckmap.dto.event.bookmark;
 
 import javax.validation.constraints.NotBlank;
 

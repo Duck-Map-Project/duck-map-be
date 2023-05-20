@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.teamddd.duckmap.dto.CreateBookmarkReq;
-import com.teamddd.duckmap.dto.CreateBookmarkRes;
 import com.teamddd.duckmap.dto.Result;
-import com.teamddd.duckmap.dto.UpdateBookmarkReq;
+import com.teamddd.duckmap.dto.event.bookmark.CreateBookmarkReq;
+import com.teamddd.duckmap.dto.event.bookmark.CreateBookmarkRes;
+import com.teamddd.duckmap.dto.event.bookmark.UpdateBookmarkReq;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +43,7 @@ public class BookmarkController {
 	@Operation(summary = "북마크 폴더 변경")
 	@PutMapping("/{id}/bookmarks")
 	public Result<Void> updateBookmark(@PathVariable Long id,
-		@Validated @RequestBody UpdateBookmarkReq UpdateBookmarkReq) {
+		@Validated @RequestBody UpdateBookmarkReq updateBookmarkReq) {
 		return Result.<Void>builder().build();
 	}
 
