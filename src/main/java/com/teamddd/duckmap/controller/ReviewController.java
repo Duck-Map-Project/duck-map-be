@@ -17,15 +17,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.teamddd.duckmap.dto.CreateReviewReq;
-import com.teamddd.duckmap.dto.CreateReviewRes;
 import com.teamddd.duckmap.dto.ImageRes;
-import com.teamddd.duckmap.dto.MyReviewsRes;
 import com.teamddd.duckmap.dto.Result;
-import com.teamddd.duckmap.dto.ReviewRes;
-import com.teamddd.duckmap.dto.ReviewSearchParam;
-import com.teamddd.duckmap.dto.ReviewsRes;
-import com.teamddd.duckmap.dto.UpdateReviewReq;
+import com.teamddd.duckmap.dto.review.CreateReviewReq;
+import com.teamddd.duckmap.dto.review.CreateReviewRes;
+import com.teamddd.duckmap.dto.review.MyReviewsRes;
+import com.teamddd.duckmap.dto.review.ReviewRes;
+import com.teamddd.duckmap.dto.review.ReviewSearchParam;
+import com.teamddd.duckmap.dto.review.ReviewsRes;
+import com.teamddd.duckmap.dto.review.UpdateReviewReq;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;

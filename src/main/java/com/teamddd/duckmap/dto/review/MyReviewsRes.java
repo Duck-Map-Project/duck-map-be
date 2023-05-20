@@ -1,6 +1,8 @@
-package com.teamddd.duckmap.dto;
+package com.teamddd.duckmap.dto.review;
 
 import java.time.LocalDateTime;
+
+import com.teamddd.duckmap.dto.ImageRes;
 
 import lombok.Builder;
 import lombok.Getter;

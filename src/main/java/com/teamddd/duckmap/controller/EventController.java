@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.teamddd.duckmap.dto.ImageRes;
 import com.teamddd.duckmap.dto.Result;
-import com.teamddd.duckmap.dto.ReviewRes;
 import com.teamddd.duckmap.dto.artist.ArtistRes;
 import com.teamddd.duckmap.dto.artist.ArtistTypeRes;
 import com.teamddd.duckmap.dto.event.category.EventCategoryRes;
@@ -30,6 +29,7 @@ import com.teamddd.duckmap.dto.event.event.EventSearchParam;
 import com.teamddd.duckmap.dto.event.event.EventsRes;
 import com.teamddd.duckmap.dto.event.event.HashtagRes;
 import com.teamddd.duckmap.dto.event.event.UpdateEventReq;
+import com.teamddd.duckmap.dto.review.ReviewRes;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;

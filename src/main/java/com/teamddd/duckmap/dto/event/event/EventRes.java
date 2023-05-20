@@ -4,9 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.teamddd.duckmap.dto.ImageRes;
-import com.teamddd.duckmap.dto.ReviewRes;
 import com.teamddd.duckmap.dto.artist.ArtistRes;
 import com.teamddd.duckmap.dto.event.category.EventCategoryRes;
+import com.teamddd.duckmap.dto.review.ReviewRes;
 
 import lombok.Builder;
 import lombok.Getter;
