@@ -35,7 +35,13 @@ public class UserController {
 	@Operation(summary = "회원 가입")
 	@PostMapping
 	public Result<CreateUserRes> createUser(@Validated @RequestBody CreateUserReq createUserReq) {
-		return Result.<CreateUserRes>builder().data(CreateUserRes.builder().id(1L).build()).build();
+		return Result.<CreateUserRes>builder()
+			.data(
+				CreateUserRes.builder()
+					.id(1L)
+					.build()
+			)
+			.build();
 	}
 
 	@Operation(summary = "회원 정보 조회", description = "로그인한 회원 정보 조회")
@@ -46,7 +52,12 @@ public class UserController {
 				.id(1L)
 				.username("user1")
 				.email("sample@naver.com")
-				.userProfile(ImageRes.builder().apiUrl("/images/").filename("user1.jpg").build())
+				.userProfile(
+					ImageRes.builder()
+						.apiUrl("/images/")
+						.filename("user1.jpg")
+						.build()
+				)
 				.loginAt(LocalDateTime.now())
 				.build())
 			.build();
