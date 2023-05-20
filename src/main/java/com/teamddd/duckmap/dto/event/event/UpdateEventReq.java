@@ -1,4 +1,4 @@
-package com.teamddd.duckmap.dto;
+package com.teamddd.duckmap.dto.event.event;
 
 import java.time.LocalDate;
 import java.util.List;

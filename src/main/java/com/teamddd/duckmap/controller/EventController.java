@@ -16,14 +16,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.teamddd.duckmap.dto.CreateEventReq;
-import com.teamddd.duckmap.dto.CreateEventRes;
-import com.teamddd.duckmap.dto.EventRes;
+import com.teamddd.duckmap.dto.ArtistRes;
+import com.teamddd.duckmap.dto.ArtistTypeRes;
 import com.teamddd.duckmap.dto.ImageRes;
-import com.teamddd.duckmap.dto.MyEventsRes;
 import com.teamddd.duckmap.dto.Result;
 import com.teamddd.duckmap.dto.ReviewRes;
-import com.teamddd.duckmap.dto.UpdateEventReq;
+import com.teamddd.duckmap.dto.event.category.EventCategoryRes;
+import com.teamddd.duckmap.dto.event.event.CreateEventReq;
+import com.teamddd.duckmap.dto.event.event.CreateEventRes;
+import com.teamddd.duckmap.dto.event.event.EventRes;
+import com.teamddd.duckmap.dto.event.event.EventsRes;
+import com.teamddd.duckmap.dto.event.event.UpdateEventReq;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -66,8 +69,26 @@ public class EventController {
 					.businessHour("10:00 - 18:00")
 					.hashtag("#뫄뫄 #생일축하해")
 					.twitterUrl("https://twitter.com/home?lang=ko")
-					.artists(List.of())
-					.categories(List.of())
+					.artists(List.of(
+						ArtistRes.builder()
+							.id(2L)
+							.groupId(1L)
+							.name("태연")
+							.image(imageRes)
+							.artistType(
+								ArtistTypeRes.builder()
+									.id(1L)
+									.type("아이돌")
+									.build()
+							)
+							.build()
+					))
+					.categories(List.of(
+						EventCategoryRes.builder()
+							.id(1L)
+							.category("생일카페")
+							.build()
+					))
 					.images(List.of(imageRes))
 					.score(4.5)
 					.like(true)
@@ -113,29 +134,67 @@ public class EventController {
 		return Result.<Void>builder().build();
 	}
 
-	@Operation(summary = "로그인한 회원이 생성한 이벤트 목록 조회")
+	@Operation(summary = "나의 이벤트 목록 조회")
 	@GetMapping("/myevent")
-	public Page<MyEventsRes> getMyEvents(Pageable pageable) {
+	public Page<EventsRes> getMyEvents(Pageable pageable) {
+		ImageRes imageRes = ImageRes.builder()
+			.apiUrl("/images/")
+			.filename("event_image.jpg")
+			.build();
+
 		return new PageImpl<>(List.of(
-			MyEventsRes.builder()
+			EventsRes.builder()
 				.id(1L)
 				.storeName("이벤트1")
 				.address("서울 서초동")
-				.artists(List.of())
-				.categories(List.of())
-				.image(
-					ImageRes.builder()
-						.apiUrl("/images/")
-						.filename("event_image.jpg")
+				.artists(List.of(
+					ArtistRes.builder()
+						.id(2L)
+						.groupId(1L)
+						.name("태연")
+						.image(imageRes)
+						.artistType(
+							ArtistTypeRes.builder()
+								.id(1L)
+								.type("아이돌")
+								.build()
+						)
 						.build()
+				))
+				.categories(List.of(
+					EventCategoryRes.builder()
+						.id(1L)
+						.category("생일카페")
+						.build()
+				))
+				.image(
+					imageRes
 				)
 				.build(),
-			MyEventsRes.builder()
+			EventsRes.builder()
 				.id(2L)
 				.storeName("이벤트2")
 				.address("서울 한남동")
-				.artists(List.of())
-				.categories(List.of())
+				.artists(List.of(
+					ArtistRes.builder()
+						.id(1L)
+						.groupId(null)
+						.name("소녀시대")
+						.image(imageRes)
+						.artistType(
+							ArtistTypeRes.builder()
+								.id(2L)
+								.type("그룹")
+								.build()
+						)
+						.build()
+				))
+				.categories(List.of(
+					EventCategoryRes.builder()
+						.id(2L)
+						.category("전시회")
+						.build()
+				))
 				.image(
 					ImageRes.builder()
 						.apiUrl("/images/")
