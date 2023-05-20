@@ -1,4 +1,4 @@
-package com.teamddd.duckmap.dto;
+package com.teamddd.duckmap.dto.user.auth;
 
 import lombok.Builder;
 import lombok.Getter;
