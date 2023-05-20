@@ -25,7 +25,7 @@ import com.teamddd.duckmap.dto.event.category.EventCategoryRes;
 import com.teamddd.duckmap.dto.event.event.CreateEventReq;
 import com.teamddd.duckmap.dto.event.event.CreateEventRes;
 import com.teamddd.duckmap.dto.event.event.EventRes;
-import com.teamddd.duckmap.dto.event.event.MyEventsRes;
+import com.teamddd.duckmap.dto.event.event.EventsRes;
 import com.teamddd.duckmap.dto.event.event.UpdateEventReq;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -136,14 +136,14 @@ public class EventController {
 
 	@Operation(summary = "나의 이벤트 목록 조회")
 	@GetMapping("/myevent")
-	public Page<MyEventsRes> getMyEvents(Pageable pageable) {
+	public Page<EventsRes> getMyEvents(Pageable pageable) {
 		ImageRes imageRes = ImageRes.builder()
 			.apiUrl("/images/")
 			.filename("event_image.jpg")
 			.build();
 
 		return new PageImpl<>(List.of(
-			MyEventsRes.builder()
+			EventsRes.builder()
 				.id(1L)
 				.storeName("이벤트1")
 				.address("서울 서초동")
@@ -171,7 +171,7 @@ public class EventController {
 					imageRes
 				)
 				.build(),
-			MyEventsRes.builder()
+			EventsRes.builder()
 				.id(2L)
 				.storeName("이벤트2")
 				.address("서울 한남동")

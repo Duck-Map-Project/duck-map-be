@@ -11,7 +11,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class MyEventsRes {
+public class EventsRes {
 	private Long id;
 	private String storeName;
 	private String address;
