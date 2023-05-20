@@ -24,9 +24,19 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/images")
 public class ImageController {
 
-	@Operation(summary = "이미지 저장")
+	@Operation(summary = "이미지 저장", description = "content type은 image로 시작해야 합니다")
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public Result<ImageRes> saveImage(@RequestParam MultipartFile file) {
+		if (file.isEmpty() || file.getContentType() == null || !file.getContentType().startsWith("image")) {
+			return Result.<ImageRes>builder()
+				.data(
+					ImageRes.builder()
+						.apiUrl("구현하면 400 반환 예정")
+						.filename("error - content type은 image로 시작해야 합니다")
+						.build()
+				)
+				.build();
+		}
 		return Result.<ImageRes>builder()
 			.data(
 				ImageRes.builder()
