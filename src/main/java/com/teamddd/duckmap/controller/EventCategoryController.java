@@ -50,19 +50,15 @@ public class EventCategoryController {
 		return new PageImpl<>(List.of(
 			EventCategoryRes.builder()
 				.id(1L)
-				.category("태연 생카")
+				.category("생일카페")
 				.build(),
 			EventCategoryRes.builder()
 				.id(2L)
-				.category("윤아 생카")
+				.category("전시회")
 				.build(),
 			EventCategoryRes.builder()
 				.id(3L)
-				.category("서현 생카")
-				.build(),
-			EventCategoryRes.builder()
-				.id(4L)
-				.category("소녀시대 10주년")
+				.category("럭키드로우")
 				.build()
 		));
 	}
