@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.teamddd.duckmap.dto.ArtistRes;
-import com.teamddd.duckmap.dto.ArtistSearchParam;
-import com.teamddd.duckmap.dto.ArtistTypeRes;
-import com.teamddd.duckmap.dto.CreateArtistReq;
-import com.teamddd.duckmap.dto.CreateArtistRes;
 import com.teamddd.duckmap.dto.ImageRes;
 import com.teamddd.duckmap.dto.Result;
-import com.teamddd.duckmap.dto.UpdateArtistReq;
+import com.teamddd.duckmap.dto.artist.ArtistRes;
+import com.teamddd.duckmap.dto.artist.ArtistSearchParam;
+import com.teamddd.duckmap.dto.artist.ArtistTypeRes;
+import com.teamddd.duckmap.dto.artist.CreateArtistReq;
+import com.teamddd.duckmap.dto.artist.CreateArtistRes;
+import com.teamddd.duckmap.dto.artist.UpdateArtistReq;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
