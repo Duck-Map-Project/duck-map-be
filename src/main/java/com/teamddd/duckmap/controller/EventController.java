@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -25,6 +26,7 @@ import com.teamddd.duckmap.dto.event.category.EventCategoryRes;
 import com.teamddd.duckmap.dto.event.event.CreateEventReq;
 import com.teamddd.duckmap.dto.event.event.CreateEventRes;
 import com.teamddd.duckmap.dto.event.event.EventRes;
+import com.teamddd.duckmap.dto.event.event.EventSearchParam;
 import com.teamddd.duckmap.dto.event.event.EventsRes;
 import com.teamddd.duckmap.dto.event.event.UpdateEventReq;
 
@@ -132,6 +134,77 @@ public class EventController {
 	@DeleteMapping("/{id}")
 	public Result<Void> deleteEvent(@PathVariable Long id) {
 		return Result.<Void>builder().build();
+	}
+
+	@Operation(summary = "이벤트 목록 조회")
+	@GetMapping
+	public Page<EventsRes> getEvents(Pageable pageable, @ModelAttribute EventSearchParam eventSearchParam) {
+		ImageRes imageRes = ImageRes.builder()
+			.apiUrl("/images/")
+			.filename("filename.png")
+			.build();
+
+		return new PageImpl<>(List.of(
+			EventsRes.builder()
+				.id(1L)
+				.storeName("이벤트1")
+				.address("서울 서초동")
+				.artists(List.of(
+					ArtistRes.builder()
+						.id(2L)
+						.groupId(1L)
+						.name("태연")
+						.image(imageRes)
+						.artistType(
+							ArtistTypeRes.builder()
+								.id(1L)
+								.type("아이돌")
+								.build()
+						)
+						.build()
+				))
+				.categories(List.of(
+					EventCategoryRes.builder()
+						.id(1L)
+						.category("생일카페")
+						.build()
+				))
+				.image(
+					imageRes
+				)
+				.build(),
+			EventsRes.builder()
+				.id(2L)
+				.storeName("이벤트2")
+				.address("서울 한남동")
+				.artists(List.of(
+					ArtistRes.builder()
+						.id(1L)
+						.groupId(null)
+						.name("소녀시대")
+						.image(imageRes)
+						.artistType(
+							ArtistTypeRes.builder()
+								.id(2L)
+								.type("그룹")
+								.build()
+						)
+						.build()
+				))
+				.categories(List.of(
+					EventCategoryRes.builder()
+						.id(2L)
+						.category("전시회")
+						.build()
+				))
+				.image(
+					ImageRes.builder()
+						.apiUrl("/images/")
+						.filename("event_image2.jpg")
+						.build()
+				)
+				.build()
+		));
 	}
 
 	@Operation(summary = "나의 이벤트 목록 조회")
