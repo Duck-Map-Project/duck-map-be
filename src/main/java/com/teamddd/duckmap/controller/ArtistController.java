@@ -53,6 +53,7 @@ public class ArtistController {
 			ArtistRes.builder()
 				.id(1L)
 				.groupId(null)
+				.groupName("")
 				.name("세븐틴")
 				.image(
 					ImageRes.builder()
@@ -70,6 +71,7 @@ public class ArtistController {
 			ArtistRes.builder()
 				.id(2L)
 				.groupId(null)
+				.groupName("")
 				.name("이제훈")
 				.image(
 					ImageRes.builder()
@@ -87,6 +89,7 @@ public class ArtistController {
 			ArtistRes.builder()
 				.id(3L)
 				.groupId(null)
+				.groupName("")
 				.name("아이브")
 				.image(
 					ImageRes.builder()
@@ -112,6 +115,7 @@ public class ArtistController {
 				ArtistRes.builder()
 					.id(id)
 					.groupId(null)
+					.groupName("")
 					.name("세븐틴")
 					.image(
 						ImageRes.builder()
