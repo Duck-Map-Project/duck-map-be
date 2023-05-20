@@ -1,4 +1,4 @@
-package com.teamddd.duckmap.dto;
+package com.teamddd.duckmap.dto.artist;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
