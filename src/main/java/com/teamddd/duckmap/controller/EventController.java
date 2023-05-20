@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.teamddd.duckmap.dto.CreateEventReq;
-import com.teamddd.duckmap.dto.CreateEventRes;
-import com.teamddd.duckmap.dto.EventRes;
 import com.teamddd.duckmap.dto.ImageRes;
-import com.teamddd.duckmap.dto.MyEventsRes;
 import com.teamddd.duckmap.dto.Result;
 import com.teamddd.duckmap.dto.ReviewRes;
-import com.teamddd.duckmap.dto.UpdateEventReq;
+import com.teamddd.duckmap.dto.event.event.CreateEventReq;
+import com.teamddd.duckmap.dto.event.event.CreateEventRes;
+import com.teamddd.duckmap.dto.event.event.EventRes;
+import com.teamddd.duckmap.dto.event.event.MyEventsRes;
+import com.teamddd.duckmap.dto.event.event.UpdateEventReq;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;

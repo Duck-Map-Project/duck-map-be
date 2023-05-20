@@ -1,6 +1,10 @@
-package com.teamddd.duckmap.dto;
+package com.teamddd.duckmap.dto.event.event;
 
 import java.util.List;
+
+import com.teamddd.duckmap.dto.ImageRes;
+import com.teamddd.duckmap.dto.MockArtistRes;
+import com.teamddd.duckmap.dto.MockCategoryRes;
 
 import lombok.Builder;
 import lombok.Getter;
