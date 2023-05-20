@@ -3,10 +3,10 @@ package com.teamddd.duckmap.dto.event.event;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.teamddd.duckmap.dto.ArtistRes;
 import com.teamddd.duckmap.dto.ImageRes;
-import com.teamddd.duckmap.dto.MockArtistRes;
-import com.teamddd.duckmap.dto.MockCategoryRes;
 import com.teamddd.duckmap.dto.ReviewRes;
+import com.teamddd.duckmap.dto.event.category.EventCategoryRes;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -22,8 +22,8 @@ public class EventRes {
 	private String businessHour;
 	private String hashtag;
 	private String twitterUrl;
-	private List<MockArtistRes> artists;
-	private List<MockCategoryRes> categories;
+	private List<ArtistRes> artists;
+	private List<EventCategoryRes> categories;
 	private List<ImageRes> images;
 
 	private double score;
