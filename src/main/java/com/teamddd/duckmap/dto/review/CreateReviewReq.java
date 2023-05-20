@@ -2,10 +2,10 @@ package com.teamddd.duckmap.dto.review;
 
 import java.util.List;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.Range;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -14,7 +14,8 @@ import lombok.Getter;
 public class CreateReviewReq {
 	@NotNull
 	private Long eventId;
-	@Range(min = 0, max = 5)
+	@Min(0)
+	@Max(5)
 	@Schema(defaultValue = "0")
 	private int score;
 	private String content;
