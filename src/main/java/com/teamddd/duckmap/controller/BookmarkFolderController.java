@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.teamddd.duckmap.dto.BookmarkFolderRes;
-import com.teamddd.duckmap.dto.BookmarkRes;
 import com.teamddd.duckmap.dto.BookmarkedEventRes;
 import com.teamddd.duckmap.dto.CreateBookmarkFolderReq;
 import com.teamddd.duckmap.dto.CreateBookmarkFolderRes;
@@ -75,33 +74,25 @@ public class BookmarkFolderController {
 
 	@Operation(summary = "북마크 폴더 내부의 이벤트 목록 조회")
 	@GetMapping("/{id}/events")
-	public Page<BookmarkRes> getAllBookmarks(@PathVariable Long id, Pageable pageable) {
+	public Page<BookmarkedEventRes> getAllBookmarks(@PathVariable Long id, Pageable pageable) {
 		return new PageImpl<>(List.of(
-			BookmarkRes.builder()
+			BookmarkedEventRes.builder()
 				.id(1L)
-				.bookmarkedEvent(
-					BookmarkedEventRes.builder()
-						.id(1L)
-						.storeName("스프링 카페")
-						.image(
-							ImageRes.builder()
-								.apiUrl("/images/")
-								.filename("default_cafe.jpg")
-								.build()
-						).build()
+				.storeName("스프링 카페")
+				.image(
+					ImageRes.builder()
+						.apiUrl("/images/")
+						.filename("default_cafe.jpg")
+						.build()
 				).build(),
-			BookmarkRes.builder()
+			BookmarkedEventRes.builder()
 				.id(2L)
-				.bookmarkedEvent(
-					BookmarkedEventRes.builder()
-						.id(2L)
-						.storeName("썸머 카페")
-						.image(
-							ImageRes.builder()
-								.apiUrl("/images/")
-								.filename("default_cafe.jpg")
-								.build()
-						).build()
+				.storeName("썸머 카페")
+				.image(
+					ImageRes.builder()
+						.apiUrl("/images/")
+						.filename("default_cafe.jpg")
+						.build()
 				).build()
 		));
 	}
