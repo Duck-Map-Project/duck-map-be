@@ -8,6 +8,4 @@ import lombok.Getter;
 public class CreateBookmarkReq {
 	@NotNull
 	private Long bookmarkFolderId;
-	@NotNull
-	private Long eventId;
 }

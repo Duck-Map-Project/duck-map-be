@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.teamddd.duckmap.dto.CreateBookmarkReq;
 import com.teamddd.duckmap.dto.CreateBookmarkRes;
 import com.teamddd.duckmap.dto.Result;
 import com.teamddd.duckmap.dto.UpdateBookmarkReq;
@@ -27,7 +28,9 @@ public class BookmarkController {
 
 	@Operation(summary = "북마크 생성")
 	@PostMapping("/{id}/bookmarks")
-	public Result<CreateBookmarkRes> createBookmark(@PathVariable Long id, HttpSession session) {
+	public Result<CreateBookmarkRes> createBookmark(@PathVariable Long id, HttpSession session,
+		@Validated @RequestBody
+		CreateBookmarkReq createBookmarkReq) {
 		return Result.<CreateBookmarkRes>builder()
 			.data(
 				CreateBookmarkRes.builder()
