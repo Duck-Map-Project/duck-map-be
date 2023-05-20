@@ -7,5 +7,5 @@ import lombok.Getter;
 @Builder
 public class BookmarkRes {
 	private Long id;
-	private BookmarkedEventRes bookmarkedEventRes;
+	private EventRes event;
 }
