@@ -12,7 +12,6 @@ import lombok.Getter;
 public class MyReviewsRes {
 	private Long id;
 	private Long eventId;
-	private ImageRes eventImage;
 	private String eventStoreName;
 	private LocalDateTime createdAt;
 	private int score;
