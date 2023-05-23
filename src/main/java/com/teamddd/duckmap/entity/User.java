@@ -3,6 +3,8 @@ package com.teamddd.duckmap.entity;
 import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,6 +33,10 @@ public class User extends BaseTimeEntity {
 	private String password;
 	private String salt;
 	private String image;
+
+	@Enumerated(EnumType.STRING)
+	private UserType userType; //USER, ADMIN
+
 	private LocalDateTime loginAt;
 
 }
