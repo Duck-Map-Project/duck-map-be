@@ -14,5 +14,6 @@ public class UserRes {
 	private String username;
 	private String email;
 	private ImageRes userProfile;
+	private String userType;
 	private LocalDateTime loginAt;
 }
