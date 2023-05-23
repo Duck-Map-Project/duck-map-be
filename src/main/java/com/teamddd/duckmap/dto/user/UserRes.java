@@ -2,9 +2,8 @@ package com.teamddd.duckmap.dto.user;
 
 import java.time.LocalDateTime;
 
-import org.hibernate.usertype.UserType;
-
 import com.teamddd.duckmap.dto.ImageRes;
+import com.teamddd.duckmap.entity.UserType;
 
 import lombok.Builder;
 import lombok.Getter;

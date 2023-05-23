@@ -21,6 +21,7 @@ import com.teamddd.duckmap.dto.user.CreateUserRes;
 import com.teamddd.duckmap.dto.user.UpdatePasswordReq;
 import com.teamddd.duckmap.dto.user.UpdateUserReq;
 import com.teamddd.duckmap.dto.user.UserRes;
+import com.teamddd.duckmap.entity.UserType;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -58,7 +59,7 @@ public class UserController {
 						.filename("user1.jpg")
 						.build()
 				)
-				.userType("USER")
+				.userType(UserType.USER)
 				.loginAt(LocalDateTime.now())
 				.build())
 			.build();
