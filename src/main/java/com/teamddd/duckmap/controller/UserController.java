@@ -58,6 +58,7 @@ public class UserController {
 						.filename("user1.jpg")
 						.build()
 				)
+				.userType("USER")
 				.loginAt(LocalDateTime.now())
 				.build())
 			.build();
