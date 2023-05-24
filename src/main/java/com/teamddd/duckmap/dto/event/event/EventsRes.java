@@ -14,6 +14,7 @@ import lombok.Getter;
 public class EventsRes {
 	private Long id;
 	private String storeName;
+	private boolean inProgress;
 	private String address;
 	private List<ArtistRes> artists;
 	private List<EventCategoryRes> categories;
