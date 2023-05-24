@@ -66,6 +66,7 @@ public class EventController {
 				EventRes.builder()
 					.id(id)
 					.storeName("상호명")
+					.inProgress(true)
 					.fromDate(LocalDateTime.now().minusDays(2L))
 					.toDate(LocalDateTime.now().plusDays(1L))
 					.address("주소")
@@ -149,6 +150,7 @@ public class EventController {
 			EventsRes.builder()
 				.id(1L)
 				.storeName("이벤트1")
+				.inProgress(false)
 				.address("서울 서초동")
 				.artists(List.of(
 					ArtistRes.builder()
@@ -179,6 +181,7 @@ public class EventController {
 			EventsRes.builder()
 				.id(2L)
 				.storeName("이벤트2")
+				.inProgress(true)
 				.address("서울 한남동")
 				.artists(List.of(
 					ArtistRes.builder()
@@ -224,6 +227,7 @@ public class EventController {
 			EventsRes.builder()
 				.id(1L)
 				.storeName("이벤트1")
+				.inProgress(false)
 				.address("서울 서초동")
 				.artists(List.of(
 					ArtistRes.builder()
@@ -254,6 +258,7 @@ public class EventController {
 			EventsRes.builder()
 				.id(2L)
 				.storeName("이벤트2")
+				.inProgress(true)
 				.address("서울 한남동")
 				.artists(List.of(
 					ArtistRes.builder()

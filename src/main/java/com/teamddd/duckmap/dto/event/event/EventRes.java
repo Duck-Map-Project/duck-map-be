@@ -16,6 +16,7 @@ import lombok.Getter;
 public class EventRes {
 	private Long id;
 	private String storeName;
+	private boolean inProgress;
 	private LocalDateTime fromDate;
 	private LocalDateTime toDate;
 	private String address;
