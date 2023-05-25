@@ -9,4 +9,5 @@ public class LoginUserRes {
 	private Long id;
 	private String username;
 	private String image;
+	private long lastSearchArtist;
 }
