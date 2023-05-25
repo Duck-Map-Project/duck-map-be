@@ -31,6 +31,7 @@ public class AuthController {
 					.id(1L)
 					.username("사용자1")
 					.image("img.png")
+					.lastSearchArtist(1L)
 					.build()
 			)
 			.build();
