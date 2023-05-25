@@ -31,7 +31,7 @@ class EventRepositoryTest {
 
 	@DisplayName("user pk로 event 목록 검색, EventLike, EventBookmark와 join하여 조회")
 	@Test
-	void findByUser() throws Exception {
+	void findMyEvents() throws Exception {
 		//given
 		User user = User.builder().build();
 		User user2 = User.builder().build();
