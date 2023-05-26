@@ -7,8 +7,8 @@ import com.teamddd.duckmap.entity.EventBookmarkFolder;
 import com.teamddd.duckmap.entity.User;
 import com.teamddd.duckmap.repository.BookmarkFolderRepository;
 import org.assertj.core.groups.Tuple;
-import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
@@ -38,23 +38,35 @@ public class BookmarkFolderRepositoryTest {
 		em.persist(user);
 
 		Event event = createEvent(user, "event1", LocalDate.now(), LocalDate.now(), "#hashtag");
+		Event event2 = createEvent(user, "event2", LocalDate.now(), LocalDate.now(), "#hashtag");
+		Event event3 = createEvent(user, "event3", LocalDate.now(), LocalDate.now(), "#hashtag");
 		em.persist(event);
-
+		em.persist(event2);
+		em.persist(event3);
 
 		EventBookmark eventBookmark = createEventBookmark(user, event);
-		em.persist(eventBookmark);
+		EventBookmark eventBookmark2 = createEventBookmark(user, event2);
+		EventBookmark eventBookmark3 = createEventBookmark(user, event3);
 
-		EventBookmarkFolder eventBookmarkFolder1 = createEventBookmarkFolder(eventBookmark);
-		em.persist(eventBookmarkFolder1);
-		PageRequest pageRequest = PageRequest.of(0, 2);
+		em.persist(eventBookmark);
+		em.persist(eventBookmark2);
+		em.persist(eventBookmark3);
+
+		EventBookmarkFolder eventBookmarkFolder = createEventBookmarkFolder(List.of(eventBookmark, eventBookmark2, eventBookmark3));
+		em.persist(eventBookmarkFolder);
+		PageRequest pageRequest = PageRequest.of(0, 3);
 
 		//when
-		Page<BookmarkFolderEventDto> bookmarkedEvents = bookmarkFolderRepository.findBookmarkedEvents(eventBookmarkFolder1.getId(), pageRequest);
-
+		Page<BookmarkFolderEventDto> bookmarkedEvents = bookmarkFolderRepository
+				.findBookmarkedEvents(eventBookmarkFolder.getId(), pageRequest);
 		//then
-		assertThat(bookmarkedEvents).hasSize(1).extracting("event.id", "event.storeName", "eventBookmark.id").containsExactly(Tuple.tuple(event.getId(), "event1", eventBookmark.getId()));
+		assertThat(bookmarkedEvents).hasSize(3)
+				.extracting("event.id", "event.storeName", "eventBookmark.id")
+				.containsExactly(Tuple.tuple(event.getId(), "event1", eventBookmark.getId()),
+						Tuple.tuple(event2.getId(), "event2", eventBookmark2.getId()),
+						Tuple.tuple(event3.getId(), "event3", eventBookmark3.getId()));
 
-		assertThat(bookmarkedEvents.getTotalElements()).isEqualTo(1);
+		assertThat(bookmarkedEvents.getTotalElements()).isEqualTo(3);
 		assertThat(bookmarkedEvents.getTotalPages()).isEqualTo(1);
 	}
 
@@ -66,7 +78,7 @@ public class BookmarkFolderRepositoryTest {
 		return EventBookmark.builder().user(user).event(event).build();
 	}
 
-	private EventBookmarkFolder createEventBookmarkFolder(EventBookmark bookmark) {
-		return EventBookmarkFolder.builder().eventBookmarks(List.of(bookmark)).build();
+	private EventBookmarkFolder createEventBookmarkFolder(List<EventBookmark> bookmarks) {
+		return EventBookmarkFolder.builder().eventBookmarks(bookmarks).build();
 	}
 }
