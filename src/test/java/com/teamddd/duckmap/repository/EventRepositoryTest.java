@@ -3,6 +3,7 @@ package com.teamddd.duckmap.repository;
 import static org.assertj.core.api.Assertions.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 
@@ -70,6 +71,57 @@ class EventRepositoryTest {
 
 		assertThat(myEvents.getTotalElements()).isEqualTo(2);
 		assertThat(myEvents.getTotalPages()).isEqualTo(1);
+	}
+
+	@DisplayName("날짜 기준 진행중인 event 목록 조회")
+	@Test
+	void findByFromDateLessThanEqualAndToDateGreaterThanEqual() throws Exception {
+		//given
+		LocalDate date = LocalDate.now();
+
+		User user = User.builder().build();
+		em.persist(user);
+
+		Event event1 = createEvent(user, "event1", date.minusDays(10), date.minusDays(6), "#hashtag1");
+		Event event2 = createEvent(user, "event2", date.minusDays(1), date, "#hashtag2");
+		Event event3 = createEvent(user, "event3", date, date.plusDays(1), "#hashtag3");
+		Event event4 = createEvent(user, "event4", date.plusDays(2), date.plusDays(4), "#hashtag4");
+		em.persist(event1);
+		em.persist(event2);
+		em.persist(event3);
+		em.persist(event4);
+
+		Artist artist1 = Artist.builder().build();
+		Artist artist2 = Artist.builder().build();
+		em.persist(artist1);
+		em.persist(artist2);
+
+		EventArtist eventArtist1 = createEventArtist(event1, artist1);
+		EventArtist eventArtist2 = createEventArtist(event1, artist2);
+		EventArtist eventArtist3 = createEventArtist(event2, artist1);
+		EventArtist eventArtist4 = createEventArtist(event3, artist2);
+		EventArtist eventArtist5 = createEventArtist(event4, artist1);
+		em.persist(eventArtist1);
+		em.persist(eventArtist2);
+		em.persist(eventArtist3);
+		em.persist(eventArtist4);
+		em.persist(eventArtist5);
+
+		EventLike eventLike1 = createEventLike(user, event1);
+		EventLike eventLike2 = createEventLike(user, event2);
+		EventBookmark eventBookmark2 = createEventBookmark(user, event2);
+		EventBookmark eventBookmark3 = createEventBookmark(user, event3);
+		em.persist(eventLike1);
+		em.persist(eventLike2);
+		em.persist(eventBookmark2);
+		em.persist(eventBookmark3);
+
+		//when
+		List<String> hashtags = eventRepository.findHashtagsByFromDateAndToDate(date);
+
+		//then
+		assertThat(hashtags).hasSize(2)
+			.containsExactly("#hashtag2", "#hashtag3");
 	}
 
 	private Event createEvent(User user, String storeName, LocalDate fromDate, LocalDate toDate, String hashtag) {
@@ -206,8 +258,7 @@ class EventRepositoryTest {
 			PageRequest pageRequest = PageRequest.of(0, 2);
 
 			//when
-			Page<EventLikeBookmarkDto> events = eventRepository.findByArtistAndDate(null, date, null,
-				pageRequest);
+			Page<EventLikeBookmarkDto> events = eventRepository.findByArtistAndDate(null, date, null, pageRequest);
 
 			//then
 			assertThat(events).hasSize(2)
