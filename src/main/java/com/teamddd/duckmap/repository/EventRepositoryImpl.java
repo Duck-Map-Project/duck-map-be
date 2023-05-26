@@ -30,6 +30,21 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
 	}
 
 	@Override
+	public EventLikeBookmarkDto findByIdWithLikeAndBookmark(Long eventId, Long userId) {
+		return queryFactory.select(
+				new QEventLikeBookmarkDto(
+					event,
+					eventLike,
+					eventBookmark
+				))
+			.from(event)
+			.leftJoin(eventLike).on(event.eq(eventLike.event).and(eventLikeUserEqUserId(userId)))
+			.leftJoin(eventBookmark).on(event.eq(eventBookmark.event).and(eventBookmarkUserEqUserId(userId)))
+			.where(event.id.eq(eventId))
+			.fetchOne();
+	}
+
+	@Override
 	public Page<EventLikeBookmarkDto> findMyEvents(Long userId, Pageable pageable) {
 		List<EventLikeBookmarkDto> events = queryFactory.select(
 				new QEventLikeBookmarkDto(

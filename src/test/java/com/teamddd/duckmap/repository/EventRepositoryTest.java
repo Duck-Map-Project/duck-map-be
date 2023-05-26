@@ -150,6 +150,60 @@ class EventRepositoryTest {
 	}
 
 	@Nested
+	@DisplayName("event pk로 조회, user fk로 EventLike, EventBookmark join 조회")
+	class FindByIdWithLikeAndBookmark {
+		@DisplayName("user fk가 null")
+		@Test
+		void findByIdWithLikeAndBookmark1() throws Exception {
+			//given
+			User user = User.builder().build();
+			em.persist(user);
+
+			Event event = createEvent(user, "event1", LocalDate.now(), LocalDate.now(), "#hashtag");
+			em.persist(event);
+
+			EventLike eventLike = createEventLike(user, event);
+			em.persist(eventLike);
+
+			EventBookmark eventBookmark = createEventBookmark(user, event);
+			em.persist(eventBookmark);
+
+			//when
+			EventLikeBookmarkDto findEvent = eventRepository.findByIdWithLikeAndBookmark(event.getId(), null);
+
+			//then
+			assertThat(findEvent).extracting("event.storeName", "like.id", "bookmark.id")
+				.contains("event1", null, null);
+		}
+
+		@DisplayName("user fk가 주어진 경우")
+		@Test
+		void findByIdWithLikeAndBookmark2() throws Exception {
+			//given
+			User user1 = User.builder().build();
+			User user2 = User.builder().build();
+			em.persist(user1);
+			em.persist(user2);
+
+			Event event = createEvent(user1, "event1", LocalDate.now(), LocalDate.now(), "#hashtag");
+			em.persist(event);
+
+			EventLike eventLike = createEventLike(user2, event);
+			em.persist(eventLike);
+
+			EventBookmark eventBookmark = createEventBookmark(user2, event);
+			em.persist(eventBookmark);
+
+			//when
+			EventLikeBookmarkDto findEvent = eventRepository.findByIdWithLikeAndBookmark(event.getId(), user2.getId());
+
+			//then
+			assertThat(findEvent).extracting("event.storeName", "like.user.id", "bookmark.user.id")
+				.contains("event1", user2.getId(), user2.getId());
+		}
+	}
+
+	@Nested
 	@DisplayName("EventArtist pk, fromDate<=LocalDate<=toDate인 event 목록 EventLike, EventBookmark와 join하여 조회")
 	class FindByArtistAndDate {
 
