@@ -53,10 +53,9 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
 					eventBookmark
 				))
 			.from(event)
-			.join(event.user, user)
-			.leftJoin(eventLike).on(event.eq(eventLike.event).and(user.eq(eventLike.user)))
-			.leftJoin(eventBookmark).on(event.eq(eventBookmark.event).and(user.eq(eventBookmark.user)))
-			.where(user.id.eq(userId))
+			.leftJoin(eventLike).on(event.eq(eventLike.event).and(event.user.id.eq(eventLike.user.id)))
+			.leftJoin(eventBookmark).on(event.eq(eventBookmark.event).and(event.user.id.eq(eventBookmark.user.id)))
+			.where(event.user.id.eq(userId))
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetch();
