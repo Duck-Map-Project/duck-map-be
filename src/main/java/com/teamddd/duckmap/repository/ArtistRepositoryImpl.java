@@ -37,10 +37,6 @@ public class ArtistRepositoryImpl implements ArtistRepositoryCustom {
 			.limit(pageable.getPageSize())
 			.fetch();
 
-		for (Artist artist1 : artists) {
-			System.out.println(artist1.getName());
-		}
-
 		JPAQuery<Long> countQuery = queryFactory.select(artist.count())
 			.from(artist)
 			.leftJoin(artist.group, group)
