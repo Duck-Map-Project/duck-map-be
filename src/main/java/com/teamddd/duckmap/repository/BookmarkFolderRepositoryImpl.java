@@ -13,7 +13,6 @@ import java.util.List;
 
 import static com.teamddd.duckmap.entity.QEvent.event;
 import static com.teamddd.duckmap.entity.QEventBookmark.eventBookmark;
-import static com.teamddd.duckmap.entity.QEventBookmarkFolder.eventBookmarkFolder;
 
 public class BookmarkFolderRepositoryImpl implements BookmarkFolderRepositoryCustom {
 	private final JPAQueryFactory queryFactory;
@@ -30,18 +29,14 @@ public class BookmarkFolderRepositoryImpl implements BookmarkFolderRepositoryCus
 								eventBookmark
 						))
 				.from(event)
-				.leftJoin(eventBookmark).on(event.eq(eventBookmark.event))
-				.leftJoin(eventBookmark.eventBookmarkFolder, eventBookmarkFolder)
-				.on(eventBookmarkFolder.id.eq(bookmarkFolderId))
+				.join(eventBookmark).on(event.eq(eventBookmark.event))
 				.offset(pageable.getOffset())
 				.limit(pageable.getPageSize())
 				.fetch();
 
 		JPAQuery<Long> countQuery = queryFactory.select(event.count())
 				.from(event)
-				.leftJoin(eventBookmark).on(event.eq(eventBookmark.event))
-				.leftJoin(eventBookmark.eventBookmarkFolder, eventBookmarkFolder)
-				.on(eventBookmarkFolder.id.eq(bookmarkFolderId));
+				.join(eventBookmark).on(event.eq(eventBookmark.event));
 
 		return PageableExecutionUtils.getPage(events, pageable, countQuery::fetchOne);
 	}
