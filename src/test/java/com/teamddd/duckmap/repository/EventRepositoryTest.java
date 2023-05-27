@@ -73,9 +73,9 @@ class EventRepositoryTest {
 		assertThat(myEvents.getTotalPages()).isEqualTo(1);
 	}
 
-	@DisplayName("날짜 기준 진행중인 event 목록 조회")
+	@DisplayName("날짜 기준 진행중인 event hashtag 목록 조회")
 	@Test
-	void findByFromDateLessThanEqualAndToDateGreaterThanEqual() throws Exception {
+	void findHashtagsByFromDateAndToDate() throws Exception {
 		//given
 		LocalDate date = LocalDate.now();
 
