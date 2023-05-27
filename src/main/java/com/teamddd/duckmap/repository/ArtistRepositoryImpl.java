@@ -31,7 +31,7 @@ public class ArtistRepositoryImpl implements ArtistRepositoryCustom {
 		List<Artist> artists = queryFactory.selectFrom(artist)
 			.leftJoin(artist.group, group).fetchJoin()
 			.where(eqArtistTypeId(artistTypeId),
-				containsArtistName(name)
+				containsArtistOrGroupName(name)
 			)
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
@@ -41,7 +41,7 @@ public class ArtistRepositoryImpl implements ArtistRepositoryCustom {
 			.from(artist)
 			.leftJoin(artist.group, group)
 			.where(eqArtistTypeId(artistTypeId),
-				containsArtistName(name)
+				containsArtistOrGroupName(name)
 			);
 
 		return PageableExecutionUtils.getPage(artists, pageable, countQuery::fetchOne);
@@ -51,7 +51,7 @@ public class ArtistRepositoryImpl implements ArtistRepositoryCustom {
 		return artistTypeId != null ? artist.artistType.id.eq(artistTypeId) : null;
 	}
 
-	private BooleanExpression containsArtistName(String name) {
+	private BooleanExpression containsArtistOrGroupName(String name) {
 		return StringUtils.hasText(name) ? artist.name.contains(name).or(group.name.contains(name)) : null;
 	}
 }
