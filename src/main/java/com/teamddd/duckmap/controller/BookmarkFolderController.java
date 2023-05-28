@@ -72,6 +72,25 @@ public class BookmarkFolderController {
 		));
 	}
 
+	@Operation(summary = "북마크 폴더 pk로 조회", description = "북마크 폴더 외부 공유용 api")
+	@GetMapping("/{id}")
+	public Result<BookmarkFolderRes> getBookmarkFolder(@PathVariable Long id) {
+		return Result.<BookmarkFolderRes>builder()
+			.data(
+				BookmarkFolderRes.builder()
+					.id(1L)
+					.name("생일카페 모음")
+					.image(
+						ImageRes.builder()
+							.apiUrl("/images/")
+							.filename("default_folder.jpg")
+							.build()
+					)
+					.build()
+			)
+			.build();
+	}
+
 	@Operation(summary = "북마크 폴더 내부의 이벤트 목록 조회")
 	@GetMapping("/{id}/events")
 	public Page<BookmarkedEventRes> getAllBookmarks(@PathVariable Long id, Pageable pageable) {
