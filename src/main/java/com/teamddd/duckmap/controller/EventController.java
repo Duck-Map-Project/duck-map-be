@@ -292,6 +292,83 @@ public class EventController {
 		));
 	}
 
+	@Operation(summary = "나의 좋아요 이벤트 목록 조회")
+	@GetMapping("/mylike")
+	public Page<EventsRes> getMyLikeEvents(Pageable pageable) {
+		ImageRes imageRes = ImageRes.builder()
+			.apiUrl("/images/")
+			.filename("event_image.jpg")
+			.build();
+
+		return new PageImpl<>(List.of(
+			EventsRes.builder()
+				.id(1L)
+				.storeName("이벤트1")
+				.inProgress(false)
+				.address("서울 서초동")
+				.artists(List.of(
+					ArtistRes.builder()
+						.id(2L)
+						.groupId(1L)
+						.name("태연")
+						.image(imageRes)
+						.artistType(
+							ArtistTypeRes.builder()
+								.id(1L)
+								.type("아이돌")
+								.build()
+						)
+						.build()
+				))
+				.categories(List.of(
+					EventCategoryRes.builder()
+						.id(1L)
+						.category("생일카페")
+						.build()
+				))
+				.image(
+					imageRes
+				)
+				.like(true)
+				.bookmark(false)
+				.build(),
+			EventsRes.builder()
+				.id(2L)
+				.storeName("이벤트2")
+				.inProgress(true)
+				.address("서울 한남동")
+				.artists(List.of(
+					ArtistRes.builder()
+						.id(1L)
+						.groupId(null)
+						.name("소녀시대")
+						.image(imageRes)
+						.artistType(
+							ArtistTypeRes.builder()
+								.id(2L)
+								.type("그룹")
+								.build()
+						)
+						.build()
+				))
+				.categories(List.of(
+					EventCategoryRes.builder()
+						.id(2L)
+						.category("전시회")
+						.build()
+				))
+				.image(
+					ImageRes.builder()
+						.apiUrl("/images/")
+						.filename("event_image2.jpg")
+						.build()
+				)
+				.like(true)
+				.bookmark(true)
+				.build()
+		));
+	}
+
 	@Operation(summary = "오늘 진행중인 이벤트 해시태그 목록 조회")
 	@GetMapping("/hashtags/today")
 	public Result<List<HashtagRes>> getTodayHashtags() {
