@@ -1,11 +1,10 @@
-package com.teamddd.duckmap;
+package com.teamddd.duckmap.repository;
 
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderEventDto;
 import com.teamddd.duckmap.entity.Event;
 import com.teamddd.duckmap.entity.EventBookmark;
 import com.teamddd.duckmap.entity.EventBookmarkFolder;
 import com.teamddd.duckmap.entity.User;
-import com.teamddd.duckmap.repository.BookmarkFolderRepository;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
