@@ -2,6 +2,7 @@ package com.teamddd.duckmap.repository;
 
 import static com.teamddd.duckmap.entity.QEvent.*;
 import static com.teamddd.duckmap.entity.QEventBookmark.*;
+import static com.teamddd.duckmap.entity.QEventBookmarkFolder.*;
 
 import java.util.List;
 
@@ -49,16 +50,16 @@ public class BookmarkFolderRepositoryImpl implements BookmarkFolderRepositoryCus
 	@Override
 	public Page<EventBookmarkFolder> findBookmarkFoldersByUserId(Long userId, Pageable pageable) {
 		List<EventBookmarkFolder> bookmarkFolders = queryFactory
-			.select(eventBookmark.eventBookmarkFolder).distinct()
-			.from(eventBookmark)
-			.where(eventBookmark.eventBookmarkFolder.user.id.eq(userId))
+			.select(eventBookmarkFolder)
+			.from(eventBookmarkFolder)
+			.where(eventBookmarkFolder.user.id.eq(userId))
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetch();
 
-		JPAQuery<Long> countQuery = queryFactory.select(eventBookmark.eventBookmarkFolder.countDistinct())
-			.from(eventBookmark)
-			.where(eventBookmark.user.id.eq(userId));
+		JPAQuery<Long> countQuery = queryFactory.select(eventBookmarkFolder.count())
+			.from(eventBookmarkFolder)
+			.where(eventBookmarkFolder.user.id.eq(userId));
 
 		return PageableExecutionUtils.getPage(bookmarkFolders, pageable, countQuery::fetchOne);
 
