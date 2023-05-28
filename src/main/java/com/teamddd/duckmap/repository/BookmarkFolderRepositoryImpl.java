@@ -30,13 +30,15 @@ public class BookmarkFolderRepositoryImpl implements BookmarkFolderRepositoryCus
 						))
 				.from(event)
 				.join(eventBookmark).on(event.eq(eventBookmark.event))
+				.where(eventBookmark.eventBookmarkFolder.id.eq(bookmarkFolderId))
 				.offset(pageable.getOffset())
 				.limit(pageable.getPageSize())
 				.fetch();
 
 		JPAQuery<Long> countQuery = queryFactory.select(event.count())
 				.from(event)
-				.join(eventBookmark).on(event.eq(eventBookmark.event));
+				.join(eventBookmark).on(event.eq(eventBookmark.event))
+				.where(eventBookmark.eventBookmarkFolder.id.eq(bookmarkFolderId));
 
 		return PageableExecutionUtils.getPage(events, pageable, countQuery::fetchOne);
 	}

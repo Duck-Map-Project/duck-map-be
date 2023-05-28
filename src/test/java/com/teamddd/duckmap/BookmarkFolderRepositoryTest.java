@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -44,21 +44,27 @@ public class BookmarkFolderRepositoryTest {
 		em.persist(event2);
 		em.persist(event3);
 
-		EventBookmark eventBookmark = createEventBookmark(user, event);
-		EventBookmark eventBookmark2 = createEventBookmark(user, event2);
-		EventBookmark eventBookmark3 = createEventBookmark(user, event3);
+		EventBookmarkFolder eventBookmarkFolder = createEventBookmarkFolder();
+		em.persist(eventBookmarkFolder);
+
+		EventBookmark eventBookmark = createEventBookmark(user, event, eventBookmarkFolder);
+		EventBookmark eventBookmark2 = createEventBookmark(user, event2, eventBookmarkFolder);
+		EventBookmark eventBookmark3 = createEventBookmark(user, event3, eventBookmarkFolder);
+
+		eventBookmark.getEventBookmarkFolder().getEventBookmarks().add(eventBookmark);
+		eventBookmark2.getEventBookmarkFolder().getEventBookmarks().add(eventBookmark2);
+		eventBookmark3.getEventBookmarkFolder().getEventBookmarks().add(eventBookmark3);
 
 		em.persist(eventBookmark);
 		em.persist(eventBookmark2);
 		em.persist(eventBookmark3);
 
-		EventBookmarkFolder eventBookmarkFolder = createEventBookmarkFolder(List.of(eventBookmark, eventBookmark2, eventBookmark3));
-		em.persist(eventBookmarkFolder);
 		PageRequest pageRequest = PageRequest.of(0, 3);
 
 		//when
 		Page<BookmarkFolderEventDto> bookmarkedEvents = bookmarkFolderRepository
 				.findBookmarkedEvents(eventBookmarkFolder.getId(), pageRequest);
+
 		//then
 		assertThat(bookmarkedEvents).hasSize(3)
 				.extracting("event.id", "event.storeName", "eventBookmark.id")
@@ -74,11 +80,11 @@ public class BookmarkFolderRepositoryTest {
 		return Event.builder().user(user).storeName(storeName).fromDate(fromDate).toDate(toDate).hashtag(hashtag).build();
 	}
 
-	private EventBookmark createEventBookmark(User user, Event event) {
-		return EventBookmark.builder().user(user).event(event).build();
+	private EventBookmark createEventBookmark(User user, Event event, EventBookmarkFolder eventBookmarkFolder) {
+		return EventBookmark.builder().user(user).event(event).eventBookmarkFolder(eventBookmarkFolder).build();
 	}
 
-	private EventBookmarkFolder createEventBookmarkFolder(List<EventBookmark> bookmarks) {
-		return EventBookmarkFolder.builder().eventBookmarks(bookmarks).build();
+	private EventBookmarkFolder createEventBookmarkFolder() {
+		return EventBookmarkFolder.builder().eventBookmarks(new ArrayList<>()).build();
 	}
 }
