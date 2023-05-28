@@ -38,34 +38,31 @@ public class BookmarkFolderRepositoryTest {
 
 		Event event = createEvent(user, "event1");
 		Event event2 = createEvent(user, "event2");
-		Event event3 = createEvent(user, "event3");
-		Event event4 = createEvent(user, "event4");
 		em.persist(event);
 		em.persist(event2);
-		em.persist(event3);
-		em.persist(event4);
 
 		EventBookmarkFolder eventBookmarkFolder = createEventBookmarkFolder(user, "folder1");
 		EventBookmarkFolder eventBookmarkFolder2 = createEventBookmarkFolder(user, "folder2");
+		EventBookmarkFolder eventBookmarkFolder3 = createEventBookmarkFolder(user2, "folder3");
 		em.persist(eventBookmarkFolder);
 		em.persist(eventBookmarkFolder2);
+		em.persist(eventBookmarkFolder3);
 
 		EventBookmark eventBookmark = createEventBookmark(user, event, eventBookmarkFolder);
-		EventBookmark eventBookmark2 = createEventBookmark(user, event2, eventBookmarkFolder);
-		EventBookmark eventBookmark3 = createEventBookmark(user2, event, eventBookmarkFolder2);
-		EventBookmark eventBookmark4 = createEventBookmark(user, event3, eventBookmarkFolder2);
-		EventBookmark eventBookmark5 = createEventBookmark(user2, event4, eventBookmarkFolder2);
+		EventBookmark eventBookmark2 = createEventBookmark(user, event2, eventBookmarkFolder2);
+		EventBookmark eventBookmark3 = createEventBookmark(user2, event, eventBookmarkFolder3);
 
 		em.persist(eventBookmark);
 		em.persist(eventBookmark2);
 		em.persist(eventBookmark3);
-		em.persist(eventBookmark4);
-		em.persist(eventBookmark5);
 
 		PageRequest pageRequest = PageRequest.of(0, 2);
 		//when
 		Page<EventBookmarkFolder> bookmarkFolders = bookmarkFolderRepository
 			.findBookmarkFoldersByUserId(user.getId(), pageRequest);
+
+		Page<EventBookmarkFolder> bookmarkFolders2 = bookmarkFolderRepository
+			.findBookmarkFoldersByUserId(user2.getId(), pageRequest);
 		//then
 		assertThat(bookmarkFolders).hasSize(2)
 			.extracting("name")
@@ -73,6 +70,11 @@ public class BookmarkFolderRepositoryTest {
 		assertThat(bookmarkFolders.getTotalElements()).isEqualTo(2);
 		assertThat(bookmarkFolders.getTotalPages()).isEqualTo(1);
 
+		assertThat(bookmarkFolders2).hasSize(1)
+			.extracting("name")
+			.containsExactlyInAnyOrder("folder3");
+		assertThat(bookmarkFolders2.getTotalElements()).isEqualTo(1);
+		assertThat(bookmarkFolders2.getTotalPages()).isEqualTo(1);
 	}
 
 	@DisplayName("bookmarkfolderId로 이벤트 목록 조회")
