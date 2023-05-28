@@ -27,6 +27,54 @@ public class BookmarkFolderRepositoryTest {
 	@Autowired
 	EntityManager em;
 
+	@DisplayName("UserId로 북마크 폴더 목록 조회")
+	@Test
+	public void findBookmarkFoldersByUserId() throws Exception {
+		//given
+		User user = User.builder().username("user1").build();
+		User user2 = User.builder().username("user2").build();
+		em.persist(user);
+		em.persist(user2);
+
+		Event event = createEvent(user, "event1");
+		Event event2 = createEvent(user, "event2");
+		Event event3 = createEvent(user, "event3");
+		Event event4 = createEvent(user, "event4");
+		em.persist(event);
+		em.persist(event2);
+		em.persist(event3);
+		em.persist(event4);
+
+		EventBookmarkFolder eventBookmarkFolder = createEventBookmarkFolder("folder1");
+		EventBookmarkFolder eventBookmarkFolder2 = createEventBookmarkFolder("folder2");
+		em.persist(eventBookmarkFolder);
+		em.persist(eventBookmarkFolder2);
+
+		EventBookmark eventBookmark = createEventBookmark(user, event, eventBookmarkFolder);
+		EventBookmark eventBookmark2 = createEventBookmark(user, event2, eventBookmarkFolder);
+		EventBookmark eventBookmark3 = createEventBookmark(user2, event, eventBookmarkFolder2);
+		EventBookmark eventBookmark4 = createEventBookmark(user, event3, eventBookmarkFolder2);
+		EventBookmark eventBookmark5 = createEventBookmark(user2, event4, eventBookmarkFolder2);
+
+		em.persist(eventBookmark);
+		em.persist(eventBookmark2);
+		em.persist(eventBookmark3);
+		em.persist(eventBookmark4);
+		em.persist(eventBookmark5);
+
+		PageRequest pageRequest = PageRequest.of(0, 3);
+		//when
+		Page<EventBookmarkFolder> bookmarkFolders = bookmarkFolderRepository
+				.findBookmarkFoldersByUserId(user.getId(), pageRequest);
+		//then
+		assertThat(bookmarkFolders).hasSize(3)
+				.extracting("name")
+				.containsExactlyInAnyOrder("folder1", "folder1", "folder2");
+		assertThat(bookmarkFolders.getTotalElements()).isEqualTo(3);
+		assertThat(bookmarkFolders.getTotalPages()).isEqualTo(1);
+
+	}
+
 	@DisplayName("bookmarkfolderId로 이벤트 목록 조회")
 	@Test
 	public void findBookmarkedEvents() throws Exception {
