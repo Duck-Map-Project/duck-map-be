@@ -1,10 +1,9 @@
 package com.teamddd.duckmap.repository;
 
-import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderEventDto;
-import com.teamddd.duckmap.entity.Event;
-import com.teamddd.duckmap.entity.EventBookmark;
-import com.teamddd.duckmap.entity.EventBookmarkFolder;
-import com.teamddd.duckmap.entity.User;
+import static org.assertj.core.api.Assertions.*;
+
+import javax.persistence.EntityManager;
+
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,10 +13,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
+import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderEventDto;
+import com.teamddd.duckmap.entity.Event;
+import com.teamddd.duckmap.entity.EventBookmark;
+import com.teamddd.duckmap.entity.EventBookmarkFolder;
+import com.teamddd.duckmap.entity.User;
 
 @SpringBootTest
 @Transactional
@@ -65,11 +65,11 @@ public class BookmarkFolderRepositoryTest {
 		PageRequest pageRequest = PageRequest.of(0, 2);
 		//when
 		Page<EventBookmarkFolder> bookmarkFolders = bookmarkFolderRepository
-				.findBookmarkFoldersByUserId(user.getId(), pageRequest);
+			.findBookmarkFoldersByUserId(user.getId(), pageRequest);
 		//then
 		assertThat(bookmarkFolders).hasSize(2)
-				.extracting("name")
-				.containsExactlyInAnyOrder("folder1", "folder2");
+			.extracting("name")
+			.containsExactlyInAnyOrder("folder1", "folder2");
 		assertThat(bookmarkFolders.getTotalElements()).isEqualTo(2);
 		assertThat(bookmarkFolders.getTotalPages()).isEqualTo(1);
 
@@ -112,21 +112,21 @@ public class BookmarkFolderRepositoryTest {
 		PageRequest pageRequest2 = PageRequest.of(0, 2);
 		//when
 		Page<BookmarkFolderEventDto> bookmarkedEvents = bookmarkFolderRepository
-				.findBookmarkedEvents(eventBookmarkFolder.getId(), pageRequest);
+			.findBookmarkedEvents(eventBookmarkFolder.getId(), pageRequest);
 		Page<BookmarkFolderEventDto> bookmarkedEvents2 = bookmarkFolderRepository
-				.findBookmarkedEvents(eventBookmarkFolder2.getId(), pageRequest2);
+			.findBookmarkedEvents(eventBookmarkFolder2.getId(), pageRequest2);
 		//then
 		assertThat(bookmarkedEvents).hasSize(2)
-				.extracting("event.id", "event.storeName", "eventBookmark.id")
-				.containsExactly(Tuple.tuple(event.getId(), "event1", eventBookmark.getId()),
-						Tuple.tuple(event2.getId(), "event2", eventBookmark2.getId()));
+			.extracting("event.id", "event.storeName", "eventBookmark.id")
+			.containsExactly(Tuple.tuple(event.getId(), "event1", eventBookmark.getId()),
+				Tuple.tuple(event2.getId(), "event2", eventBookmark2.getId()));
 		assertThat(bookmarkedEvents.getTotalElements()).isEqualTo(2);
 		assertThat(bookmarkedEvents.getTotalPages()).isEqualTo(1);
 
 		assertThat(bookmarkedEvents2).hasSize(2)
-				.extracting("event.id", "event.storeName", "eventBookmark.id")
-				.containsExactlyInAnyOrder(Tuple.tuple(event.getId(), "event1", eventBookmark3.getId()),
-						Tuple.tuple(event3.getId(), "event3", eventBookmark4.getId()));
+			.extracting("event.id", "event.storeName", "eventBookmark.id")
+			.containsExactlyInAnyOrder(Tuple.tuple(event.getId(), "event1", eventBookmark3.getId()),
+				Tuple.tuple(event3.getId(), "event3", eventBookmark4.getId()));
 		assertThat(bookmarkedEvents2.getTotalElements()).isEqualTo(3);
 		assertThat(bookmarkedEvents2.getTotalPages()).isEqualTo(2);
 	}
