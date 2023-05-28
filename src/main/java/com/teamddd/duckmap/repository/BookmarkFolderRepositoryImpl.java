@@ -46,14 +46,15 @@ public class BookmarkFolderRepositoryImpl implements BookmarkFolderRepositoryCus
 
 	@Override
 	public Page<EventBookmarkFolder> findBookmarkFoldersByUserId(Long userId, Pageable pageable) {
-		List<EventBookmarkFolder> bookmarkFolders = queryFactory.select(eventBookmark.eventBookmarkFolder)
+		List<EventBookmarkFolder> bookmarkFolders = queryFactory
+				.select(eventBookmark.eventBookmarkFolder).distinct()
 				.from(eventBookmark)
 				.where(eventBookmark.user.id.eq(userId))
 				.offset(pageable.getOffset())
 				.limit(pageable.getPageSize())
 				.fetch();
 
-		JPAQuery<Long> countQuery = queryFactory.select(eventBookmark.eventBookmarkFolder.count())
+		JPAQuery<Long> countQuery = queryFactory.select(eventBookmark.eventBookmarkFolder.countDistinct())
 				.from(eventBookmark)
 				.where(eventBookmark.user.id.eq(userId));
 

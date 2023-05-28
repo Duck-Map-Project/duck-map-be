@@ -62,15 +62,15 @@ public class BookmarkFolderRepositoryTest {
 		em.persist(eventBookmark4);
 		em.persist(eventBookmark5);
 
-		PageRequest pageRequest = PageRequest.of(0, 3);
+		PageRequest pageRequest = PageRequest.of(0, 2);
 		//when
 		Page<EventBookmarkFolder> bookmarkFolders = bookmarkFolderRepository
 				.findBookmarkFoldersByUserId(user.getId(), pageRequest);
 		//then
-		assertThat(bookmarkFolders).hasSize(3)
+		assertThat(bookmarkFolders).hasSize(2)
 				.extracting("name")
-				.containsExactlyInAnyOrder("folder1", "folder1", "folder2");
-		assertThat(bookmarkFolders.getTotalElements()).isEqualTo(3);
+				.containsExactlyInAnyOrder("folder1", "folder2");
+		assertThat(bookmarkFolders.getTotalElements()).isEqualTo(2);
 		assertThat(bookmarkFolders.getTotalPages()).isEqualTo(1);
 
 	}
