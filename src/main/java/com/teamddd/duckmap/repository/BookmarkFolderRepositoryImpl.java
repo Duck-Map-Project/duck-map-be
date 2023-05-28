@@ -49,7 +49,7 @@ public class BookmarkFolderRepositoryImpl implements BookmarkFolderRepositoryCus
 		List<EventBookmarkFolder> bookmarkFolders = queryFactory
 				.select(eventBookmark.eventBookmarkFolder).distinct()
 				.from(eventBookmark)
-				.where(eventBookmark.user.id.eq(userId))
+				.where(eventBookmark.eventBookmarkFolder.user.id.eq(userId))
 				.offset(pageable.getOffset())
 				.limit(pageable.getPageSize())
 				.fetch();

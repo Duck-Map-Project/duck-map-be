@@ -45,8 +45,8 @@ public class BookmarkFolderRepositoryTest {
 		em.persist(event3);
 		em.persist(event4);
 
-		EventBookmarkFolder eventBookmarkFolder = createEventBookmarkFolder("folder1");
-		EventBookmarkFolder eventBookmarkFolder2 = createEventBookmarkFolder("folder2");
+		EventBookmarkFolder eventBookmarkFolder = createEventBookmarkFolder(user, "folder1");
+		EventBookmarkFolder eventBookmarkFolder2 = createEventBookmarkFolder(user, "folder2");
 		em.persist(eventBookmarkFolder);
 		em.persist(eventBookmarkFolder2);
 
@@ -91,8 +91,8 @@ public class BookmarkFolderRepositoryTest {
 		em.persist(event3);
 		em.persist(event4);
 
-		EventBookmarkFolder eventBookmarkFolder = createEventBookmarkFolder("folder1");
-		EventBookmarkFolder eventBookmarkFolder2 = createEventBookmarkFolder("folder2");
+		EventBookmarkFolder eventBookmarkFolder = createEventBookmarkFolder(user, "folder1");
+		EventBookmarkFolder eventBookmarkFolder2 = createEventBookmarkFolder(user, "folder2");
 		em.persist(eventBookmarkFolder);
 		em.persist(eventBookmarkFolder2);
 
@@ -139,7 +139,7 @@ public class BookmarkFolderRepositoryTest {
 		return EventBookmark.builder().user(user).event(event).eventBookmarkFolder(eventBookmarkFolder).build();
 	}
 
-	private EventBookmarkFolder createEventBookmarkFolder(String name) {
-		return EventBookmarkFolder.builder().name(name).build();
+	private EventBookmarkFolder createEventBookmarkFolder(User user, String name) {
+		return EventBookmarkFolder.builder().user(user).name(name).build();
 	}
 }
