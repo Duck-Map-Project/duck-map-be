@@ -69,6 +69,28 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
 	}
 
 	@Override
+	public Page<EventLikeBookmarkDto> findMyLikeEvents(Long userId, Pageable pageable) {
+		List<EventLikeBookmarkDto> events = queryFactory.select(
+				new QEventLikeBookmarkDto(
+					event,
+					eventLike,
+					eventBookmark
+				))
+			.from(event)
+			.join(eventLike).on(event.eq(eventLike.event).and(eventLike.user.id.eq(userId)))
+			.leftJoin(eventBookmark).on(event.eq(eventBookmark.event).and(event.user.id.eq(eventBookmark.user.id)))
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.fetch();
+
+		JPAQuery<Long> countQuery = queryFactory.select(event.count())
+			.from(event)
+			.join(eventLike).on(event.eq(eventLike.event).and(eventLike.user.id.eq(userId)));
+
+		return PageableExecutionUtils.getPage(events, pageable, countQuery::fetchOne);
+	}
+
+	@Override
 	public Page<EventLikeBookmarkDto> findByArtistAndDate(Long artistId, LocalDate date, Long userId,
 		Pageable pageable) {
 		JPAQuery<EventLikeBookmarkDto> eventsQuery = queryFactory.selectDistinct(
