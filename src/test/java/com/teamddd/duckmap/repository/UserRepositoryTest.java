@@ -35,6 +35,23 @@ public class UserRepositoryTest {
 		//then
 		assertThat(findUser.getEmail()).isEqualTo("user1@email.com");
 		assertThat(findUser.getUsername()).isEqualTo("user1");
+	}
 
+	@Test
+	void findByUsername() throws Exception {
+		//given
+		User user1 = User.builder().username("user1").email("user1@email.com").build();
+		User user2 = User.builder().username("user2").email("user2@email.com").build();
+		User user3 = User.builder().username("user3").email("user3@email.com").build();
+		em.persist(user1);
+		em.persist(user2);
+		em.persist(user3);
+
+		//when
+		User findUser = userRepository.findByUsername(user2.getUsername());
+
+		//then
+		assertThat(findUser.getEmail()).isEqualTo("user2@email.com");
+		assertThat(findUser.getUsername()).isEqualTo("user2");
 	}
 }
