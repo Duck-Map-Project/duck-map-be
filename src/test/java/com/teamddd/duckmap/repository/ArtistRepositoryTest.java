@@ -2,6 +2,8 @@ package com.teamddd.duckmap.repository;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 
 import org.assertj.core.groups.Tuple;
@@ -24,6 +26,41 @@ class ArtistRepositoryTest {
 	ArtistRepository artistRepository;
 	@Autowired
 	EntityManager em;
+
+	@DisplayName("group fk로 artist 목록 조회")
+	@Test
+	void findByGroup() throws Exception {
+		//given
+		ArtistType type1 = createArtistType("그룹");
+		ArtistType type2 = createArtistType("아이돌");
+		em.persist(type1);
+		em.persist(type2);
+
+		Artist group1 = createArtist("group1", type1, null);
+		Artist artist2 = createArtist("artist2", type2, group1);
+		Artist artist3 = createArtist("artist3", type2, group1);
+		Artist group2 = createArtist("group2", type1, null);
+		Artist artist4 = createArtist("artist4", type2, group2);
+		em.persist(group1);
+		em.persist(group2);
+		em.persist(artist2);
+		em.persist(artist3);
+		em.persist(artist4);
+
+		Artist paramGroup = Artist.builder()
+			.id(group1.getId())
+			.build();
+
+		//when
+		List<Artist> artists = artistRepository.findByGroup(paramGroup);
+
+		//then
+		assertThat(artists).hasSize(2)
+			.extracting("id", "name", "group.id")
+			.containsExactlyInAnyOrder(
+				Tuple.tuple(artist2.getId(), artist2.getName(), group1.getId()),
+				Tuple.tuple(artist3.getId(), artist3.getName(), group1.getId()));
+	}
 
 	private ArtistType createArtistType(String type) {
 		return ArtistType.builder().type(type).build();
