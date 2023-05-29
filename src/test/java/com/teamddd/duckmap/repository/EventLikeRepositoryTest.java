@@ -51,9 +51,9 @@ public class EventLikeRepositoryTest {
 		em.persist(eventLike5);
 
 		//when
-		Integer likeCount1 = eventLikeRepository.countByEventId(event1.getId());
-		Integer likeCount2 = eventLikeRepository.countByEventId(event2.getId());
-		Integer likeCount3 = eventLikeRepository.countByEventId(event3.getId());
+		Long likeCount1 = eventLikeRepository.countByEventId(event1.getId());
+		Long likeCount2 = eventLikeRepository.countByEventId(event2.getId());
+		Long likeCount3 = eventLikeRepository.countByEventId(event3.getId());
 		//then
 		assertThat(likeCount1).isEqualTo(3);
 		assertThat(likeCount2).isEqualTo(1);
