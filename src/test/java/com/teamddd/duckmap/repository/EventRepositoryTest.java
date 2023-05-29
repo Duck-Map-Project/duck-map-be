@@ -124,6 +124,59 @@ class EventRepositoryTest {
 			.containsExactly("#hashtag2", "#hashtag3");
 	}
 
+	@DisplayName("user fk가 좋아요한 event 목록 조회")
+	@Test
+	void findMyLikeEvents() throws Exception {
+		//given
+		User user = User.builder().build();
+		User user2 = User.builder().build();
+		em.persist(user);
+		em.persist(user2);
+
+		Event event1 = createEvent(user, "event1", LocalDate.now(), LocalDate.now(), "#hashtag");
+		Event event2 = createEvent(user, "event2", LocalDate.now(), LocalDate.now(), "#hashtag");
+		Event event3 = createEvent(user, "event3", LocalDate.now(), LocalDate.now(), "#hashtag");
+		Event event4 = createEvent(user, "event4", LocalDate.now(), LocalDate.now(), "#hashtag");
+		Event event5 = createEvent(user, "event5", LocalDate.now(), LocalDate.now(), "#hashtag");
+		em.persist(event1);
+		em.persist(event2);
+		em.persist(event3);
+		em.persist(event4);
+		em.persist(event5);
+
+		EventLike eventLike1 = createEventLike(user, event1);
+		EventLike eventLike2 = createEventLike(user, event2);
+		EventLike eventLike3 = createEventLike(user2, event2);
+		EventLike eventLike4 = createEventLike(user2, event4);
+		EventLike eventLike5 = createEventLike(user, event5);
+		em.persist(eventLike1);
+		em.persist(eventLike2);
+		em.persist(eventLike3);
+		em.persist(eventLike4);
+		em.persist(eventLike5);
+
+		EventBookmark eventBookmark2 = createEventBookmark(user, event2);
+		EventBookmark eventBookmark3 = createEventBookmark(user, event3);
+		em.persist(eventBookmark2);
+		em.persist(eventBookmark3);
+
+		PageRequest request = PageRequest.of(0, 3);
+
+		//when
+		Page<EventLikeBookmarkDto> events = eventRepository.findMyLikeEvents(user.getId(), request);
+
+		//then
+		assertThat(events).hasSize(3)
+			.extracting("event.storeName", "like.id", "like.user.id", "bookmark.id")
+			.containsExactly(
+				Tuple.tuple("event1", eventLike1.getId(), user.getId(), null),
+				Tuple.tuple("event2", eventLike2.getId(), user.getId(), eventBookmark2.getId()),
+				Tuple.tuple("event5", eventLike5.getId(), user.getId(), null));
+
+		assertThat(events.getTotalElements()).isEqualTo(3);
+		assertThat(events.getTotalPages()).isEqualTo(1);
+	}
+
 	private Event createEvent(User user, String storeName, LocalDate fromDate, LocalDate toDate, String hashtag) {
 		return Event.builder()
 			.user(user)
