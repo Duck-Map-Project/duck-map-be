@@ -8,7 +8,7 @@ import com.teamddd.duckmap.entity.Event;
 import com.teamddd.duckmap.entity.Review;
 import com.teamddd.duckmap.entity.User;
 
-public interface ReviewRepository extends JpaRepository<Review, Long> {
+public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRepositoryCustom {
 	Page<Review> findByUser(User user, Pageable pageable);
 
 	Page<Review> findByEvent(Event event, Pageable pageable);
