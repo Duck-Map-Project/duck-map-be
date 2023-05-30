@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderEventDto;
+import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderUserDto;
 import com.teamddd.duckmap.entity.Event;
 import com.teamddd.duckmap.entity.EventBookmark;
 import com.teamddd.duckmap.entity.EventBookmarkFolder;
@@ -144,4 +145,43 @@ public class BookmarkFolderRepositoryTest {
 	private EventBookmarkFolder createEventBookmarkFolder(User user, String name) {
 		return EventBookmarkFolder.builder().user(user).name(name).build();
 	}
+
+	@DisplayName("북마크 폴더 pk로 북마크 폴더,사용자 정보 조회")
+	@Test
+	void findBookmarkFolderAndUserById() throws Exception {
+		//given
+		User user = User.builder().username("user1").build();
+		User user2 = User.builder().username("user2").build();
+		em.persist(user);
+		em.persist(user2);
+
+		Event event = createEvent(user, "event1");
+		Event event2 = createEvent(user, "event2");
+		em.persist(event);
+		em.persist(event2);
+
+		EventBookmarkFolder eventBookmarkFolder = createEventBookmarkFolder(user, "folder1");
+		EventBookmarkFolder eventBookmarkFolder2 = createEventBookmarkFolder(user2, "folder2");
+		em.persist(eventBookmarkFolder);
+		em.persist(eventBookmarkFolder2);
+
+		EventBookmark eventBookmark = createEventBookmark(user, event, eventBookmarkFolder);
+		EventBookmark eventBookmark2 = createEventBookmark(user, event2, eventBookmarkFolder2);
+
+		em.persist(eventBookmark);
+		em.persist(eventBookmark2);
+
+		//when
+		BookmarkFolderUserDto bookmarkFolderUserDto = bookmarkFolderRepository
+			.findBookmarkFolderAndUserById(eventBookmarkFolder.getId());
+		BookmarkFolderUserDto bookmarkFolderUserDto2 = bookmarkFolderRepository
+			.findBookmarkFolderAndUserById(eventBookmarkFolder2.getId());
+
+		//then
+		assertThat(bookmarkFolderUserDto.getUsername()).isEqualTo("user1");
+		assertThat(bookmarkFolderUserDto.getBookmarkFolder().getName()).isEqualTo("folder1");
+		assertThat(bookmarkFolderUserDto2.getUsername()).isEqualTo("user2");
+		assertThat(bookmarkFolderUserDto2.getBookmarkFolder().getName()).isEqualTo("folder2");
+	}
+
 }
