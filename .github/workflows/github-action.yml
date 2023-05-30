@@ -91,8 +91,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Discord notification
-        env:
-          DISCORD_WEBHOOK: https://discord.com/api/webhooks/1113004999572733973/QawT7RqAG3sUI6SBCWCx3EyA5ASA4p6Vueqoo7JASDpyVYWGYVpHApV3UYjd2lEJ0A8V
         uses: Ilshidur/action-discord@master
         with:
+          status: ${{ job.status }}
+          author_name: GitHub-Actions CI/CD
+          fields: repo,message,commit,author,ref,job,took
           args: 'The project {{ EVENT_PAYLOAD.repository.full_name }} has been deployed.'
+        env:
+          DISCORD_WEBHOOK: https://discord.com/api/webhooks/1113004999572733973/QawT7RqAG3sUI6SBCWCx3EyA5ASA4p6Vueqoo7JASDpyVYWGYVpHApV3UYjd2lEJ0A8V
+        if: always()
