@@ -25,9 +25,9 @@ public class ReviewRepositoryTest {
 	@Autowired
 	EntityManager em;
 
-	@DisplayName("EventId로 review 목록 조회")
+	@DisplayName("Event로 review 목록 조회")
 	@Test
-	void findByEventId() throws Exception {
+	void findByEvent() throws Exception {
 		//given
 		User user1 = User.builder().username("user1").build();
 		User user2 = User.builder().username("user2").build();
@@ -59,8 +59,8 @@ public class ReviewRepositoryTest {
 		PageRequest pageRequest = PageRequest.of(0, 2);
 
 		//when
-		Page<Review> reviews = reviewRepository.findByEventId(event.getId(), pageRequest);
-		Page<Review> reviews2 = reviewRepository.findByEventId(event2.getId(), pageRequest);
+		Page<Review> reviews = reviewRepository.findByEvent(event, pageRequest);
+		Page<Review> reviews2 = reviewRepository.findByEvent(event2, pageRequest);
 		//then
 		assertThat(reviews).hasSize(2)
 			.extracting("id", "content", "event.storeName")
@@ -81,9 +81,9 @@ public class ReviewRepositoryTest {
 		assertThat(reviews2.getTotalPages()).isEqualTo(1);
 	}
 
-	@DisplayName("UserId로 my review 목록 조회")
+	@DisplayName("User로 my review 목록 조회")
 	@Test
-	void findByUserId() throws Exception {
+	void findByUser() throws Exception {
 		//given
 		User user1 = User.builder().username("user1").build();
 		User user2 = User.builder().username("user2").build();
@@ -115,8 +115,8 @@ public class ReviewRepositoryTest {
 		PageRequest pageRequest = PageRequest.of(0, 2);
 
 		//when
-		Page<Review> reviews = reviewRepository.findByUserId(user1.getId(), pageRequest);
-		Page<Review> reviews2 = reviewRepository.findByUserId(user2.getId(), pageRequest);
+		Page<Review> reviews = reviewRepository.findByUser(user1, pageRequest);
+		Page<Review> reviews2 = reviewRepository.findByUser(user2, pageRequest);
 		//then
 		assertThat(reviews).hasSize(2)
 			.extracting("id", "content", "event.storeName")
