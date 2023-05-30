@@ -73,7 +73,7 @@ jobs:
             sudo docker pull ${{ secrets.DOCKER_REPO }}
             docker-compose up -d
             docker image prune -f
-            sudo docker run -p 8080:8080 ${{ secrets.DOCKER_REPO }}
+            sudo nohup docker run -p 8080:8080 ${{ secrets.DOCKER_REPO }}>/home/duck/app/log/run.log 2>&1 &
         
   ## time
   current-time:
