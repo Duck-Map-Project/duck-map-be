@@ -293,7 +293,7 @@ public class ReviewRepositoryTest {
 				.extracting("id", "content", "event.storeName")
 				.contains(
 					Tuple.tuple(review1.getId(), review1.getContent(), event1.getStoreName()),
-					Tuple.tuple(review6.getId(), review6.getContent(), event1.getStoreName()));
+					Tuple.tuple(review2.getId(), review2.getContent(), event2.getStoreName()));
 			assertThat(reviews2.getTotalElements()).isEqualTo(3);
 			assertThat(reviews2.getTotalPages()).isEqualTo(2);
 		}

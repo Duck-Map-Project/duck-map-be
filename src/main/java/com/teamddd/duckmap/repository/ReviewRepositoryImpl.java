@@ -1,5 +1,6 @@
 package com.teamddd.duckmap.repository;
 
+import static com.teamddd.duckmap.entity.QEvent.*;
 import static com.teamddd.duckmap.entity.QEventArtist.*;
 import static com.teamddd.duckmap.entity.QReview.*;
 
@@ -28,6 +29,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
 	public Page<Review> findByArtistAndDate(Long artistId, LocalDate date, Pageable pageable) {
 		List<Review> reviews = queryFactory.select(review)
 			.from(review)
+			.leftJoin(review.event, event)
 			.join(eventArtist).on(review.event.eq(eventArtist.event))
 			.where(eqArtistId(artistId), betweenDate(date))
 			.offset(pageable.getOffset())
@@ -36,6 +38,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
 
 		JPAQuery<Long> countQuery = queryFactory.select(review.count())
 			.from(review)
+			.leftJoin(review.event, event)
 			.join(eventArtist).on(review.event.eq(eventArtist.event))
 			.where(eqArtistId(artistId), betweenDate(date));
 
@@ -47,6 +50,6 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
 	}
 
 	private BooleanExpression betweenDate(LocalDate date) {
-		return date != null ? review.event.fromDate.loe(date).and(review.event.toDate.goe(date)) : null;
+		return date != null ? event.fromDate.loe(date).and(event.toDate.goe(date)) : null;
 	}
 }
