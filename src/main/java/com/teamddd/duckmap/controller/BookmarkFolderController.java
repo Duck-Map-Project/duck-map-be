@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.teamddd.duckmap.dto.ImageRes;
 import com.teamddd.duckmap.dto.Result;
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderRes;
+import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderUserRes;
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkedEventRes;
 import com.teamddd.duckmap.dto.event.bookmark.CreateBookmarkFolderReq;
 import com.teamddd.duckmap.dto.event.bookmark.CreateBookmarkFolderRes;
@@ -70,6 +71,27 @@ public class BookmarkFolderController {
 				)
 				.build()
 		));
+	}
+
+	@Operation(summary = "북마크 폴더 pk로 북마크 폴더,사용자 정보 조회", description = "북마크 폴더 외부 공유용 api")
+	@GetMapping("/{id}")
+	public Result<BookmarkFolderUserRes> getBookmarkFolder(@PathVariable Long id) {
+		return Result.<BookmarkFolderUserRes>builder()
+			.data(
+				BookmarkFolderUserRes.builder()
+					.id(1L)
+					.name("생일카페 모음")
+					.image(
+						ImageRes.builder()
+							.apiUrl("/images/")
+							.filename("default_folder.jpg")
+							.build()
+					)
+					.userId(1L)
+					.username("사용자1")
+					.build()
+			)
+			.build();
 	}
 
 	@Operation(summary = "북마크 폴더 내부의 이벤트 목록 조회")
