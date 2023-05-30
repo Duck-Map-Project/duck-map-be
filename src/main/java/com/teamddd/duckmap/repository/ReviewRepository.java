@@ -8,4 +8,6 @@ import com.teamddd.duckmap.entity.Review;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 	Page<Review> findByUserId(Long userId, Pageable pageable);
+
+	Page<Review> findByEventId(Long eventId, Pageable pageable);
 }
