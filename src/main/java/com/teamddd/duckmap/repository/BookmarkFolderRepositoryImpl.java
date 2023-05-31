@@ -15,7 +15,9 @@ import org.springframework.data.support.PageableExecutionUtils;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderEventDto;
+import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderUserDto;
 import com.teamddd.duckmap.dto.event.bookmark.QBookmarkFolderEventDto;
+import com.teamddd.duckmap.dto.event.bookmark.QBookmarkFolderUserDto;
 import com.teamddd.duckmap.entity.EventBookmarkFolder;
 
 public class BookmarkFolderRepositoryImpl implements BookmarkFolderRepositoryCustom {
@@ -65,4 +67,16 @@ public class BookmarkFolderRepositoryImpl implements BookmarkFolderRepositoryCus
 
 	}
 
+	@Override
+	public BookmarkFolderUserDto findBookmarkFolderAndUserById(Long bookmarkFolderId) {
+		return queryFactory.select(
+				new QBookmarkFolderUserDto(
+					eventBookmarkFolder,
+					eventBookmarkFolder.user.id.as("userId"),
+					eventBookmarkFolder.user.username.as("username"))
+			)
+			.from(eventBookmarkFolder)
+			.where(eventBookmarkFolder.id.eq(bookmarkFolderId))
+			.fetchOne();
+	}
 }
