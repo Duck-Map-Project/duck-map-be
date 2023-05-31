@@ -32,6 +32,7 @@ public class AuthController {
 					.username("사용자1")
 					.image("img.png")
 					.lastSearchArtist(1L)
+					.token("duckmaptemptoken")
 					.build()
 			)
 			.build();
