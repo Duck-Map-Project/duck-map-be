@@ -6,6 +6,7 @@ import java.util.Date;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,12 +24,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Component
 public class JwtTokenProvider {
-	private String secretKey = "duckmapsecret";
+	@Value("${jwt.secret}")
+	private String secretKey;
+	private final UserDetailsService userDetailsService;
 
 	// 토큰 유효시간 30분
 	private final long tokenValidTime = 30 * 60 * 1000L;
-
-	private final UserDetailsService userDetailsService;
 
 	// 객체 초기화, secret Key를 Base64로 인코딩
 	@PostConstruct
