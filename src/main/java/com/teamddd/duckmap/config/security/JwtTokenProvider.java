@@ -4,7 +4,6 @@ import java.util.Base64;
 import java.util.Date;
 
 import javax.annotation.PostConstruct;
-import javax.management.relation.Role;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,6 +11,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
+
+import com.teamddd.duckmap.entity.UserType;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -37,9 +38,9 @@ public class JwtTokenProvider {
 	}
 
 	// JWT 토큰 생성
-	public String createToken(String userPK, Role roles) {
+	public String createToken(String userPK, UserType userType) {
 		Claims claims = Jwts.claims().setSubject(userPK); // JWT payload에 저장되는 정보 단위
-		claims.put("roles", roles); // 정보 저장 (key-value)
+		claims.put("userType", userType); // 정보 저장 (key-value)
 		Date now = new Date();
 		return Jwts.builder()
 			.setClaims(claims)
