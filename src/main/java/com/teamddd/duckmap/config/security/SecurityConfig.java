@@ -1,6 +1,7 @@
 package com.teamddd.duckmap.config.security;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,8 +16,9 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
+@Configuration
 public class SecurityConfig {
-	private final JwtTokenProvider jwtTokenProvider;
+	private final JwtProvider jwtProvider;
 
 	// 비밀번호 암호화
 	@Bean
@@ -43,7 +45,7 @@ public class SecurityConfig {
 			.antMatchers("/api/post/**").authenticated()
 			.anyRequest().permitAll() // 그외 나머지 요청은 누구나 접근 가능
 			.and()
-			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+			.addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
 		// JwtAuthenticationFilter를 UsernamePasswordAuthenticationFilter 전에 넣음
 
 		return http.build();
