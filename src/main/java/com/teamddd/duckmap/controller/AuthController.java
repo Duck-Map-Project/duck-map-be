@@ -36,6 +36,7 @@ public class AuthController {
 	@Operation(summary = "로그인")
 	@PostMapping("/login")
 	public Result<LoginUserRes> login(@Validated @RequestBody LoginUserReq loginUserRQ) {
+		Long lastSearchArtistId;
 		User user = userRepository.findByEmail(loginUserRQ.getEmail())
 			.orElseThrow(() -> new IllegalArgumentException("가입 되지 않은 이메일입니다."));
 		if (!passwordEncoder.matches(loginUserRQ.getPassword(), user.getPassword())) {
@@ -43,6 +44,12 @@ public class AuthController {
 		}
 
 		LastSearchArtist lastSearchArtist = lastSearchArtistRepository.findByUserId(user.getId());
+
+		if (lastSearchArtist != null) {
+			lastSearchArtistId = lastSearchArtist.getId();
+		} else {
+			lastSearchArtistId = null;
+		}
 
 		String token = jwtTokenProvider.createToken(user.getEmail(), user.getUserType());
 
@@ -52,7 +59,7 @@ public class AuthController {
 					.id(user.getId())
 					.username(user.getUsername())
 					.image(user.getImage())
-					.lastSearchArtist(lastSearchArtist.getId())
+					.lastSearchArtist(lastSearchArtistId)
 					.token(token)
 					.build()
 			)
