@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Component
-public class JwtTokenProvider {
+public class JwtProvider {
 	@Value("${jwt.secret}")
 	private String secretKey;
 	private final UserDetailsService userDetailsService;
