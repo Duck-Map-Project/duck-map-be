@@ -28,9 +28,6 @@ public class JwtProvider {
 	private String secretKey;
 	private final UserDetailsService userDetailsService;
 
-	// 토큰 유효시간 30분
-	private final long tokenValidTime = 30 * 60 * 1000L;
-
 	// 객체 초기화, secret Key를 Base64로 인코딩
 	@PostConstruct
 	protected void init() {
@@ -43,6 +40,8 @@ public class JwtProvider {
 		Claims claims = Jwts.claims().setSubject(userPK); // JWT payload에 저장되는 정보 단위
 		claims.put("userType", userType); // 정보 저장 (key-value)
 		Date now = new Date();
+		// 토큰 유효시간 30분
+		long tokenValidTime = 30 * 60 * 1000L;
 		return Jwts.builder()
 			.setClaims(claims)
 			.setIssuedAt(now)
