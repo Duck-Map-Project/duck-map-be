@@ -2,18 +2,24 @@ package com.teamddd.duckmap.controller;
 
 import javax.servlet.http.HttpSession;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.teamddd.duckmap.config.security.JwtTokenProvider;
 import com.teamddd.duckmap.dto.Result;
 import com.teamddd.duckmap.dto.user.auth.LoginUserReq;
 import com.teamddd.duckmap.dto.user.auth.LoginUserRes;
+import com.teamddd.duckmap.entity.LastSearchArtist;
+import com.teamddd.duckmap.entity.User;
+import com.teamddd.duckmap.repository.LastSearchArtistRepository;
+import com.teamddd.duckmap.repository.UserRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,16 +28,32 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 public class AuthController {
+	private final PasswordEncoder passwordEncoder;
+	private final JwtTokenProvider jwtTokenProvider;
+	private final UserRepository userRepository;
+	private final LastSearchArtistRepository lastSearchArtistRepository;
+
 	@Operation(summary = "로그인")
 	@PostMapping("/login")
 	public Result<LoginUserRes> login(@Validated @RequestBody LoginUserReq loginUserRQ) {
+		User user = userRepository.findByEmail(loginUserRQ.getEmail())
+			.orElseThrow(() -> new IllegalArgumentException("가입 되지 않은 이메일입니다."));
+		if (!passwordEncoder.matches(loginUserRQ.getPassword(), user.getPassword())) {
+			throw new IllegalArgumentException("이메일 또는 비밀번호가 맞지 않습니다.");
+		}
+
+		LastSearchArtist lastSearchArtist = lastSearchArtistRepository.findByUserId(user.getId());
+
+		String token = jwtTokenProvider.createToken(user.getEmail(), user.getUserType());
+
 		return Result.<LoginUserRes>builder()
 			.data(
 				LoginUserRes.builder()
-					.id(1L)
-					.username("사용자1")
-					.image("img.png")
-					.lastSearchArtist(1L)
+					.id(user.getId())
+					.username(user.getUsername())
+					.image(user.getImage())
+					.lastSearchArtist(lastSearchArtist.getId())
+					.token(token)
 					.build()
 			)
 			.build();
@@ -44,3 +66,4 @@ public class AuthController {
 			.build();
 	}
 }
+
