@@ -2,6 +2,8 @@ package com.teamddd.duckmap.repository;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.Optional;
+
 import javax.persistence.EntityManager;
 
 import org.junit.jupiter.api.Test;
@@ -30,8 +32,8 @@ public class UserRepositoryTest {
 		em.persist(user3);
 
 		//when
-		User findUser = userRepository.findByEmail(user1.getEmail());
-
+		Optional<User> optionalUser = userRepository.findByEmail(user1.getEmail());
+		User findUser = optionalUser.get();
 		//then
 		assertThat(findUser.getEmail()).isEqualTo("user1@email.com");
 		assertThat(findUser.getUsername()).isEqualTo("user1");
@@ -48,8 +50,8 @@ public class UserRepositoryTest {
 		em.persist(user3);
 
 		//when
-		User findUser = userRepository.findByUsername(user2.getUsername());
-
+		Optional<User> optionalUser = userRepository.findByUsername(user2.getUsername());
+		User findUser = optionalUser.get();
 		//then
 		assertThat(findUser.getEmail()).isEqualTo("user2@email.com");
 		assertThat(findUser.getUsername()).isEqualTo("user2");
