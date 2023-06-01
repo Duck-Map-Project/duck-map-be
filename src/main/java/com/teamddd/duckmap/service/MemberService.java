@@ -18,7 +18,7 @@ import com.teamddd.duckmap.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Transactional(readOnly = true) //읽기 전용
+@Transactional
 @RequiredArgsConstructor
 public class MemberService {
 	private final UserRepository userRepository;
