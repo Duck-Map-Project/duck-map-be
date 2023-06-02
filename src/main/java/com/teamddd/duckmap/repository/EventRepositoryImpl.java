@@ -8,6 +8,7 @@ import static com.teamddd.duckmap.entity.QUser.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 
@@ -30,8 +31,8 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
 	}
 
 	@Override
-	public EventLikeBookmarkDto findByIdWithLikeAndBookmark(Long eventId, Long userId) {
-		return queryFactory.select(
+	public Optional<EventLikeBookmarkDto> findByIdWithLikeAndBookmark(Long eventId, Long userId) {
+		return Optional.ofNullable(queryFactory.select(
 				new QEventLikeBookmarkDto(
 					event,
 					eventLike,
@@ -41,7 +42,7 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
 			.leftJoin(eventLike).on(event.eq(eventLike.event).and(eventLikeUserEqUserId(userId)))
 			.leftJoin(eventBookmark).on(event.eq(eventBookmark.event).and(eventBookmarkUserEqUserId(userId)))
 			.where(event.id.eq(eventId))
-			.fetchOne();
+			.fetchOne());
 	}
 
 	@Override
