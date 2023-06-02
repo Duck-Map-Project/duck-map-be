@@ -5,12 +5,6 @@
     <property name="LOG_FILE" value="logfile.log"/>
     <property name="LOG_FILE_PROD" value="${LOG_DIR_SERVER}/${LOG_FILE}"/>
 
-    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <Pattern>[%d{yyyy-MM-dd HH:mm:ss}][%thread] %highlight(%-5level) %logger{36} - %msg%n</Pattern>
-        </layout>
-    </appender>
-
     <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
 
         <springProfile name="prod">
@@ -30,7 +24,6 @@
     <!-- Logging level - TRACE > DEBUG > INFO > WARN > ERROR > FATAL -->
     <!-- 모든 로그 레벨을 INFO로 설정 : INFO, WARN, ERROR, FATAL 레벨 출력 -->
     <root level="INFO">
-        <appender-ref ref="console"/>
         <appender-ref ref="file"/>
     </root>
 
