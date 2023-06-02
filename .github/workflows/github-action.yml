@@ -62,9 +62,9 @@ jobs:
         key: ${{ secrets.AWS_PRIVATE_KEY }}
         port: ${{ secrets.AWS_PORT }}
         script: |
-            sudo docker rm -f $(docker ps -qa)
+            sudo docker rm -f $(sudo docker ps -qa)
             sudo docker pull ${{ secrets.DOCKER_REPO }}
-            docker image prune -f
+            sudo docker image prune -f
             sudo docker run -p 8080:8080 --name duckmap-container ${{ secrets.DOCKER_REPO }}
         
   ## time
