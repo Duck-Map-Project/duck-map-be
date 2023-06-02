@@ -31,12 +31,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/users")
+@RequestMapping("/members")
 public class MemberController {
 	private final MemberService memberService;
 
 	@Operation(summary = "회원 가입")
-	@PostMapping
+	@PostMapping("/join")
 	public Result<CreateMemberRes> createUser(@Validated @RequestBody CreateMemberReq createMemberReq) {
 		Long id = memberService.join(createMemberReq);
 		return Result.<CreateMemberRes>builder()
