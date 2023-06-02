@@ -5,6 +5,6 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class CreateUserRes {
+public class CreateMemberRes {
 	private Long id;
 }

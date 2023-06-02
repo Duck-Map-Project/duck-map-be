@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class LoginUserRes {
+public class LoginRes {
 	private Long id;
 	private String username;
 	private String image;

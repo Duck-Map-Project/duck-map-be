@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.teamddd.duckmap.dto.Result;
-import com.teamddd.duckmap.dto.user.auth.LoginUserReq;
-import com.teamddd.duckmap.dto.user.auth.LoginUserRes;
-import com.teamddd.duckmap.entity.User;
+import com.teamddd.duckmap.dto.user.auth.LoginReq;
+import com.teamddd.duckmap.dto.user.auth.LoginRes;
+import com.teamddd.duckmap.entity.Member;
 import com.teamddd.duckmap.service.MemberService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,16 +28,16 @@ public class AuthController {
 
 	@Operation(summary = "로그인")
 	@PostMapping("/login")
-	public Result<LoginUserRes> login(@Validated @RequestBody LoginUserReq loginUserRQ) {
-		User user = memberService.findOne(loginUserRQ);
-		String token = memberService.login(user);
-		Long lastSearchArtistId = memberService.findLastSearchArtist(user.getId());
-		return Result.<LoginUserRes>builder()
+	public Result<LoginRes> login(@Validated @RequestBody LoginReq loginUserRQ) {
+		Member member = memberService.findOne(loginUserRQ);
+		String token = memberService.login(member);
+		Long lastSearchArtistId = memberService.findLastSearchArtist(member.getId());
+		return Result.<LoginRes>builder()
 			.data(
-				LoginUserRes.builder()
-					.id(user.getId())
-					.username(user.getUsername())
-					.image(user.getImage())
+				LoginRes.builder()
+					.id(member.getId())
+					.username(member.getUsername())
+					.image(member.getImage())
 					.lastSearchArtist(lastSearchArtistId)
 					.token(token)
 					.build()

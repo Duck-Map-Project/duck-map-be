@@ -14,11 +14,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderEventDto;
-import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderUserDto;
+import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderMemberDto;
 import com.teamddd.duckmap.entity.Event;
 import com.teamddd.duckmap.entity.EventBookmark;
 import com.teamddd.duckmap.entity.EventBookmarkFolder;
-import com.teamddd.duckmap.entity.User;
+import com.teamddd.duckmap.entity.Member;
 
 @SpringBootTest
 @Transactional
@@ -32,26 +32,26 @@ public class BookmarkFolderRepositoryTest {
 	@Test
 	public void findBookmarkFoldersByUserId() throws Exception {
 		//given
-		User user = User.builder().username("user1").build();
-		User user2 = User.builder().username("user2").build();
-		em.persist(user);
-		em.persist(user2);
+		Member member = Member.builder().username("user1").build();
+		Member member2 = Member.builder().username("user2").build();
+		em.persist(member);
+		em.persist(member2);
 
-		Event event = createEvent(user, "event1");
-		Event event2 = createEvent(user, "event2");
+		Event event = createEvent(member, "event1");
+		Event event2 = createEvent(member, "event2");
 		em.persist(event);
 		em.persist(event2);
 
-		EventBookmarkFolder eventBookmarkFolder = createEventBookmarkFolder(user, "folder1");
-		EventBookmarkFolder eventBookmarkFolder2 = createEventBookmarkFolder(user, "folder2");
-		EventBookmarkFolder eventBookmarkFolder3 = createEventBookmarkFolder(user2, "folder3");
+		EventBookmarkFolder eventBookmarkFolder = createEventBookmarkFolder(member, "folder1");
+		EventBookmarkFolder eventBookmarkFolder2 = createEventBookmarkFolder(member, "folder2");
+		EventBookmarkFolder eventBookmarkFolder3 = createEventBookmarkFolder(member2, "folder3");
 		em.persist(eventBookmarkFolder);
 		em.persist(eventBookmarkFolder2);
 		em.persist(eventBookmarkFolder3);
 
-		EventBookmark eventBookmark = createEventBookmark(user, event, eventBookmarkFolder);
-		EventBookmark eventBookmark2 = createEventBookmark(user, event2, eventBookmarkFolder2);
-		EventBookmark eventBookmark3 = createEventBookmark(user2, event, eventBookmarkFolder3);
+		EventBookmark eventBookmark = createEventBookmark(member, event, eventBookmarkFolder);
+		EventBookmark eventBookmark2 = createEventBookmark(member, event2, eventBookmarkFolder2);
+		EventBookmark eventBookmark3 = createEventBookmark(member2, event, eventBookmarkFolder3);
 
 		em.persist(eventBookmark);
 		em.persist(eventBookmark2);
@@ -60,10 +60,10 @@ public class BookmarkFolderRepositoryTest {
 		PageRequest pageRequest = PageRequest.of(0, 2);
 		//when
 		Page<EventBookmarkFolder> bookmarkFolders = bookmarkFolderRepository
-			.findBookmarkFoldersByUserId(user.getId(), pageRequest);
+			.findBookmarkFoldersByMemberId(member.getId(), pageRequest);
 
 		Page<EventBookmarkFolder> bookmarkFolders2 = bookmarkFolderRepository
-			.findBookmarkFoldersByUserId(user2.getId(), pageRequest);
+			.findBookmarkFoldersByMemberId(member2.getId(), pageRequest);
 		//then
 		assertThat(bookmarkFolders).hasSize(2)
 			.extracting("name")
@@ -82,28 +82,28 @@ public class BookmarkFolderRepositoryTest {
 	@Test
 	public void findBookmarkedEvents() throws Exception {
 		//given
-		User user = User.builder().build();
-		em.persist(user);
+		Member member = Member.builder().build();
+		em.persist(member);
 
-		Event event = createEvent(user, "event1");
-		Event event2 = createEvent(user, "event2");
-		Event event3 = createEvent(user, "event3");
-		Event event4 = createEvent(user, "event4");
+		Event event = createEvent(member, "event1");
+		Event event2 = createEvent(member, "event2");
+		Event event3 = createEvent(member, "event3");
+		Event event4 = createEvent(member, "event4");
 		em.persist(event);
 		em.persist(event2);
 		em.persist(event3);
 		em.persist(event4);
 
-		EventBookmarkFolder eventBookmarkFolder = createEventBookmarkFolder(user, "folder1");
-		EventBookmarkFolder eventBookmarkFolder2 = createEventBookmarkFolder(user, "folder2");
+		EventBookmarkFolder eventBookmarkFolder = createEventBookmarkFolder(member, "folder1");
+		EventBookmarkFolder eventBookmarkFolder2 = createEventBookmarkFolder(member, "folder2");
 		em.persist(eventBookmarkFolder);
 		em.persist(eventBookmarkFolder2);
 
-		EventBookmark eventBookmark = createEventBookmark(user, event, eventBookmarkFolder);
-		EventBookmark eventBookmark2 = createEventBookmark(user, event2, eventBookmarkFolder);
-		EventBookmark eventBookmark3 = createEventBookmark(user, event, eventBookmarkFolder2);
-		EventBookmark eventBookmark4 = createEventBookmark(user, event3, eventBookmarkFolder2);
-		EventBookmark eventBookmark5 = createEventBookmark(user, event4, eventBookmarkFolder2);
+		EventBookmark eventBookmark = createEventBookmark(member, event, eventBookmarkFolder);
+		EventBookmark eventBookmark2 = createEventBookmark(member, event2, eventBookmarkFolder);
+		EventBookmark eventBookmark3 = createEventBookmark(member, event, eventBookmarkFolder2);
+		EventBookmark eventBookmark4 = createEventBookmark(member, event3, eventBookmarkFolder2);
+		EventBookmark eventBookmark5 = createEventBookmark(member, event4, eventBookmarkFolder2);
 
 		em.persist(eventBookmark);
 		em.persist(eventBookmark2);
@@ -134,54 +134,54 @@ public class BookmarkFolderRepositoryTest {
 		assertThat(bookmarkedEvents2.getTotalPages()).isEqualTo(2);
 	}
 
-	private Event createEvent(User user, String storeName) {
-		return Event.builder().user(user).storeName(storeName).build();
+	private Event createEvent(Member member, String storeName) {
+		return Event.builder().member(member).storeName(storeName).build();
 	}
 
-	private EventBookmark createEventBookmark(User user, Event event, EventBookmarkFolder eventBookmarkFolder) {
-		return EventBookmark.builder().user(user).event(event).eventBookmarkFolder(eventBookmarkFolder).build();
+	private EventBookmark createEventBookmark(Member member, Event event, EventBookmarkFolder eventBookmarkFolder) {
+		return EventBookmark.builder().member(member).event(event).eventBookmarkFolder(eventBookmarkFolder).build();
 	}
 
-	private EventBookmarkFolder createEventBookmarkFolder(User user, String name) {
-		return EventBookmarkFolder.builder().user(user).name(name).build();
+	private EventBookmarkFolder createEventBookmarkFolder(Member member, String name) {
+		return EventBookmarkFolder.builder().member(member).name(name).build();
 	}
 
 	@DisplayName("북마크 폴더 pk로 북마크 폴더,사용자 정보 조회")
 	@Test
 	void findBookmarkFolderAndUserById() throws Exception {
 		//given
-		User user = User.builder().username("user1").build();
-		User user2 = User.builder().username("user2").build();
-		em.persist(user);
-		em.persist(user2);
+		Member member = Member.builder().username("user1").build();
+		Member member2 = Member.builder().username("user2").build();
+		em.persist(member);
+		em.persist(member2);
 
-		Event event = createEvent(user, "event1");
-		Event event2 = createEvent(user, "event2");
+		Event event = createEvent(member, "event1");
+		Event event2 = createEvent(member, "event2");
 		em.persist(event);
 		em.persist(event2);
 
-		EventBookmarkFolder eventBookmarkFolder = createEventBookmarkFolder(user, "folder1");
-		EventBookmarkFolder eventBookmarkFolder2 = createEventBookmarkFolder(user2, "folder2");
+		EventBookmarkFolder eventBookmarkFolder = createEventBookmarkFolder(member, "folder1");
+		EventBookmarkFolder eventBookmarkFolder2 = createEventBookmarkFolder(member2, "folder2");
 		em.persist(eventBookmarkFolder);
 		em.persist(eventBookmarkFolder2);
 
-		EventBookmark eventBookmark = createEventBookmark(user, event, eventBookmarkFolder);
-		EventBookmark eventBookmark2 = createEventBookmark(user, event2, eventBookmarkFolder2);
+		EventBookmark eventBookmark = createEventBookmark(member, event, eventBookmarkFolder);
+		EventBookmark eventBookmark2 = createEventBookmark(member, event2, eventBookmarkFolder2);
 
 		em.persist(eventBookmark);
 		em.persist(eventBookmark2);
 
 		//when
-		BookmarkFolderUserDto bookmarkFolderUserDto = bookmarkFolderRepository
-			.findBookmarkFolderAndUserById(eventBookmarkFolder.getId());
-		BookmarkFolderUserDto bookmarkFolderUserDto2 = bookmarkFolderRepository
-			.findBookmarkFolderAndUserById(eventBookmarkFolder2.getId());
+		BookmarkFolderMemberDto bookmarkFolderMemberDto = bookmarkFolderRepository
+			.findBookmarkFolderAndMemberById(eventBookmarkFolder.getId());
+		BookmarkFolderMemberDto bookmarkFolderMemberDto2 = bookmarkFolderRepository
+			.findBookmarkFolderAndMemberById(eventBookmarkFolder2.getId());
 
 		//then
-		assertThat(bookmarkFolderUserDto.getUsername()).isEqualTo("user1");
-		assertThat(bookmarkFolderUserDto.getBookmarkFolder().getName()).isEqualTo("folder1");
-		assertThat(bookmarkFolderUserDto2.getUsername()).isEqualTo("user2");
-		assertThat(bookmarkFolderUserDto2.getBookmarkFolder().getName()).isEqualTo("folder2");
+		assertThat(bookmarkFolderMemberDto.getUsername()).isEqualTo("user1");
+		assertThat(bookmarkFolderMemberDto.getBookmarkFolder().getName()).isEqualTo("folder1");
+		assertThat(bookmarkFolderMemberDto2.getUsername()).isEqualTo("user2");
+		assertThat(bookmarkFolderMemberDto2.getBookmarkFolder().getName()).isEqualTo("folder2");
 	}
 
 }

@@ -12,9 +12,9 @@ public interface EventRepositoryCustom {
 
 	Optional<EventLikeBookmarkDto> findByIdWithLikeAndBookmark(Long eventId, Long userId);
 
-	Page<EventLikeBookmarkDto> findMyEvents(Long userId, Pageable pageable);
+	Page<EventLikeBookmarkDto> findMyEvents(Long memberId, Pageable pageable);
 
-	Page<EventLikeBookmarkDto> findMyLikeEvents(Long userId, Pageable pageable);
+	Page<EventLikeBookmarkDto> findMyLikeEvents(Long memberId, Pageable pageable);
 
-	Page<EventLikeBookmarkDto> findByArtistAndDate(Long artistId, LocalDate date, Long userId, Pageable pageable);
+	Page<EventLikeBookmarkDto> findByArtistAndDate(Long artistId, LocalDate date, Long memberId, Pageable pageable);
 }

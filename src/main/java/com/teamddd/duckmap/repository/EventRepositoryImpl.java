@@ -4,7 +4,7 @@ import static com.teamddd.duckmap.entity.QEvent.*;
 import static com.teamddd.duckmap.entity.QEventArtist.*;
 import static com.teamddd.duckmap.entity.QEventBookmark.*;
 import static com.teamddd.duckmap.entity.QEventLike.*;
-import static com.teamddd.duckmap.entity.QUser.*;
+import static com.teamddd.duckmap.entity.QMember.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -31,7 +31,7 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
 	}
 
 	@Override
-	public Optional<EventLikeBookmarkDto> findByIdWithLikeAndBookmark(Long eventId, Long userId) {
+	public Optional<EventLikeBookmarkDto> findByIdWithLikeAndBookmark(Long eventId, Long memberId) {
 		return Optional.ofNullable(queryFactory.select(
 				new QEventLikeBookmarkDto(
 					event,
@@ -39,14 +39,14 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
 					eventBookmark
 				))
 			.from(event)
-			.leftJoin(eventLike).on(event.eq(eventLike.event).and(eventLikeUserEqUserId(userId)))
-			.leftJoin(eventBookmark).on(event.eq(eventBookmark.event).and(eventBookmarkUserEqUserId(userId)))
+			.leftJoin(eventLike).on(event.eq(eventLike.event).and(eventLikeMemberEqMemberId(memberId)))
+			.leftJoin(eventBookmark).on(event.eq(eventBookmark.event).and(eventBookmarkMemberEqMemberId(memberId)))
 			.where(event.id.eq(eventId))
 			.fetchOne());
 	}
 
 	@Override
-	public Page<EventLikeBookmarkDto> findMyEvents(Long userId, Pageable pageable) {
+	public Page<EventLikeBookmarkDto> findMyEvents(Long memberId, Pageable pageable) {
 		List<EventLikeBookmarkDto> events = queryFactory.select(
 				new QEventLikeBookmarkDto(
 					event,
@@ -54,23 +54,23 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
 					eventBookmark
 				))
 			.from(event)
-			.leftJoin(eventLike).on(event.eq(eventLike.event).and(event.user.id.eq(eventLike.user.id)))
-			.leftJoin(eventBookmark).on(event.eq(eventBookmark.event).and(event.user.id.eq(eventBookmark.user.id)))
-			.where(event.user.id.eq(userId))
+			.leftJoin(eventLike).on(event.eq(eventLike.event).and(event.member.id.eq(eventLike.member.id)))
+			.leftJoin(eventBookmark).on(event.eq(eventBookmark.event).and(event.member.id.eq(eventBookmark.member.id)))
+			.where(event.member.id.eq(memberId))
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetch();
 
 		JPAQuery<Long> countQuery = queryFactory.select(event.count())
 			.from(event)
-			.join(event.user, user)
-			.where(user.id.eq(userId));
+			.join(event.member, member)
+			.where(member.id.eq(memberId));
 
 		return PageableExecutionUtils.getPage(events, pageable, countQuery::fetchOne);
 	}
 
 	@Override
-	public Page<EventLikeBookmarkDto> findMyLikeEvents(Long userId, Pageable pageable) {
+	public Page<EventLikeBookmarkDto> findMyLikeEvents(Long memberId, Pageable pageable) {
 		List<EventLikeBookmarkDto> events = queryFactory.select(
 				new QEventLikeBookmarkDto(
 					event,
@@ -78,21 +78,21 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
 					eventBookmark
 				))
 			.from(event)
-			.join(eventLike).on(event.eq(eventLike.event).and(eventLike.user.id.eq(userId)))
-			.leftJoin(eventBookmark).on(event.eq(eventBookmark.event).and(event.user.id.eq(eventBookmark.user.id)))
+			.join(eventLike).on(event.eq(eventLike.event).and(eventLike.member.id.eq(memberId)))
+			.leftJoin(eventBookmark).on(event.eq(eventBookmark.event).and(event.member.id.eq(eventBookmark.member.id)))
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetch();
 
 		JPAQuery<Long> countQuery = queryFactory.select(event.count())
 			.from(event)
-			.join(eventLike).on(event.eq(eventLike.event).and(eventLike.user.id.eq(userId)));
+			.join(eventLike).on(event.eq(eventLike.event).and(eventLike.member.id.eq(memberId)));
 
 		return PageableExecutionUtils.getPage(events, pageable, countQuery::fetchOne);
 	}
 
 	@Override
-	public Page<EventLikeBookmarkDto> findByArtistAndDate(Long artistId, LocalDate date, Long userId,
+	public Page<EventLikeBookmarkDto> findByArtistAndDate(Long artistId, LocalDate date, Long memberId,
 		Pageable pageable) {
 		JPAQuery<EventLikeBookmarkDto> eventsQuery = queryFactory.selectDistinct(
 				new QEventLikeBookmarkDto(
@@ -106,8 +106,8 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
 				.leftJoin(event.eventArtists, eventArtist);
 		}
 		List<EventLikeBookmarkDto> events = eventsQuery
-			.leftJoin(eventLike).on(event.eq(eventLike.event).and(eventLikeUserEqUserId(userId)))
-			.leftJoin(eventBookmark).on(event.eq(eventBookmark.event).and(eventBookmarkUserEqUserId(userId)))
+			.leftJoin(eventLike).on(event.eq(eventLike.event).and(eventLikeMemberEqMemberId(memberId)))
+			.leftJoin(eventBookmark).on(event.eq(eventBookmark.event).and(eventBookmarkMemberEqMemberId(memberId)))
 			.where(eqArtistId(artistId),
 				betweenDate(date))
 			.offset(pageable.getOffset())
@@ -127,12 +127,12 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
 		return PageableExecutionUtils.getPage(events, pageable, countQuery::fetchOne);
 	}
 
-	private BooleanExpression eventLikeUserEqUserId(Long userId) {
-		return userId != null ? eventLike.user.id.eq(userId) : eventLike.user.id.isNull();
+	private BooleanExpression eventLikeMemberEqMemberId(Long memberId) {
+		return memberId != null ? eventLike.member.id.eq(memberId) : eventLike.member.id.isNull();
 	}
 
-	private BooleanExpression eventBookmarkUserEqUserId(Long userId) {
-		return userId != null ? eventBookmark.user.id.eq(userId) : eventBookmark.user.id.isNull();
+	private BooleanExpression eventBookmarkMemberEqMemberId(Long memberId) {
+		return memberId != null ? eventBookmark.member.id.eq(memberId) : eventBookmark.member.id.isNull();
 	}
 
 	private BooleanExpression eqArtistId(Long artistId) {

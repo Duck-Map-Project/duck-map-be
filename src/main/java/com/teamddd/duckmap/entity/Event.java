@@ -40,8 +40,8 @@ public class Event extends BaseTimeEntity {
 	private String twitterUrl;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
-	private User user;
+	@JoinColumn(name = "member_id")
+	private Member member;
 
 	@OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<EventArtist> eventArtists = new ArrayList<>();

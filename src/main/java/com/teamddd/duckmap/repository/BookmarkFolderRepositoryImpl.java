@@ -15,9 +15,9 @@ import org.springframework.data.support.PageableExecutionUtils;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderEventDto;
-import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderUserDto;
+import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderMemberDto;
 import com.teamddd.duckmap.dto.event.bookmark.QBookmarkFolderEventDto;
-import com.teamddd.duckmap.dto.event.bookmark.QBookmarkFolderUserDto;
+import com.teamddd.duckmap.dto.event.bookmark.QBookmarkFolderMemberDto;
 import com.teamddd.duckmap.entity.EventBookmarkFolder;
 
 public class BookmarkFolderRepositoryImpl implements BookmarkFolderRepositoryCustom {
@@ -50,30 +50,30 @@ public class BookmarkFolderRepositoryImpl implements BookmarkFolderRepositoryCus
 	}
 
 	@Override
-	public Page<EventBookmarkFolder> findBookmarkFoldersByUserId(Long userId, Pageable pageable) {
+	public Page<EventBookmarkFolder> findBookmarkFoldersByMemberId(Long memberId, Pageable pageable) {
 		List<EventBookmarkFolder> bookmarkFolders = queryFactory
 			.select(eventBookmarkFolder)
 			.from(eventBookmarkFolder)
-			.where(eventBookmarkFolder.user.id.eq(userId))
+			.where(eventBookmarkFolder.member.id.eq(memberId))
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetch();
 
 		JPAQuery<Long> countQuery = queryFactory.select(eventBookmarkFolder.count())
 			.from(eventBookmarkFolder)
-			.where(eventBookmarkFolder.user.id.eq(userId));
+			.where(eventBookmarkFolder.member.id.eq(memberId));
 
 		return PageableExecutionUtils.getPage(bookmarkFolders, pageable, countQuery::fetchOne);
 
 	}
 
 	@Override
-	public BookmarkFolderUserDto findBookmarkFolderAndUserById(Long bookmarkFolderId) {
+	public BookmarkFolderMemberDto findBookmarkFolderAndMemberById(Long bookmarkFolderId) {
 		return queryFactory.select(
-				new QBookmarkFolderUserDto(
+				new QBookmarkFolderMemberDto(
 					eventBookmarkFolder,
-					eventBookmarkFolder.user.id.as("userId"),
-					eventBookmarkFolder.user.username.as("username"))
+					eventBookmarkFolder.member.id.as("memberId"),
+					eventBookmarkFolder.member.username.as("username"))
 			)
 			.from(eventBookmarkFolder)
 			.where(eventBookmarkFolder.id.eq(bookmarkFolderId))
