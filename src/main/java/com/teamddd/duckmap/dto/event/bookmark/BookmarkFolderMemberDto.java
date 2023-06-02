@@ -6,15 +6,15 @@ import com.teamddd.duckmap.entity.EventBookmarkFolder;
 import lombok.Getter;
 
 @Getter
-public class BookmarkFolderUserDto {
+public class BookmarkFolderMemberDto {
 	private final EventBookmarkFolder bookmarkFolder;
-	private final Long userId;
+	private final Long memberId;
 	private final String username;
 
 	@QueryProjection
-	public BookmarkFolderUserDto(EventBookmarkFolder bookmarkFolder, Long userId, String username) {
+	public BookmarkFolderMemberDto(EventBookmarkFolder bookmarkFolder, Long memberId, String username) {
 		this.bookmarkFolder = bookmarkFolder;
-		this.userId = userId;
+		this.memberId = memberId;
 		this.username = username;
 	}
 }

@@ -3,16 +3,18 @@ package com.teamddd.duckmap.config.security;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 
-public class SecurityUser extends User {
-	private final com.teamddd.duckmap.entity.User user;
+import com.teamddd.duckmap.entity.Member;
 
-	public SecurityUser(com.teamddd.duckmap.entity.User user) {
-		super(user.getId().toString(), user.getPassword(),
-			AuthorityUtils.createAuthorityList(user.getUserType().toString()));
-		this.user = user;
+public class SecurityUser extends User {
+	private final Member member;
+
+	public SecurityUser(Member member) {
+		super(member.getId().toString(), member.getPassword(),
+			AuthorityUtils.createAuthorityList(member.getRole().toString()));
+		this.member = member;
 	}
 
-	public com.teamddd.duckmap.entity.User getUser() {
-		return user;
+	public Member getUser() {
+		return member;
 	}
 }

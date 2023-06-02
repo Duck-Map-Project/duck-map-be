@@ -13,7 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
-import com.teamddd.duckmap.entity.UserType;
+import com.teamddd.duckmap.entity.Role;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -36,9 +36,9 @@ public class JwtProvider {
 	}
 
 	// JWT 토큰 생성
-	public String createToken(String userPK, UserType userType) {
+	public String createToken(String userPK, Role role) {
 		Claims claims = Jwts.claims().setSubject(userPK); // JWT payload에 저장되는 정보 단위
-		claims.put("userType", userType); // 정보 저장 (key-value)
+		claims.put("role", role); // 정보 저장 (key-value)
 		Date now = new Date();
 		// 토큰 유효시간 30분
 		long tokenValidTime = 30 * 60 * 1000L;

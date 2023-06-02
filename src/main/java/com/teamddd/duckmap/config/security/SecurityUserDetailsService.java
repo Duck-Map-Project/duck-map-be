@@ -8,22 +8,22 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.teamddd.duckmap.entity.User;
-import com.teamddd.duckmap.repository.UserRepository;
+import com.teamddd.duckmap.entity.Member;
+import com.teamddd.duckmap.repository.MemberRepository;
 
 @Service
 public class SecurityUserDetailsService implements UserDetailsService {
 	@Autowired
-	private UserRepository userRepository;
+	private MemberRepository memberRepository;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Optional<User> optional = userRepository.findByEmail(username);
+		Optional<Member> optional = memberRepository.findByEmail(username);
 		if (optional.isEmpty()) {
 			throw new UsernameNotFoundException(username + " 사용자 찾을 수 없음");
 		} else {
-			User user = optional.get();
-			return new SecurityUser(user);
+			Member member = optional.get();
+			return new SecurityUser(member);
 		}
 
 	}

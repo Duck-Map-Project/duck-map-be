@@ -23,7 +23,7 @@ import com.teamddd.duckmap.entity.Event;
 import com.teamddd.duckmap.entity.EventArtist;
 import com.teamddd.duckmap.entity.EventBookmark;
 import com.teamddd.duckmap.entity.EventLike;
-import com.teamddd.duckmap.entity.User;
+import com.teamddd.duckmap.entity.Member;
 
 @Transactional
 @SpringBootTest
@@ -37,22 +37,22 @@ class EventRepositoryTest {
 	@Test
 	void findMyEvents() throws Exception {
 		//given
-		User user = User.builder().build();
-		User user2 = User.builder().build();
-		em.persist(user);
-		em.persist(user2);
+		Member member = Member.builder().build();
+		Member member2 = Member.builder().build();
+		em.persist(member);
+		em.persist(member2);
 
-		Event event1 = createEvent(user, "event1", LocalDate.now(), LocalDate.now(), "#hashtag");
-		Event event2 = createEvent(user2, "event2", LocalDate.now(), LocalDate.now(), "#hashtag");
-		Event event3 = createEvent(user, "event3", LocalDate.now(), LocalDate.now(), "#hashtag");
+		Event event1 = createEvent(member, "event1", LocalDate.now(), LocalDate.now(), "#hashtag");
+		Event event2 = createEvent(member2, "event2", LocalDate.now(), LocalDate.now(), "#hashtag");
+		Event event3 = createEvent(member, "event3", LocalDate.now(), LocalDate.now(), "#hashtag");
 		em.persist(event1);
 		em.persist(event2);
 		em.persist(event3);
 
-		EventLike eventLike1 = createEventLike(user, event1);
-		EventLike eventLike2 = createEventLike(user, event2);
-		EventBookmark eventBookmark2 = createEventBookmark(user, event2);
-		EventBookmark eventBookmark3 = createEventBookmark(user, event3);
+		EventLike eventLike1 = createEventLike(member, event1);
+		EventLike eventLike2 = createEventLike(member, event2);
+		EventBookmark eventBookmark2 = createEventBookmark(member, event2);
+		EventBookmark eventBookmark3 = createEventBookmark(member, event3);
 		em.persist(eventLike1);
 		em.persist(eventLike2);
 		em.persist(eventBookmark2);
@@ -61,13 +61,13 @@ class EventRepositoryTest {
 		PageRequest pageRequest = PageRequest.of(0, 2);
 
 		//when
-		Page<EventLikeBookmarkDto> myEvents = eventRepository.findMyEvents(user.getId(), pageRequest);
+		Page<EventLikeBookmarkDto> myEvents = eventRepository.findMyEvents(member.getId(), pageRequest);
 
 		//then
 		assertThat(myEvents).hasSize(2)
 			.extracting("event.user.id", "event.storeName", "like.id", "bookmark.id")
-			.containsExactly(Tuple.tuple(user.getId(), "event1", eventLike1.getId(), null),
-				Tuple.tuple(user.getId(), "event3", null, eventBookmark3.getId()));
+			.containsExactly(Tuple.tuple(member.getId(), "event1", eventLike1.getId(), null),
+				Tuple.tuple(member.getId(), "event3", null, eventBookmark3.getId()));
 
 		assertThat(myEvents.getTotalElements()).isEqualTo(2);
 		assertThat(myEvents.getTotalPages()).isEqualTo(1);
@@ -79,13 +79,13 @@ class EventRepositoryTest {
 		//given
 		LocalDate date = LocalDate.now();
 
-		User user = User.builder().build();
-		em.persist(user);
+		Member member = Member.builder().build();
+		em.persist(member);
 
-		Event event1 = createEvent(user, "event1", date.minusDays(10), date.minusDays(6), "#hashtag1");
-		Event event2 = createEvent(user, "event2", date.minusDays(1), date, "#hashtag2");
-		Event event3 = createEvent(user, "event3", date, date.plusDays(1), "#hashtag3");
-		Event event4 = createEvent(user, "event4", date.plusDays(2), date.plusDays(4), "#hashtag4");
+		Event event1 = createEvent(member, "event1", date.minusDays(10), date.minusDays(6), "#hashtag1");
+		Event event2 = createEvent(member, "event2", date.minusDays(1), date, "#hashtag2");
+		Event event3 = createEvent(member, "event3", date, date.plusDays(1), "#hashtag3");
+		Event event4 = createEvent(member, "event4", date.plusDays(2), date.plusDays(4), "#hashtag4");
 		em.persist(event1);
 		em.persist(event2);
 		em.persist(event3);
@@ -107,10 +107,10 @@ class EventRepositoryTest {
 		em.persist(eventArtist4);
 		em.persist(eventArtist5);
 
-		EventLike eventLike1 = createEventLike(user, event1);
-		EventLike eventLike2 = createEventLike(user, event2);
-		EventBookmark eventBookmark2 = createEventBookmark(user, event2);
-		EventBookmark eventBookmark3 = createEventBookmark(user, event3);
+		EventLike eventLike1 = createEventLike(member, event1);
+		EventLike eventLike2 = createEventLike(member, event2);
+		EventBookmark eventBookmark2 = createEventBookmark(member, event2);
+		EventBookmark eventBookmark3 = createEventBookmark(member, event3);
 		em.persist(eventLike1);
 		em.persist(eventLike2);
 		em.persist(eventBookmark2);
@@ -128,58 +128,58 @@ class EventRepositoryTest {
 	@Test
 	void findMyLikeEvents() throws Exception {
 		//given
-		User user = User.builder().build();
-		User user2 = User.builder().build();
-		em.persist(user);
-		em.persist(user2);
+		Member member = Member.builder().build();
+		Member member2 = Member.builder().build();
+		em.persist(member);
+		em.persist(member2);
 
-		Event event1 = createEvent(user, "event1", LocalDate.now(), LocalDate.now(), "#hashtag");
-		Event event2 = createEvent(user, "event2", LocalDate.now(), LocalDate.now(), "#hashtag");
-		Event event3 = createEvent(user, "event3", LocalDate.now(), LocalDate.now(), "#hashtag");
-		Event event4 = createEvent(user, "event4", LocalDate.now(), LocalDate.now(), "#hashtag");
-		Event event5 = createEvent(user, "event5", LocalDate.now(), LocalDate.now(), "#hashtag");
+		Event event1 = createEvent(member, "event1", LocalDate.now(), LocalDate.now(), "#hashtag");
+		Event event2 = createEvent(member, "event2", LocalDate.now(), LocalDate.now(), "#hashtag");
+		Event event3 = createEvent(member, "event3", LocalDate.now(), LocalDate.now(), "#hashtag");
+		Event event4 = createEvent(member, "event4", LocalDate.now(), LocalDate.now(), "#hashtag");
+		Event event5 = createEvent(member, "event5", LocalDate.now(), LocalDate.now(), "#hashtag");
 		em.persist(event1);
 		em.persist(event2);
 		em.persist(event3);
 		em.persist(event4);
 		em.persist(event5);
 
-		EventLike eventLike1 = createEventLike(user, event1);
-		EventLike eventLike2 = createEventLike(user, event2);
-		EventLike eventLike3 = createEventLike(user2, event2);
-		EventLike eventLike4 = createEventLike(user2, event4);
-		EventLike eventLike5 = createEventLike(user, event5);
+		EventLike eventLike1 = createEventLike(member, event1);
+		EventLike eventLike2 = createEventLike(member, event2);
+		EventLike eventLike3 = createEventLike(member2, event2);
+		EventLike eventLike4 = createEventLike(member2, event4);
+		EventLike eventLike5 = createEventLike(member, event5);
 		em.persist(eventLike1);
 		em.persist(eventLike2);
 		em.persist(eventLike3);
 		em.persist(eventLike4);
 		em.persist(eventLike5);
 
-		EventBookmark eventBookmark2 = createEventBookmark(user, event2);
-		EventBookmark eventBookmark3 = createEventBookmark(user, event3);
+		EventBookmark eventBookmark2 = createEventBookmark(member, event2);
+		EventBookmark eventBookmark3 = createEventBookmark(member, event3);
 		em.persist(eventBookmark2);
 		em.persist(eventBookmark3);
 
 		PageRequest request = PageRequest.of(0, 3);
 
 		//when
-		Page<EventLikeBookmarkDto> events = eventRepository.findMyLikeEvents(user.getId(), request);
+		Page<EventLikeBookmarkDto> events = eventRepository.findMyLikeEvents(member.getId(), request);
 
 		//then
 		assertThat(events).hasSize(3)
 			.extracting("event.storeName", "like.id", "like.user.id", "bookmark.id")
 			.containsExactly(
-				Tuple.tuple("event1", eventLike1.getId(), user.getId(), null),
-				Tuple.tuple("event2", eventLike2.getId(), user.getId(), eventBookmark2.getId()),
-				Tuple.tuple("event5", eventLike5.getId(), user.getId(), null));
+				Tuple.tuple("event1", eventLike1.getId(), member.getId(), null),
+				Tuple.tuple("event2", eventLike2.getId(), member.getId(), eventBookmark2.getId()),
+				Tuple.tuple("event5", eventLike5.getId(), member.getId(), null));
 
 		assertThat(events.getTotalElements()).isEqualTo(3);
 		assertThat(events.getTotalPages()).isEqualTo(1);
 	}
 
-	private Event createEvent(User user, String storeName, LocalDate fromDate, LocalDate toDate, String hashtag) {
+	private Event createEvent(Member member, String storeName, LocalDate fromDate, LocalDate toDate, String hashtag) {
 		return Event.builder()
-			.user(user)
+			.member(member)
 			.storeName(storeName)
 			.fromDate(fromDate)
 			.toDate(toDate)
@@ -187,12 +187,12 @@ class EventRepositoryTest {
 			.build();
 	}
 
-	private EventLike createEventLike(User user, Event event) {
-		return EventLike.builder().user(user).event(event).build();
+	private EventLike createEventLike(Member member, Event event) {
+		return EventLike.builder().member(member).event(event).build();
 	}
 
-	private EventBookmark createEventBookmark(User user, Event event) {
-		return EventBookmark.builder().user(user).event(event).build();
+	private EventBookmark createEventBookmark(Member member, Event event) {
+		return EventBookmark.builder().member(member).event(event).build();
 	}
 
 	private EventArtist createEventArtist(Event event1, Artist artist1) {
@@ -209,16 +209,16 @@ class EventRepositoryTest {
 		@Test
 		void findByIdWithLikeAndBookmark1() throws Exception {
 			//given
-			User user = User.builder().build();
-			em.persist(user);
+			Member member = Member.builder().build();
+			em.persist(member);
 
-			Event event = createEvent(user, "event1", LocalDate.now(), LocalDate.now(), "#hashtag");
+			Event event = createEvent(member, "event1", LocalDate.now(), LocalDate.now(), "#hashtag");
 			em.persist(event);
 
-			EventLike eventLike = createEventLike(user, event);
+			EventLike eventLike = createEventLike(member, event);
 			em.persist(eventLike);
 
-			EventBookmark eventBookmark = createEventBookmark(user, event);
+			EventBookmark eventBookmark = createEventBookmark(member, event);
 			em.persist(eventBookmark);
 
 			//when
@@ -233,27 +233,27 @@ class EventRepositoryTest {
 		@Test
 		void findByIdWithLikeAndBookmark2() throws Exception {
 			//given
-			User user1 = User.builder().build();
-			User user2 = User.builder().build();
-			em.persist(user1);
-			em.persist(user2);
+			Member member1 = Member.builder().build();
+			Member member2 = Member.builder().build();
+			em.persist(member1);
+			em.persist(member2);
 
-			Event event = createEvent(user1, "event1", LocalDate.now(), LocalDate.now(), "#hashtag");
+			Event event = createEvent(member1, "event1", LocalDate.now(), LocalDate.now(), "#hashtag");
 			em.persist(event);
 
-			EventLike eventLike = createEventLike(user2, event);
+			EventLike eventLike = createEventLike(member2, event);
 			em.persist(eventLike);
 
-			EventBookmark eventBookmark = createEventBookmark(user2, event);
+			EventBookmark eventBookmark = createEventBookmark(member2, event);
 			em.persist(eventBookmark);
 
 			//when
-			EventLikeBookmarkDto findEvent = eventRepository.findByIdWithLikeAndBookmark(event.getId(), user2.getId())
+			EventLikeBookmarkDto findEvent = eventRepository.findByIdWithLikeAndBookmark(event.getId(), member2.getId())
 				.get();
 
 			//then
 			assertThat(findEvent).extracting("event.storeName", "like.user.id", "bookmark.user.id")
-				.contains("event1", user2.getId(), user2.getId());
+				.contains("event1", member2.getId(), member2.getId());
 		}
 	}
 
@@ -267,13 +267,13 @@ class EventRepositoryTest {
 			//given
 			LocalDate date = LocalDate.now();
 
-			User user = User.builder().build();
-			em.persist(user);
+			Member member = Member.builder().build();
+			em.persist(member);
 
-			Event event1 = createEvent(user, "event1", date.minusDays(10), date.minusDays(6), "#hashtag");
-			Event event2 = createEvent(user, "event2", date.minusDays(1), date, "#hashtag");
-			Event event3 = createEvent(user, "event3", date, date.plusDays(1), "#hashtag");
-			Event event4 = createEvent(user, "event4", date.plusDays(2), date.plusDays(4), "#hashtag");
+			Event event1 = createEvent(member, "event1", date.minusDays(10), date.minusDays(6), "#hashtag");
+			Event event2 = createEvent(member, "event2", date.minusDays(1), date, "#hashtag");
+			Event event3 = createEvent(member, "event3", date, date.plusDays(1), "#hashtag");
+			Event event4 = createEvent(member, "event4", date.plusDays(2), date.plusDays(4), "#hashtag");
 			em.persist(event1);
 			em.persist(event2);
 			em.persist(event3);
@@ -295,10 +295,10 @@ class EventRepositoryTest {
 			em.persist(eventArtist4);
 			em.persist(eventArtist5);
 
-			EventLike eventLike1 = createEventLike(user, event1);
-			EventLike eventLike2 = createEventLike(user, event2);
-			EventBookmark eventBookmark2 = createEventBookmark(user, event2);
-			EventBookmark eventBookmark3 = createEventBookmark(user, event3);
+			EventLike eventLike1 = createEventLike(member, event1);
+			EventLike eventLike2 = createEventLike(member, event2);
+			EventBookmark eventBookmark2 = createEventBookmark(member, event2);
+			EventBookmark eventBookmark3 = createEventBookmark(member, event3);
 			em.persist(eventLike1);
 			em.persist(eventLike2);
 			em.persist(eventBookmark2);
@@ -326,13 +326,13 @@ class EventRepositoryTest {
 			//given
 			LocalDate date = LocalDate.now();
 
-			User user = User.builder().build();
-			em.persist(user);
+			Member member = Member.builder().build();
+			em.persist(member);
 
-			Event event1 = createEvent(user, "event1", date.minusDays(10), date, "#hashtag");
-			Event event2 = createEvent(user, "event2", date.minusDays(1), date, "#hashtag");
-			Event event3 = createEvent(user, "event3", date, date.plusDays(1), "#hashtag");
-			Event event4 = createEvent(user, "event4", date.plusDays(2), date.plusDays(4), "#hashtag");
+			Event event1 = createEvent(member, "event1", date.minusDays(10), date, "#hashtag");
+			Event event2 = createEvent(member, "event2", date.minusDays(1), date, "#hashtag");
+			Event event3 = createEvent(member, "event3", date, date.plusDays(1), "#hashtag");
+			Event event4 = createEvent(member, "event4", date.plusDays(2), date.plusDays(4), "#hashtag");
 			em.persist(event1);
 			em.persist(event2);
 			em.persist(event3);
@@ -354,10 +354,10 @@ class EventRepositoryTest {
 			em.persist(eventArtist4);
 			em.persist(eventArtist5);
 
-			EventLike eventLike1 = createEventLike(user, event1);
-			EventLike eventLike2 = createEventLike(user, event2);
-			EventBookmark eventBookmark2 = createEventBookmark(user, event2);
-			EventBookmark eventBookmark3 = createEventBookmark(user, event3);
+			EventLike eventLike1 = createEventLike(member, event1);
+			EventLike eventLike2 = createEventLike(member, event2);
+			EventBookmark eventBookmark2 = createEventBookmark(member, event2);
+			EventBookmark eventBookmark3 = createEventBookmark(member, event3);
 			em.persist(eventLike1);
 			em.persist(eventLike2);
 			em.persist(eventBookmark2);
@@ -384,13 +384,13 @@ class EventRepositoryTest {
 			//given
 			LocalDate date = LocalDate.now();
 
-			User user = User.builder().build();
-			em.persist(user);
+			Member member = Member.builder().build();
+			em.persist(member);
 
-			Event event1 = createEvent(user, "event1", date.minusDays(10), date.minusDays(6), "#hashtag");
-			Event event2 = createEvent(user, "event2", date.minusDays(1), date, "#hashtag");
-			Event event3 = createEvent(user, "event3", date, date.plusDays(1), "#hashtag");
-			Event event4 = createEvent(user, "event4", date.plusDays(2), date.plusDays(4), "#hashtag");
+			Event event1 = createEvent(member, "event1", date.minusDays(10), date.minusDays(6), "#hashtag");
+			Event event2 = createEvent(member, "event2", date.minusDays(1), date, "#hashtag");
+			Event event3 = createEvent(member, "event3", date, date.plusDays(1), "#hashtag");
+			Event event4 = createEvent(member, "event4", date.plusDays(2), date.plusDays(4), "#hashtag");
 			em.persist(event1);
 			em.persist(event2);
 			em.persist(event3);
@@ -412,10 +412,10 @@ class EventRepositoryTest {
 			em.persist(eventArtist4);
 			em.persist(eventArtist5);
 
-			EventLike eventLike1 = createEventLike(user, event1);
-			EventLike eventLike2 = createEventLike(user, event2);
-			EventBookmark eventBookmark2 = createEventBookmark(user, event2);
-			EventBookmark eventBookmark3 = createEventBookmark(user, event3);
+			EventLike eventLike1 = createEventLike(member, event1);
+			EventLike eventLike2 = createEventLike(member, event2);
+			EventBookmark eventBookmark2 = createEventBookmark(member, event2);
+			EventBookmark eventBookmark3 = createEventBookmark(member, event3);
 			em.persist(eventLike1);
 			em.persist(eventLike2);
 			em.persist(eventBookmark2);
@@ -424,7 +424,7 @@ class EventRepositoryTest {
 			PageRequest pageRequest = PageRequest.of(0, 3);
 
 			//when
-			Page<EventLikeBookmarkDto> events = eventRepository.findByArtistAndDate(null, null, user.getId(),
+			Page<EventLikeBookmarkDto> events = eventRepository.findByArtistAndDate(null, null, member.getId(),
 				pageRequest);
 
 			//then

@@ -1,5 +1,5 @@
 package com.teamddd.duckmap.entity;
 
-public enum UserType {
+public enum Role {
 	USER, ADMIN
 }

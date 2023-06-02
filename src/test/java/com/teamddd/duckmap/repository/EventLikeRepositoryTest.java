@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.teamddd.duckmap.entity.Event;
 import com.teamddd.duckmap.entity.EventLike;
-import com.teamddd.duckmap.entity.User;
+import com.teamddd.duckmap.entity.Member;
 
 @SpringBootTest
 @Transactional
@@ -24,25 +24,25 @@ public class EventLikeRepositoryTest {
 	@Test
 	void countByEventId() throws Exception {
 		//given
-		User user1 = User.builder().build();
-		User user2 = User.builder().build();
-		User user3 = User.builder().build();
-		em.persist(user1);
-		em.persist(user2);
-		em.persist(user3);
+		Member member1 = Member.builder().build();
+		Member member2 = Member.builder().build();
+		Member member3 = Member.builder().build();
+		em.persist(member1);
+		em.persist(member2);
+		em.persist(member3);
 
-		Event event1 = createEvent(user1, "event1");
-		Event event2 = createEvent(user1, "event2");
-		Event event3 = createEvent(user1, "event3");
+		Event event1 = createEvent(member1, "event1");
+		Event event2 = createEvent(member1, "event2");
+		Event event3 = createEvent(member1, "event3");
 		em.persist(event1);
 		em.persist(event2);
 		em.persist(event3);
 
-		EventLike eventLike1 = createEventLike(user1, event1);
-		EventLike eventLike2 = createEventLike(user1, event2);
-		EventLike eventLike3 = createEventLike(user2, event1);
-		EventLike eventLike4 = createEventLike(user2, event3);
-		EventLike eventLike5 = createEventLike(user3, event1);
+		EventLike eventLike1 = createEventLike(member1, event1);
+		EventLike eventLike2 = createEventLike(member1, event2);
+		EventLike eventLike3 = createEventLike(member2, event1);
+		EventLike eventLike4 = createEventLike(member2, event3);
+		EventLike eventLike5 = createEventLike(member3, event1);
 
 		em.persist(eventLike1);
 		em.persist(eventLike2);
@@ -61,11 +61,11 @@ public class EventLikeRepositoryTest {
 
 	}
 
-	private Event createEvent(User user, String storeName) {
-		return Event.builder().user(user).storeName(storeName).build();
+	private Event createEvent(Member member, String storeName) {
+		return Event.builder().member(member).storeName(storeName).build();
 	}
 
-	private EventLike createEventLike(User user, Event event) {
-		return EventLike.builder().user(user).event(event).build();
+	private EventLike createEventLike(Member member, Event event) {
+		return EventLike.builder().member(member).event(event).build();
 	}
 }

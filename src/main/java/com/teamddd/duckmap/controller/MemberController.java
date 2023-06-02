@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 
 import javax.servlet.http.HttpSession;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,16 +14,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.teamddd.duckmap.config.security.JwtProvider;
 import com.teamddd.duckmap.dto.ImageRes;
 import com.teamddd.duckmap.dto.Result;
-import com.teamddd.duckmap.dto.user.CreateUserReq;
-import com.teamddd.duckmap.dto.user.CreateUserRes;
+import com.teamddd.duckmap.dto.user.CreateMemberReq;
+import com.teamddd.duckmap.dto.user.CreateMemberRes;
+import com.teamddd.duckmap.dto.user.MemberRes;
+import com.teamddd.duckmap.dto.user.UpdateMemberReq;
 import com.teamddd.duckmap.dto.user.UpdatePasswordReq;
-import com.teamddd.duckmap.dto.user.UpdateUserReq;
-import com.teamddd.duckmap.dto.user.UserRes;
-import com.teamddd.duckmap.entity.UserType;
-import com.teamddd.duckmap.repository.UserRepository;
+import com.teamddd.duckmap.entity.Role;
 import com.teamddd.duckmap.service.MemberService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,20 +31,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/users")
-public class UserController {
-	private final PasswordEncoder passwordEncoder;
+@RequestMapping("/members")
+public class MemberController {
 	private final MemberService memberService;
-	private final JwtProvider jwtProvider;
-	private final UserRepository userRepository;
 
 	@Operation(summary = "회원 가입")
-	@PostMapping
-	public Result<CreateUserRes> createUser(@Validated @RequestBody CreateUserReq createUserReq) {
-		Long id = memberService.join(createUserReq);
-		return Result.<CreateUserRes>builder()
+	@PostMapping("/join")
+	public Result<CreateMemberRes> createUser(@Validated @RequestBody CreateMemberReq createMemberReq) {
+		Long id = memberService.join(createMemberReq);
+		return Result.<CreateMemberRes>builder()
 			.data(
-				CreateUserRes.builder()
+				CreateMemberRes.builder()
 					.id(id)
 					.build()
 			)
@@ -56,9 +50,9 @@ public class UserController {
 
 	@Operation(summary = "회원 정보 조회", description = "로그인한 회원 정보 조회")
 	@GetMapping("/me")
-	public Result<UserRes> getUserInfo(HttpSession session) {
-		return Result.<UserRes>builder()
-			.data(UserRes.builder()
+	public Result<MemberRes> getUserInfo(HttpSession session) {
+		return Result.<MemberRes>builder()
+			.data(MemberRes.builder()
 				.id(1L)
 				.username("user1")
 				.email("sample@naver.com")
@@ -68,7 +62,7 @@ public class UserController {
 						.filename("user1.jpg")
 						.build()
 				)
-				.userType(UserType.USER)
+				.role(Role.USER)
 				.loginAt(LocalDateTime.now())
 				.build())
 			.build();
@@ -76,7 +70,7 @@ public class UserController {
 
 	@Operation(summary = "회원정보 수정", description = "로그인한 회원의 닉네임, 프로필 사진 변경 요청")
 	@PutMapping("/me")
-	public Result<Void> updateUser(HttpSession session, @Validated @RequestBody UpdateUserReq updateUserReq) {
+	public Result<Void> updateUser(HttpSession session, @Validated @RequestBody UpdateMemberReq updateMemberReq) {
 		return Result.<Void>builder().build();
 	}
 

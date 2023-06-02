@@ -7,10 +7,10 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class BookmarkFolderUserRes {
+public class BookmarkFolderMemberRes {
 	private Long id;
 	private String name;
 	private ImageRes image;
-	private Long userId;
+	private Long memberId;
 	private String username;
 }
