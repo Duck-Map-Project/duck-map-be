@@ -222,7 +222,7 @@ class EventRepositoryTest {
 			em.persist(eventBookmark);
 
 			//when
-			EventLikeBookmarkDto findEvent = eventRepository.findByIdWithLikeAndBookmark(event.getId(), null);
+			EventLikeBookmarkDto findEvent = eventRepository.findByIdWithLikeAndBookmark(event.getId(), null).get();
 
 			//then
 			assertThat(findEvent).extracting("event.storeName", "like.id", "bookmark.id")
@@ -248,7 +248,8 @@ class EventRepositoryTest {
 			em.persist(eventBookmark);
 
 			//when
-			EventLikeBookmarkDto findEvent = eventRepository.findByIdWithLikeAndBookmark(event.getId(), user2.getId());
+			EventLikeBookmarkDto findEvent = eventRepository.findByIdWithLikeAndBookmark(event.getId(), user2.getId())
+				.get();
 
 			//then
 			assertThat(findEvent).extracting("event.storeName", "like.user.id", "bookmark.user.id")
