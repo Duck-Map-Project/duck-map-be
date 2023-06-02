@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Entity
 @Getter
-@Table(name = "members")
+@Table(name = "member")
 public class Member extends BaseTimeEntity {
 
 	@Id
