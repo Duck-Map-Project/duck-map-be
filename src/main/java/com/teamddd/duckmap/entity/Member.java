@@ -21,8 +21,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Entity
 @Getter
-@Table(name = "users")
-public class User extends BaseTimeEntity {
+@Table(name = "members")
+public class Member extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,7 +35,7 @@ public class User extends BaseTimeEntity {
 	private String image;
 
 	@Enumerated(EnumType.STRING)
-	private UserType userType; //USER, ADMIN
+	private Role role; //USER, ADMIN
 
 	private LocalDateTime loginAt;
 
