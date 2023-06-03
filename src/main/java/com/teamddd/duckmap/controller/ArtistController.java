@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.teamddd.duckmap.dto.ImageRes;
-import com.teamddd.duckmap.dto.Result;
 import com.teamddd.duckmap.dto.artist.ArtistRes;
 import com.teamddd.duckmap.dto.artist.ArtistSearchParam;
 import com.teamddd.duckmap.dto.artist.ArtistTypeRes;
@@ -35,14 +34,10 @@ import lombok.extern.slf4j.Slf4j;
 public class ArtistController {
 	@Operation(summary = "아티스트 등록")
 	@PostMapping
-	public Result<CreateArtistRes> createArtist(
+	public CreateArtistRes createArtist(
 		@Validated @RequestBody CreateArtistReq createArtistReq) {
-		return Result.<CreateArtistRes>builder()
-			.data(
-				CreateArtistRes.builder()
-					.id(1L)
-					.build()
-			)
+		return CreateArtistRes.builder()
+			.id(1L)
 			.build();
 	}
 
@@ -109,26 +104,22 @@ public class ArtistController {
 
 	@Operation(summary = "아티스트 pk로 조회")
 	@GetMapping("/{id}")
-	public Result<ArtistRes> getArtist(@PathVariable Long id) {
-		return Result.<ArtistRes>builder()
-			.data(
-				ArtistRes.builder()
-					.id(id)
-					.groupId(null)
-					.groupName("")
-					.name("세븐틴")
-					.image(
-						ImageRes.builder()
-							.apiUrl("/images/")
-							.filename("artist_img_svt.jpg")
-							.build()
-					)
-					.artistType(
-						ArtistTypeRes.builder()
-							.id(1L)
-							.type("아이돌")
-							.build()
-					)
+	public ArtistRes getArtist(@PathVariable Long id) {
+		return ArtistRes.builder()
+			.id(id)
+			.groupId(null)
+			.groupName("")
+			.name("세븐틴")
+			.image(
+				ImageRes.builder()
+					.apiUrl("/images/")
+					.filename("artist_img_svt.jpg")
+					.build()
+			)
+			.artistType(
+				ArtistTypeRes.builder()
+					.id(1L)
+					.type("아이돌")
 					.build()
 			)
 			.build();
@@ -136,13 +127,11 @@ public class ArtistController {
 
 	@Operation(summary = "아티스트 수정")
 	@PutMapping("/{id}")
-	public Result<Void> updateArtist(@PathVariable Long id, @Validated @RequestBody UpdateArtistReq updateArtistReq) {
-		return Result.<Void>builder().build();
+	public void updateArtist(@PathVariable Long id, @Validated @RequestBody UpdateArtistReq updateArtistReq) {
 	}
 
 	@Operation(summary = "아티스트 삭제")
 	@DeleteMapping("/{id}")
-	public Result<Void> deleteArtist(@PathVariable Long id) {
-		return Result.<Void>builder().build();
+	public void deleteArtist(@PathVariable Long id) {
 	}
 }

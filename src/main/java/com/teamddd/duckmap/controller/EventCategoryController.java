@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.teamddd.duckmap.dto.Result;
 import com.teamddd.duckmap.dto.event.category.CreateEventCategoryReq;
 import com.teamddd.duckmap.dto.event.category.CreateEventCategoryRes;
 import com.teamddd.duckmap.dto.event.category.EventCategoryRes;
@@ -33,14 +32,10 @@ public class EventCategoryController {
 
 	@Operation(summary = "이벤트 카테고리 생성")
 	@PostMapping
-	public Result<CreateEventCategoryRes> createEventCategory(
+	public CreateEventCategoryRes createEventCategory(
 		@Validated @RequestBody CreateEventCategoryReq createEventCategoryReq) {
-		return Result.<CreateEventCategoryRes>builder()
-			.data(
-				CreateEventCategoryRes.builder()
-					.id(1L)
-					.build()
-			)
+		return CreateEventCategoryRes.builder()
+			.id(1L)
 			.build();
 	}
 
@@ -65,14 +60,12 @@ public class EventCategoryController {
 
 	@Operation(summary = "이벤트 카테고리 수정")
 	@PutMapping("/{id}")
-	public Result<Void> updateEventCategory(@PathVariable Long id,
+	public void updateEventCategory(@PathVariable Long id,
 		@Validated @RequestBody UpdateEventCategoryReq updateEventCategoryReq) {
-		return Result.<Void>builder().build();
 	}
 
 	@Operation(summary = "이벤트 카테고리 삭제")
 	@DeleteMapping("/{id}")
-	public Result<Void> deleteEventCategory(@PathVariable Long id) {
-		return Result.<Void>builder().build();
+	public void deleteEventCategory(@PathVariable Long id) {
 	}
 }

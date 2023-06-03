@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.teamddd.duckmap.dto.ImageRes;
-import com.teamddd.duckmap.dto.Result;
 import com.teamddd.duckmap.dto.artist.ArtistRes;
 import com.teamddd.duckmap.dto.artist.ArtistTypeRes;
 import com.teamddd.duckmap.dto.event.category.EventCategoryRes;
@@ -43,99 +42,89 @@ public class EventController {
 
 	@Operation(summary = "이벤트 등록", description = "address 형식 변경 가능성 있음")
 	@PostMapping
-	public Result<CreateEventRes> createEvent(@Validated @RequestBody CreateEventReq createEventReq) {
-		return Result.<CreateEventRes>builder()
-			.data(
-				CreateEventRes.builder()
-					.id(1L)
-					.build()
-			)
+	public CreateEventRes createEvent(@Validated @RequestBody CreateEventReq createEventReq) {
+		return CreateEventRes.builder()
+			.id(1L)
 			.build();
 	}
 
 	@Operation(summary = "이벤트 pk로 조회")
 	@GetMapping("/{id}")
-	public Result<EventRes> getEvent(@PathVariable Long id) {
+	public EventRes getEvent(@PathVariable Long id) {
 		ImageRes imageRes = ImageRes.builder()
 			.apiUrl("/images/")
 			.filename("filename.png")
 			.build();
 
-		return Result.<EventRes>builder()
-			.data(
-				EventRes.builder()
-					.id(id)
-					.storeName("상호명")
-					.inProgress(true)
-					.fromDate(LocalDateTime.now().minusDays(2L))
-					.toDate(LocalDateTime.now().plusDays(1L))
-					.address("주소")
-					.businessHour("10:00 - 18:00")
-					.hashtag("#뫄뫄 #생일축하해")
-					.twitterUrl("https://twitter.com/home?lang=ko")
-					.artists(List.of(
-						ArtistRes.builder()
-							.id(2L)
-							.groupId(1L)
-							.name("태연")
-							.image(imageRes)
-							.artistType(
-								ArtistTypeRes.builder()
-									.id(1L)
-									.type("아이돌")
-									.build()
-							)
-							.build()
-					))
-					.categories(List.of(
-						EventCategoryRes.builder()
+		return EventRes.builder()
+			.id(id)
+			.storeName("상호명")
+			.inProgress(true)
+			.fromDate(LocalDateTime.now().minusDays(2L))
+			.toDate(LocalDateTime.now().plusDays(1L))
+			.address("주소")
+			.businessHour("10:00 - 18:00")
+			.hashtag("#뫄뫄 #생일축하해")
+			.twitterUrl("https://twitter.com/home?lang=ko")
+			.artists(List.of(
+				ArtistRes.builder()
+					.id(2L)
+					.groupId(1L)
+					.name("태연")
+					.image(imageRes)
+					.artistType(
+						ArtistTypeRes.builder()
 							.id(1L)
-							.category("생일카페")
+							.type("아이돌")
 							.build()
-					))
-					.images(List.of(imageRes))
-					.score(4.5)
-					.like(true)
-					.likeCount(23)
-					.bookmark(false)
-					.reviews(List.of(
-						ReviewRes.builder()
-							.id(1L)
-							.userProfile(imageRes)
-							.username("user_nickname")
-							.createdAt(LocalDateTime.now().minusDays(2))
-							.score(5)
-							.content("review content")
-							.photos(List.of(
-								imageRes,
-								imageRes
-							))
-							.build(),
-						ReviewRes.builder()
-							.id(2L)
-							.userProfile(imageRes)
-							.username("user2_nickname")
-							.createdAt(LocalDateTime.now().minusDays(3))
-							.score(4)
-							.content("review content")
-							.photos(List.of(imageRes))
-							.build()
-					))
+					)
 					.build()
-			)
+			))
+			.categories(List.of(
+				EventCategoryRes.builder()
+					.id(1L)
+					.category("생일카페")
+					.build()
+			))
+			.images(List.of(imageRes))
+			.score(4.5)
+			.like(true)
+			.likeCount(23)
+			.bookmark(false)
+			.reviews(List.of(
+				ReviewRes.builder()
+					.id(1L)
+					.userProfile(imageRes)
+					.username("user_nickname")
+					.createdAt(LocalDateTime.now().minusDays(2))
+					.score(5)
+					.content("review content")
+					.photos(List.of(
+						imageRes,
+						imageRes
+					))
+					.build(),
+				ReviewRes.builder()
+					.id(2L)
+					.userProfile(imageRes)
+					.username("user2_nickname")
+					.createdAt(LocalDateTime.now().minusDays(3))
+					.score(4)
+					.content("review content")
+					.photos(List.of(imageRes))
+					.build()
+			))
 			.build();
 	}
 
 	@Operation(summary = "이벤트 수정")
 	@PutMapping("/{id}")
-	public Result<Void> updateEvent(@PathVariable Long id, @Validated @RequestBody UpdateEventReq updateEventReq) {
-		return Result.<Void>builder().build();
+	public void updateEvent(@PathVariable Long id, @Validated @RequestBody UpdateEventReq updateEventReq) {
 	}
 
 	@Operation(summary = "이벤트 삭제")
 	@DeleteMapping("/{id}")
-	public Result<Void> deleteEvent(@PathVariable Long id) {
-		return Result.<Void>builder().build();
+	public void deleteEvent(@PathVariable Long id) {
 	}
 
 	@Operation(summary = "이벤트 목록 조회")
@@ -371,26 +360,24 @@ public class EventController {
 
 	@Operation(summary = "오늘 진행중인 이벤트 해시태그 목록 조회")
 	@GetMapping("/hashtags/today")
-	public Result<List<HashtagRes>> getTodayHashtags() {
-		return Result.<List<HashtagRes>>builder()
-			.data(List.of(
-				HashtagRes.builder()
-					.eventId(1L)
-					.hashtag("#뫄뫄 #생일_축하해")
-					.build(),
-				HashtagRes.builder()
-					.eventId(2L)
-					.hashtag("#소녀시대 #10주년")
-					.build(),
-				HashtagRes.builder()
-					.eventId(3L)
-					.hashtag("#뫄뫄_탄신 #벌써10000일")
-					.build(),
-				HashtagRes.builder()
-					.eventId(4L)
-					.hashtag("#드라마 #대박나자")
-					.build()
-			))
-			.build();
+	public List<HashtagRes> getTodayHashtags() {
+		return List.of(
+			HashtagRes.builder()
+				.eventId(1L)
+				.hashtag("#뫄뫄 #생일_축하해")
+				.build(),
+			HashtagRes.builder()
+				.eventId(2L)
+				.hashtag("#소녀시대 #10주년")
+				.build(),
+			HashtagRes.builder()
+				.eventId(3L)
+				.hashtag("#뫄뫄_탄신 #벌써10000일")
+				.build(),
+			HashtagRes.builder()
+				.eventId(4L)
+				.hashtag("#드라마 #대박나자")
+				.build()
+		);
 	}
 }
