@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import com.teamddd.duckmap.entity.Role;
@@ -26,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class JwtProvider {
 	@Value("${jwt.secret}")
 	private String secretKey;
-	private final UserDetailsService userDetailsService;
+	private final SecurityUserDetailsService securityUserDetailsService;
 
 	// 객체 초기화, secret Key를 Base64로 인코딩
 	@PostConstruct
@@ -52,7 +51,7 @@ public class JwtProvider {
 
 	// JWT 토큰에서 인증 정보 조회
 	public Authentication getAuthentication(String token) {
-		UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUserPK(token));
+		UserDetails userDetails = securityUserDetailsService.loadUserByUsername(this.getUserPK(token));
 		return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
 	}
 
