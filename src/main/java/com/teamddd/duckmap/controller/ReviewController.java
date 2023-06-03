@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.teamddd.duckmap.dto.ImageRes;
-import com.teamddd.duckmap.dto.Result;
 import com.teamddd.duckmap.dto.review.CreateReviewReq;
 import com.teamddd.duckmap.dto.review.CreateReviewRes;
 import com.teamddd.duckmap.dto.review.MyReviewsRes;
@@ -39,52 +38,43 @@ public class ReviewController {
 
 	@Operation(summary = "리뷰 등록")
 	@PostMapping
-	public Result<CreateReviewRes> createReview(@Validated @RequestBody CreateReviewReq createReviewReq) {
-		return Result.<CreateReviewRes>builder()
-			.data(
-				CreateReviewRes.builder()
-					.id(1L)
-					.build()
-			)
+	public CreateReviewRes createReview(@Validated @RequestBody CreateReviewReq createReviewReq) {
+		return CreateReviewRes.builder()
+			.id(1L)
 			.build();
 	}
 
 	@Operation(summary = "리뷰 pk로 조회")
 	@GetMapping("/{id}")
-	public Result<ReviewRes> getReview(@PathVariable Long id) {
+	public ReviewRes getReview(@PathVariable Long id) {
 		ImageRes imageRes = ImageRes.builder()
 			.apiUrl("/images/")
 			.filename("filename.png")
 			.build();
 
-		return Result.<ReviewRes>builder()
-			.data(
-				ReviewRes.builder()
-					.id(1L)
-					.userProfile(imageRes)
-					.username("user_nickname")
-					.createdAt(LocalDateTime.now().minusDays(4))
-					.score(5)
-					.content("review content")
-					.photos(List.of(
-						imageRes,
-						imageRes
-					))
-					.build()
-			)
+		return ReviewRes.builder()
+			.id(1L)
+			.userProfile(imageRes)
+			.username("user_nickname")
+			.createdAt(LocalDateTime.now().minusDays(4))
+			.score(5)
+			.content("review content")
+			.photos(List.of(
+				imageRes,
+				imageRes
+			))
 			.build();
 	}
 
 	@Operation(summary = "리뷰 수정")
 	@PutMapping("/{id}")
-	public Result<Void> updateReview(@PathVariable Long id, @Validated @RequestBody UpdateReviewReq updateReviewReq) {
-		return Result.<Void>builder().build();
+	public void updateReview(@PathVariable Long id, @Validated @RequestBody UpdateReviewReq updateReviewReq) {
 	}
 
 	@Operation(summary = "리뷰 삭제")
 	@DeleteMapping("/{id}")
-	public Result<Void> deleteReview(@PathVariable Long id) {
-		return Result.<Void>builder().build();
+	public void deleteReview(@PathVariable Long id) {
+
 	}
 
 	@Operation(summary = "리뷰 목록 조회")
