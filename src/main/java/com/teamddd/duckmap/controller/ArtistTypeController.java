@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.teamddd.duckmap.dto.Result;
 import com.teamddd.duckmap.dto.artist.ArtistTypeRes;
 import com.teamddd.duckmap.dto.artist.CreateArtistTypeReq;
 import com.teamddd.duckmap.dto.artist.CreateArtistTypeRes;
@@ -32,14 +31,10 @@ import lombok.extern.slf4j.Slf4j;
 public class ArtistTypeController {
 	@Operation(summary = "아티스트 구분 등록")
 	@PostMapping
-	public Result<CreateArtistTypeRes> createArtistType(
+	public CreateArtistTypeRes createArtistType(
 		@Validated @RequestBody CreateArtistTypeReq createArtistTypeReq) {
-		return Result.<CreateArtistTypeRes>builder()
-			.data(
-				CreateArtistTypeRes.builder()
-					.id(1L)
-					.build()
-			)
+		return CreateArtistTypeRes.builder()
+			.id(1L)
 			.build();
 	}
 
@@ -64,27 +59,21 @@ public class ArtistTypeController {
 
 	@Operation(summary = "아티스트 구분 pk로 조회")
 	@GetMapping("/{id}")
-	public Result<ArtistTypeRes> getArtistType(@PathVariable Long id) {
-		return Result.<ArtistTypeRes>builder()
-			.data(
-				ArtistTypeRes.builder()
-					.id(id)
-					.type("아이돌")
-					.build()
-			)
+	public ArtistTypeRes getArtistType(@PathVariable Long id) {
+		return ArtistTypeRes.builder()
+			.id(id)
+			.type("아이돌")
 			.build();
 	}
 
 	@Operation(summary = "아티스트 구분 수정")
 	@PutMapping("/{id}")
-	public Result<Void> updateArtistType(@PathVariable Long id,
+	public void updateArtistType(@PathVariable Long id,
 		@Validated @RequestBody UpdateArtistTypeReq updateArtistTypeReq) {
-		return Result.<Void>builder().build();
 	}
 
 	@Operation(summary = "아티스트 구분 삭제")
 	@DeleteMapping("/{id}")
-	public Result<Void> deleteArtistType(@PathVariable Long id) {
-		return Result.<Void>builder().build();
+	public void deleteArtistType(@PathVariable Long id) {
 	}
 }
