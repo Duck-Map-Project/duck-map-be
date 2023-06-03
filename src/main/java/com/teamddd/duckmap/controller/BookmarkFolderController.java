@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.teamddd.duckmap.dto.ImageRes;
-import com.teamddd.duckmap.dto.Result;
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderMemberRes;
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderRes;
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkedEventRes;
@@ -35,14 +34,10 @@ import lombok.extern.slf4j.Slf4j;
 public class BookmarkFolderController {
 	@Operation(summary = "북마크 폴더 생성")
 	@PostMapping
-	public Result<CreateBookmarkFolderRes> createBookmarkFolder(
+	public CreateBookmarkFolderRes createBookmarkFolder(
 		@Validated @RequestBody CreateBookmarkFolderReq createBookmarkFolderReq) {
-		return Result.<CreateBookmarkFolderRes>builder()
-			.data(
-				CreateBookmarkFolderRes.builder()
-					.id(1L)
-					.build()
-			)
+		return CreateBookmarkFolderRes.builder()
+			.id(1L)
 			.build();
 	}
 
@@ -75,22 +70,18 @@ public class BookmarkFolderController {
 
 	@Operation(summary = "북마크 폴더 pk로 북마크 폴더,사용자 정보 조회", description = "북마크 폴더 외부 공유용 api")
 	@GetMapping("/{id}")
-	public Result<BookmarkFolderMemberRes> getBookmarkFolder(@PathVariable Long id) {
-		return Result.<BookmarkFolderMemberRes>builder()
-			.data(
-				BookmarkFolderMemberRes.builder()
-					.id(1L)
-					.name("생일카페 모음")
-					.image(
-						ImageRes.builder()
-							.apiUrl("/images/")
-							.filename("default_folder.jpg")
-							.build()
-					)
-					.memberId(1L)
-					.username("사용자1")
+	public BookmarkFolderMemberRes getBookmarkFolder(@PathVariable Long id) {
+		return BookmarkFolderMemberRes.builder()
+			.id(1L)
+			.name("생일카페 모음")
+			.image(
+				ImageRes.builder()
+					.apiUrl("/images/")
+					.filename("default_folder.jpg")
 					.build()
 			)
+			.memberId(1L)
+			.username("사용자1")
 			.build();
 	}
 
@@ -121,14 +112,13 @@ public class BookmarkFolderController {
 
 	@Operation(summary = "북마크 폴더명, 이미지 변경 요청")
 	@PutMapping("/{id}")
-	public Result<Void> updateBookmarkFolder(@PathVariable Long id,
+	public void updateBookmarkFolder(@PathVariable Long id,
 		@Validated @RequestBody UpdateBookmarkFolderReq updateBookmarkFolderReq) {
-		return Result.<Void>builder().build();
 	}
 
 	@Operation(summary = "북마크 폴더 삭제")
 	@DeleteMapping("/{id}")
-	public Result<Void> deleteBookmarkFolder(@PathVariable Long id) {
-		return Result.<Void>builder().build();
+	public void deleteBookmarkFolder(@PathVariable Long id) {
+
 	}
 }

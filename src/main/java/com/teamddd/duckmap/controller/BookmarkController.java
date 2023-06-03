@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.teamddd.duckmap.dto.Result;
 import com.teamddd.duckmap.dto.event.bookmark.CreateBookmarkReq;
 import com.teamddd.duckmap.dto.event.bookmark.CreateBookmarkRes;
 import com.teamddd.duckmap.dto.event.bookmark.UpdateBookmarkReq;
@@ -28,29 +27,23 @@ public class BookmarkController {
 
 	@Operation(summary = "북마크 생성")
 	@PostMapping("/{id}/bookmarks")
-	public Result<CreateBookmarkRes> createBookmark(@PathVariable Long id, HttpSession session,
+	public CreateBookmarkRes createBookmark(@PathVariable Long id, HttpSession session,
 		@Validated @RequestBody
 		CreateBookmarkReq createBookmarkReq) {
-		return Result.<CreateBookmarkRes>builder()
-			.data(
-				CreateBookmarkRes.builder()
-					.id(1L)
-					.build()
-			)
+		return CreateBookmarkRes.builder()
+			.id(1L)
 			.build();
 	}
 
 	@Operation(summary = "북마크 폴더 변경")
 	@PutMapping("/{id}/bookmarks")
-	public Result<Void> updateBookmark(@PathVariable Long id,
+	public void updateBookmark(@PathVariable Long id,
 		@Validated @RequestBody UpdateBookmarkReq updateBookmarkReq) {
-		return Result.<Void>builder().build();
 	}
 
 	@Operation(summary = "북마크 취소")
 	@DeleteMapping("/{id}/bookmarks")
-	public Result<Void> deleteBookmark(@PathVariable Long id) {
-		return Result.<Void>builder().build();
+	public void deleteBookmark(@PathVariable Long id) {
 	}
 
 }
