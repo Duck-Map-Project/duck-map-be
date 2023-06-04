@@ -12,6 +12,7 @@ import com.teamddd.duckmap.dto.user.auth.LoginReq;
 import com.teamddd.duckmap.entity.LastSearchArtist;
 import com.teamddd.duckmap.entity.Member;
 import com.teamddd.duckmap.entity.Role;
+import com.teamddd.duckmap.exception.DuplicateEmailException;
 import com.teamddd.duckmap.exception.InvalidMemberException;
 import com.teamddd.duckmap.repository.LastSearchArtistRepository;
 import com.teamddd.duckmap.repository.MemberRepository;
@@ -28,12 +29,29 @@ public class MemberService {
 	private final JwtProvider jwtProvider;
 
 	public Long join(CreateMemberReq createMemberReq) {
+		checkDuplicateEmail(createMemberReq.getEmail());
+		checkDuplicateUsername(createMemberReq.getUsername());
+
 		return memberRepository.save(Member.builder()
 			.email(createMemberReq.getEmail())
 			.role(Role.USER)
 			.username(createMemberReq.getUsername())
 			.password(passwordEncoder.encode(createMemberReq.getPassword()))
 			.build()).getId();
+	}
+
+	public void checkDuplicateEmail(String email) {
+		if (memberRepository.findByEmail(email).isPresent()) {
+			throw new DuplicateEmailException();
+		}
+
+	}
+
+	public void checkDuplicateUsername(String username) {
+		if (memberRepository.findByUsername(username).isPresent()) {
+			throw new DuplicateEmailException();
+		}
+
 	}
 
 	public Member findOne(LoginReq loginUserRQ) {
