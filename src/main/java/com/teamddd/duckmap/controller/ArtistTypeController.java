@@ -45,19 +45,7 @@ public class ArtistTypeController {
 	@Operation(summary = "아티스트 구분 모두 조회")
 	@GetMapping
 	public List<ArtistTypeRes> getAllArtistType() {
-		return List.of(
-			ArtistTypeRes.builder()
-				.id(1L)
-				.type("아이돌")
-				.build(),
-			ArtistTypeRes.builder()
-				.id(2L)
-				.type("배우")
-				.build(),
-			ArtistTypeRes.builder()
-				.id(3L)
-				.type("모델")
-				.build());
+		return artistTypeService.getArtistTypes();
 	}
 
 	@Operation(summary = "아티스트 구분 pk로 조회")
