@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.teamddd.duckmap.dto.Result;
 import com.teamddd.duckmap.dto.user.auth.LoginReq;
 import com.teamddd.duckmap.dto.user.auth.LoginRes;
 import com.teamddd.duckmap.entity.Member;
@@ -28,28 +27,22 @@ public class AuthController {
 
 	@Operation(summary = "로그인")
 	@PostMapping("/login")
-	public Result<LoginRes> login(@Validated @RequestBody LoginReq loginUserRQ) {
+	public LoginRes login(@Validated @RequestBody LoginReq loginUserRQ) {
 		Member member = memberService.findOne(loginUserRQ);
 		String token = memberService.login(member);
 		Long lastSearchArtistId = memberService.findLastSearchArtist(member.getId());
-		return Result.<LoginRes>builder()
-			.data(
-				LoginRes.builder()
-					.id(member.getId())
-					.username(member.getUsername())
-					.image(member.getImage())
-					.lastSearchArtist(lastSearchArtistId)
-					.token(token)
-					.build()
-			)
+		return LoginRes.builder()
+			.id(member.getId())
+			.username(member.getUsername())
+			.image(member.getImage())
+			.lastSearchArtist(lastSearchArtistId)
+			.token(token)
 			.build();
 	}
 
 	@Operation(summary = "로그아웃")
 	@GetMapping("/logout")
-	public Result<Void> logout(HttpSession session) {
-		return Result.<Void>builder()
-			.build();
+	public void logout(HttpSession session) {
 	}
 }
 
