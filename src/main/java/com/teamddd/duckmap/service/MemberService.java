@@ -13,6 +13,7 @@ import com.teamddd.duckmap.entity.LastSearchArtist;
 import com.teamddd.duckmap.entity.Member;
 import com.teamddd.duckmap.entity.Role;
 import com.teamddd.duckmap.exception.DuplicateEmailException;
+import com.teamddd.duckmap.exception.DuplicateUsernameException;
 import com.teamddd.duckmap.exception.InvalidMemberException;
 import com.teamddd.duckmap.repository.LastSearchArtistRepository;
 import com.teamddd.duckmap.repository.MemberRepository;
@@ -40,18 +41,17 @@ public class MemberService {
 			.build()).getId();
 	}
 
-	public void checkDuplicateEmail(String email) {
-		if (memberRepository.findByEmail(email).isPresent()) {
+	private void checkDuplicateEmail(String email) {
+		memberRepository.findByEmail(email).ifPresent(member -> {
 			throw new DuplicateEmailException();
-		}
+		});
 
 	}
 
-	public void checkDuplicateUsername(String username) {
-		if (memberRepository.findByUsername(username).isPresent()) {
-			throw new DuplicateEmailException();
-		}
-
+	private void checkDuplicateUsername(String username) {
+		memberRepository.findByUsername(username).ifPresent(member -> {
+			throw new DuplicateUsernameException();
+		});
 	}
 
 	public Member findOne(LoginReq loginUserRQ) {

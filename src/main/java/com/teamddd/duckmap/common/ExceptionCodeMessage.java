@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 public enum ExceptionCodeMessage {
 	INVALID_TOKEN_EXCEPTION("A001", "유효하지 않은 토큰입니다"),
 	INVALID_MEMBER_EXCEPTION("A002", "유효하지 않은 이메일 혹은 비밀번호입니다"),
-	DUPLICATE_EMAIL_EXCEPTION("D001", "이미 사용중인 이메일입니다"),
-	DUPLICATE_USERNAME_EXCEPTION("D002", "이미 사용중인 닉네임입니다");
+	DUPLICATE_EMAIL_EXCEPTION("M001", "이미 사용중인 이메일입니다"),
+	DUPLICATE_USERNAME_EXCEPTION("M002", "이미 사용중인 닉네임입니다");
 
 	private final String code;
 	private final String message;
