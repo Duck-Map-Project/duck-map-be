@@ -1,8 +1,12 @@
 package com.teamddd.duckmap.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.teamddd.duckmap.dto.artist.ArtistTypeRes;
 import com.teamddd.duckmap.dto.artist.CreateArtistTypeReq;
 import com.teamddd.duckmap.entity.ArtistType;
 import com.teamddd.duckmap.repository.ArtistTypeRepository;
@@ -26,5 +30,12 @@ public class ArtistTypeService {
 		artistTypeRepository.save(artistType);
 
 		return artistType.getId();
+	}
+
+	public List<ArtistTypeRes> getArtistTypes() {
+		List<ArtistType> types = artistTypeRepository.findAll();
+		return types.stream()
+			.map(ArtistTypeRes::of)
+			.collect(Collectors.toList());
 	}
 }
