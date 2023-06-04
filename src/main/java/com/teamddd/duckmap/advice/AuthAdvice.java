@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.teamddd.duckmap.common.ExceptionCodeMessage;
 import com.teamddd.duckmap.dto.ErrorResult;
+import com.teamddd.duckmap.exception.InvalidMemberException;
 import com.teamddd.duckmap.exception.InvalidTokenException;
 
 import lombok.extern.slf4j.Slf4j;
@@ -24,4 +25,12 @@ public class AuthAdvice {
 			.build();
 	}
 
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
+	@ExceptionHandler
+	public ErrorResult invalidMemberException(InvalidMemberException ex) {
+		return ErrorResult.builder()
+			.code(ExceptionCodeMessage.INVALID_MEMBER_EXCEPTION.code())
+			.message(ex.getMessage())
+			.build();
+	}
 }
