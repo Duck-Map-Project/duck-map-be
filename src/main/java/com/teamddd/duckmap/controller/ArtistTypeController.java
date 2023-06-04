@@ -2,9 +2,6 @@ package com.teamddd.duckmap.controller;
 
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,8 +44,8 @@ public class ArtistTypeController {
 
 	@Operation(summary = "아티스트 구분 모두 조회")
 	@GetMapping
-	public Page<ArtistTypeRes> getAllArtistType(Pageable pageable) {
-		return new PageImpl<>(List.of(
+	public List<ArtistTypeRes> getAllArtistType() {
+		return List.of(
 			ArtistTypeRes.builder()
 				.id(1L)
 				.type("아이돌")
@@ -60,8 +57,7 @@ public class ArtistTypeController {
 			ArtistTypeRes.builder()
 				.id(3L)
 				.type("모델")
-				.build()
-		));
+				.build());
 	}
 
 	@Operation(summary = "아티스트 구분 pk로 조회")
