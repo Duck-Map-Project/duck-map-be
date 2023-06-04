@@ -12,6 +12,7 @@ import com.teamddd.duckmap.dto.user.auth.LoginReq;
 import com.teamddd.duckmap.entity.LastSearchArtist;
 import com.teamddd.duckmap.entity.Member;
 import com.teamddd.duckmap.entity.Role;
+import com.teamddd.duckmap.exception.InvalidMemberException;
 import com.teamddd.duckmap.repository.LastSearchArtistRepository;
 import com.teamddd.duckmap.repository.MemberRepository;
 
@@ -37,9 +38,9 @@ public class MemberService {
 
 	public Member findOne(LoginReq loginUserRQ) {
 		Member member = memberRepository.findByEmail(loginUserRQ.getEmail())
-			.orElseThrow(() -> new IllegalArgumentException("가입 되지 않은 이메일입니다."));
+			.orElseThrow(InvalidMemberException::new);
 		if (!passwordEncoder.matches(loginUserRQ.getPassword(), member.getPassword())) {
-			throw new IllegalArgumentException("이메일 또는 비밀번호가 맞지 않습니다.");
+			throw new InvalidMemberException();
 		}
 		return member;
 	}
