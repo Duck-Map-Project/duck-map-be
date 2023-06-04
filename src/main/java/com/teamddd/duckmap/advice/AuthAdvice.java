@@ -17,7 +17,7 @@ public class AuthAdvice {
 
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
 	@ExceptionHandler
-	public ErrorResult nonExistentUserException(InvalidTokenException ex) {
+	public ErrorResult invalidTokenException(InvalidTokenException ex) {
 		return ErrorResult.builder()
 			.code(ExceptionCodeMessage.INVALID_TOKEN_EXCEPTION.code())
 			.message(ex.getMessage())
