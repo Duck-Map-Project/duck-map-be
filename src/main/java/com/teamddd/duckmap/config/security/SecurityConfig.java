@@ -40,11 +40,6 @@ public class SecurityConfig {
 			.csrf().disable()
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 토큰 기반 인증이므로 세션 사용 안함
 			.and()
-			.authorizeRequests() // 요청에 대한 사용 권한 체크
-			.antMatchers("/admin/**").hasRole("ADMIN")
-			.antMatchers("/api/post/**").authenticated()
-			.anyRequest().permitAll() // 그외 나머지 요청은 누구나 접근 가능
-			.and()
 			.addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
 		// JwtAuthenticationFilter를 UsernamePasswordAuthenticationFilter 전에 넣음
 
