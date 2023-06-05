@@ -15,7 +15,7 @@ public class CreateMemberReq {
 	@Email
 	private String email;
 	@NotBlank
-	@Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}",
+	@Pattern(regexp = "(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,16}",
 		message = "비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
 	private String password;
 }
