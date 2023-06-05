@@ -28,12 +28,10 @@ public class ImageController {
 	public ImageRes saveImage(@RequestParam MultipartFile file) {
 		if (file.isEmpty() || file.getContentType() == null || !file.getContentType().startsWith("image")) {
 			return ImageRes.builder()
-				.apiUrl("구현하면 400 반환 예정")
-				.filename("error - content type은 image로 시작해야 합니다")
+				.filename("구현하면 400 반환 예정 - content type은 image로 시작해야 합니다")
 				.build();
 		}
 		return ImageRes.builder()
-			.apiUrl("/images/")
 			.filename("filename.jpg")
 			.build();
 	}

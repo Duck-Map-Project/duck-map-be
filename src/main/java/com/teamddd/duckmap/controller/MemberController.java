@@ -52,7 +52,6 @@ public class MemberController {
 			.email("sample@naver.com")
 			.userProfile(
 				ImageRes.builder()
-					.apiUrl("/images/")
 					.filename("user1.jpg")
 					.build()
 			)

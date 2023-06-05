@@ -52,7 +52,6 @@ public class ArtistController {
 				.name("세븐틴")
 				.image(
 					ImageRes.builder()
-						.apiUrl("/images/")
 						.filename("artist_img_svt.jpg")
 						.build()
 				)
@@ -70,7 +69,6 @@ public class ArtistController {
 				.name("이제훈")
 				.image(
 					ImageRes.builder()
-						.apiUrl("/images/")
 						.filename("artist_img_ljh.jpg")
 						.build()
 				)
@@ -88,7 +86,6 @@ public class ArtistController {
 				.name("아이브")
 				.image(
 					ImageRes.builder()
-						.apiUrl("/images/")
 						.filename("artist_img_ive.jpg")
 						.build()
 				)
@@ -112,7 +109,6 @@ public class ArtistController {
 			.name("세븐틴")
 			.image(
 				ImageRes.builder()
-					.apiUrl("/images/")
 					.filename("artist_img_svt.jpg")
 					.build()
 			)
