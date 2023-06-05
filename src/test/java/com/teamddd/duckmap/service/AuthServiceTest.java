@@ -15,6 +15,7 @@ import com.teamddd.duckmap.dto.user.CreateMemberReq;
 import com.teamddd.duckmap.dto.user.auth.LoginReq;
 import com.teamddd.duckmap.entity.Member;
 import com.teamddd.duckmap.repository.MemberRepository;
+import com.teamddd.duckmap.util.MemberUtils;
 
 @SpringBootTest
 @Transactional
@@ -65,7 +66,7 @@ public class AuthServiceTest {
 		//then
 		assertThat(mem.getUsername()).isEqualTo("user1");
 
-		//String userName = MemberUtils.getAuthMember().getUsername();
-		//assertThat(userName).isEqualTo("user1");
+		String userName = MemberUtils.getAuthMember().getUsername();
+		assertThat(userName).isEqualTo("user1");
 	}
 }
