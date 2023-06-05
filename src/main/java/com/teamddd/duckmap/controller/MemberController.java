@@ -45,7 +45,7 @@ public class MemberController {
 
 	@Operation(summary = "회원 정보 조회", description = "로그인한 회원 정보 조회")
 	@GetMapping("/me")
-	public MemberRes getUserInfo(HttpSession session) {
+	public MemberRes getUserInfo() {
 		return MemberRes.builder()
 			.id(1L)
 			.username("user1")
@@ -62,12 +62,14 @@ public class MemberController {
 
 	@Operation(summary = "회원정보 수정", description = "로그인한 회원의 닉네임, 프로필 사진 변경 요청")
 	@PutMapping("/me")
-	public void updateUser(HttpSession session, @Validated @RequestBody UpdateMemberReq updateMemberReq) {
+	public void updateUser(@Validated @RequestBody UpdateMemberReq updateMemberReq) {
+		memberService.updateUsername(updateMemberReq.getUsername());
 	}
 
 	@Operation(summary = "비밀번호 변경", description = "로그인한 회원 비밀번호 변경")
 	@PatchMapping("/me/password")
 	public void updatePassword(@Validated @RequestBody UpdatePasswordReq updatePasswordReq) {
+		memberService.updatePassword(updatePasswordReq.getCurrentPassword(), updatePasswordReq.getNewPassword());
 	}
 
 	@Operation(summary = "회원 탈퇴")

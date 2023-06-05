@@ -64,10 +64,10 @@ public class MemberService {
 	}
 
 	@Transactional
-	public void updatePassword(String exPassword, String newPassword) {
+	public void updatePassword(String currentPassword, String newPassword) {
 		Member member = memberRepository.findById(MemberUtils.getAuthMember().getId())
 			.orElseThrow(InvalidMemberException::new);
-		if (!passwordEncoder.matches(exPassword, member.getPassword())) {
+		if (!passwordEncoder.matches(currentPassword, member.getPassword())) {
 			throw new RuntimeException("비밀번호가 맞지 않습니다");
 		}
 		member.updatePassword(passwordEncoder.encode((newPassword)));
