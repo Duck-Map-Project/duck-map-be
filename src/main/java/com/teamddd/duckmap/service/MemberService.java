@@ -1,34 +1,29 @@
 package com.teamddd.duckmap.service;
 
-import java.util.Optional;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.teamddd.duckmap.config.security.JwtProvider;
 import com.teamddd.duckmap.dto.user.CreateMemberReq;
-import com.teamddd.duckmap.dto.user.auth.LoginReq;
-import com.teamddd.duckmap.entity.LastSearchArtist;
+import com.teamddd.duckmap.dto.user.MemberRes;
 import com.teamddd.duckmap.entity.Member;
 import com.teamddd.duckmap.entity.Role;
 import com.teamddd.duckmap.exception.DuplicateEmailException;
 import com.teamddd.duckmap.exception.DuplicateUsernameException;
 import com.teamddd.duckmap.exception.InvalidMemberException;
-import com.teamddd.duckmap.repository.LastSearchArtistRepository;
 import com.teamddd.duckmap.repository.MemberRepository;
+import com.teamddd.duckmap.util.MemberUtils;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MemberService {
 	private final MemberRepository memberRepository;
-	private final LastSearchArtistRepository lastSearchArtistRepository;
 	private final PasswordEncoder passwordEncoder;
-	private final JwtProvider jwtProvider;
 
+	@Transactional
 	public Long join(CreateMemberReq createMemberReq) {
 		checkDuplicateEmail(createMemberReq.getEmail());
 		checkDuplicateUsername(createMemberReq.getUsername());
@@ -54,23 +49,28 @@ public class MemberService {
 		});
 	}
 
-	public Member findOne(LoginReq loginUserRQ) {
-		Member member = memberRepository.findByEmail(loginUserRQ.getEmail())
+	public MemberRes getMyInfoBySecurity() {
+		return memberRepository.findById(MemberUtils.getAuthMember().getId())
+			.map(MemberRes::of)
 			.orElseThrow(InvalidMemberException::new);
-		if (!passwordEncoder.matches(loginUserRQ.getPassword(), member.getPassword())) {
-			throw new InvalidMemberException();
+	}
+
+	@Transactional
+	public void updateUsername(String username) {
+		Member member = memberRepository.findByEmail(MemberUtils.getAuthMember().getEmail())
+			.orElseThrow(InvalidMemberException::new);
+		member.updateUsername(username);
+		memberRepository.save(member);
+	}
+
+	@Transactional
+	public void updatePassword(String exPassword, String newPassword) {
+		Member member = memberRepository.findById(MemberUtils.getAuthMember().getId())
+			.orElseThrow(InvalidMemberException::new);
+		if (!passwordEncoder.matches(exPassword, member.getPassword())) {
+			throw new RuntimeException("비밀번호가 맞지 않습니다");
 		}
-		return member;
+		member.updatePassword(passwordEncoder.encode((newPassword)));
+		memberRepository.save(member);
 	}
-
-	public String login(Member member) {
-		return jwtProvider.createToken(member.getEmail(), member.getRole());
-	}
-
-	public Long findLastSearchArtist(Long memberId) {
-		Optional<LastSearchArtist> optional = lastSearchArtistRepository.findByMemberId(memberId);
-
-		return optional.map(LastSearchArtist::getId).orElse(null);
-	}
-
 }
