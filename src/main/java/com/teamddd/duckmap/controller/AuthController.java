@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.teamddd.duckmap.dto.user.auth.LoginReq;
 import com.teamddd.duckmap.dto.user.auth.LoginRes;
 import com.teamddd.duckmap.entity.Member;
-import com.teamddd.duckmap.service.MemberService;
+import com.teamddd.duckmap.service.AuthService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -23,19 +23,19 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 public class AuthController {
-	private final MemberService memberService;
+	private final AuthService authService;
 
 	@Operation(summary = "로그인")
 	@PostMapping("/login")
 	public LoginRes login(@Validated @RequestBody LoginReq loginUserRQ) {
-		Member member = memberService.findOne(loginUserRQ);
-		String token = memberService.login(member);
-		Long lastSearchArtistId = memberService.findLastSearchArtist(member.getId());
+		Member member = authService.login(loginUserRQ);
+		String token = authService.createToken(member);
+
 		return LoginRes.builder()
 			.id(member.getId())
 			.username(member.getUsername())
 			.image(member.getImage())
-			.lastSearchArtist(lastSearchArtistId)
+			.lastSearchArtist(null)
 			.token(token)
 			.build();
 	}
