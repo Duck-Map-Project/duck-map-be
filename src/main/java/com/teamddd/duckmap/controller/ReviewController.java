@@ -48,7 +48,6 @@ public class ReviewController {
 	@GetMapping("/{id}")
 	public ReviewRes getReview(@PathVariable Long id) {
 		ImageRes imageRes = ImageRes.builder()
-			.apiUrl("/images/")
 			.filename("filename.png")
 			.build();
 
@@ -81,7 +80,6 @@ public class ReviewController {
 	@GetMapping
 	public Page<ReviewsRes> getReviews(Pageable pageable, @ModelAttribute ReviewSearchParam reviewSearchParam) {
 		ImageRes imageRes = ImageRes.builder()
-			.apiUrl("/images/")
 			.filename("filename.png")
 			.build();
 		return new PageImpl<>(List.of(
@@ -107,7 +105,6 @@ public class ReviewController {
 	@GetMapping("/myreview")
 	public Page<MyReviewsRes> getMyReviews(Pageable pageable) {
 		ImageRes imageRes = ImageRes.builder()
-			.apiUrl("/images/")
 			.filename("filename.png")
 			.build();
 

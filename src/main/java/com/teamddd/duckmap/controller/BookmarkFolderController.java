@@ -50,7 +50,6 @@ public class BookmarkFolderController {
 				.name("Folder1")
 				.image(
 					ImageRes.builder()
-						.apiUrl("/images/")
 						.filename("default_folder.jpg")
 						.build()
 				)
@@ -60,7 +59,6 @@ public class BookmarkFolderController {
 				.name("Folder2")
 				.image(
 					ImageRes.builder()
-						.apiUrl("/images/")
 						.filename("default_folder.jpg")
 						.build()
 				)
@@ -76,7 +74,6 @@ public class BookmarkFolderController {
 			.name("생일카페 모음")
 			.image(
 				ImageRes.builder()
-					.apiUrl("/images/")
 					.filename("default_folder.jpg")
 					.build()
 			)
@@ -94,7 +91,6 @@ public class BookmarkFolderController {
 				.storeName("스프링 카페")
 				.image(
 					ImageRes.builder()
-						.apiUrl("/images/")
 						.filename("default_cafe.jpg")
 						.build()
 				).build(),
@@ -103,7 +99,6 @@ public class BookmarkFolderController {
 				.storeName("썸머 카페")
 				.image(
 					ImageRes.builder()
-						.apiUrl("/images/")
 						.filename("default_cafe.jpg")
 						.build()
 				).build()

@@ -52,7 +52,6 @@ public class EventController {
 	@GetMapping("/{id}")
 	public EventRes getEvent(@PathVariable Long id) {
 		ImageRes imageRes = ImageRes.builder()
-			.apiUrl("/images/")
 			.filename("filename.png")
 			.build();
 
@@ -131,7 +130,6 @@ public class EventController {
 	@GetMapping
 	public Page<EventsRes> getEvents(Pageable pageable, @ModelAttribute EventSearchParam eventSearchParam) {
 		ImageRes imageRes = ImageRes.builder()
-			.apiUrl("/images/")
 			.filename("filename.png")
 			.build();
 
@@ -194,7 +192,6 @@ public class EventController {
 				))
 				.image(
 					ImageRes.builder()
-						.apiUrl("/images/")
 						.filename("event_image2.jpg")
 						.build()
 				)
@@ -208,7 +205,6 @@ public class EventController {
 	@GetMapping("/myevent")
 	public Page<EventsRes> getMyEvents(Pageable pageable) {
 		ImageRes imageRes = ImageRes.builder()
-			.apiUrl("/images/")
 			.filename("event_image.jpg")
 			.build();
 
@@ -271,7 +267,6 @@ public class EventController {
 				))
 				.image(
 					ImageRes.builder()
-						.apiUrl("/images/")
 						.filename("event_image2.jpg")
 						.build()
 				)
@@ -285,7 +280,6 @@ public class EventController {
 	@GetMapping("/mylike")
 	public Page<EventsRes> getMyLikeEvents(Pageable pageable) {
 		ImageRes imageRes = ImageRes.builder()
-			.apiUrl("/images/")
 			.filename("event_image.jpg")
 			.build();
 
@@ -348,7 +342,6 @@ public class EventController {
 				))
 				.image(
 					ImageRes.builder()
-						.apiUrl("/images/")
 						.filename("event_image2.jpg")
 						.build()
 				)

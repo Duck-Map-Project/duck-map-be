@@ -4,8 +4,11 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@Builder
 public class ImageRes {
-	private String apiUrl;
-	private String filename;
+	private String fileUrl;
+
+	@Builder
+	public ImageRes(String filename) {
+		this.fileUrl = "/images/" + filename;
+	}
 }
