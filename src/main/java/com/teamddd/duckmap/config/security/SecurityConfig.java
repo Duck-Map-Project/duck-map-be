@@ -40,9 +40,12 @@ public class SecurityConfig {
 		http
 			.httpBasic().disable() // rest api 만을 고려하여 기본설정 해제
 			.csrf().disable()
+			.addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 토큰 기반 인증이므로 세션 사용 안함
 			.and()
-			.addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
+			.headers()
+			.frameOptions().sameOrigin();
+
 		// JwtAuthenticationFilter를 UsernamePasswordAuthenticationFilter 전에 넣음
 
 		return http.build();

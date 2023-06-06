@@ -11,8 +11,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import lombok.RequiredArgsConstructor;
+import com.teamddd.duckmap.exception.InvalidMemberException;
+import com.teamddd.duckmap.exception.InvalidTokenException;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private final JwtProvider jwtProvider;
@@ -20,16 +25,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
-		// 헤더에서 JWT를 받아옴
-		String token = jwtProvider.resolveToken(request);
-		// 유효한 토큰인지 확인
-		if (token != null && jwtProvider.validateToken(token)) {
-			// 토큰이 유효하면 토큰으로부터 유저 정보를 받아옴
-			Authentication authentication = jwtProvider.getAuthentication(token);
-			// SecurityContext에 Authentication 객체를 저장
-			SecurityContextHolder.getContext().setAuthentication(authentication);
+		// Access Token 추출
+		String accessToken = resolveToken(request);
+
+		try { // 정상 토큰인지 검사
+			if (accessToken != null && jwtProvider.validateAccessToken(accessToken)) {
+				Authentication authentication = jwtProvider.getAuthentication(accessToken);
+				SecurityContextHolder.getContext().setAuthentication(authentication);
+				log.info("Save authentication in SecurityContextHolder.");
+			}
+		} catch (InvalidTokenException e) { // 잘못된 토큰일 경우
+			SecurityContextHolder.clearContext();
+		} catch (InvalidMemberException e) { // 회원을 찾을 수 없을 경우
+			SecurityContextHolder.clearContext();
 		}
 		filterChain.doFilter(request, response);
 	}
 
+	// HTTP Request 헤더로부터 토큰 추출
+	public String resolveToken(HttpServletRequest httpServletRequest) {
+		String bearerToken = httpServletRequest.getHeader("Authorization");
+		if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+			return bearerToken.substring(7);
+		}
+		return null;
+	}
 }

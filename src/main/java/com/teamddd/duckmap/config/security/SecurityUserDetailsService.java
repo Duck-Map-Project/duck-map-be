@@ -1,7 +1,6 @@
 package com.teamddd.duckmap.config.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +14,9 @@ public class SecurityUserDetailsService implements UserDetailsService {
 	private MemberRepository memberRepository;
 
 	@Override
-	public UserDetails loadUserByUsername(String username) {
-		Member member = memberRepository.findByEmail(username)
+	public UserDetailsImpl loadUserByUsername(String email) {
+		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(InvalidMemberException::new);
-		return new SecurityUser(member);
+		return new UserDetailsImpl(member);
 	}
 }
