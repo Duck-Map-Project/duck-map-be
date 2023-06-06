@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.teamddd.duckmap.config.security.TokenDto;
 import com.teamddd.duckmap.dto.user.CreateMemberReq;
 import com.teamddd.duckmap.dto.user.auth.LoginReq;
 import com.teamddd.duckmap.entity.Member;
@@ -60,13 +61,11 @@ public class AuthServiceTest {
 		ReflectionTestUtils.setField(loginReq, "password", "@Aaaa1234523");
 		//when
 
-		Member mem = authService.login(loginReq);
-		String token = authService.createToken(mem);
+		TokenDto tokenDto = authService.login(loginReq);
 
 		//then
-		assertThat(mem.getUsername()).isEqualTo("user1");
 
-		String userName = MemberUtils.getAuthMember().getUsername();
-		assertThat(userName).isEqualTo("user1");
+		String email = MemberUtils.getAuthMember().getUsername();
+		assertThat(email).isEqualTo("string@string.com");
 	}
 }
