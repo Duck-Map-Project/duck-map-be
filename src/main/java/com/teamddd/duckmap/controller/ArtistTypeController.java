@@ -2,6 +2,7 @@ package com.teamddd.duckmap.controller;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.teamddd.duckmap.config.security.SecurityRule;
 import com.teamddd.duckmap.dto.artist.ArtistTypeRes;
 import com.teamddd.duckmap.dto.artist.CreateArtistTypeReq;
 import com.teamddd.duckmap.dto.artist.CreateArtistTypeRes;
@@ -30,6 +32,7 @@ public class ArtistTypeController {
 
 	private final ArtistTypeService artistTypeService;
 
+	@PreAuthorize(SecurityRule.HAS_ROLE_ADMIN)
 	@Operation(summary = "아티스트 구분 등록")
 	@PostMapping
 	public CreateArtistTypeRes createArtistType(
