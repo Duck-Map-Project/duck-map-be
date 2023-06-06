@@ -56,12 +56,11 @@ public class MemberService {
 	}
 
 	@Transactional
-	public void updateUserInfo(String username, String image) {
+	public void updateMemberInfo(String username, String image) {
 		Member member = memberRepository.findByEmail(MemberUtils.getAuthMember().getUsername())
 			.orElseThrow(InvalidMemberException::new);
-		member.updateUsername(username);
-		member.updateImage(image);
-		memberRepository.save(member);
+		member.updateMemberInfo(username, image);
+
 	}
 
 	@Transactional
@@ -72,6 +71,5 @@ public class MemberService {
 			throw new RuntimeException("비밀번호가 맞지 않습니다");
 		}
 		member.updatePassword(passwordEncoder.encode((newPassword)));
-		memberRepository.save(member);
 	}
 }

@@ -36,11 +36,8 @@ public class Member extends BaseTimeEntity {
 
 	private LocalDateTime loginAt;
 
-	public void updateUsername(String newUsername) {
+	public void updateMemberInfo(String newUsername, String image) {
 		this.username = newUsername;
-	}
-
-	public void updateImage(String image) {
 		this.image = image;
 	}
 
