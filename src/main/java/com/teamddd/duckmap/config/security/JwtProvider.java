@@ -130,9 +130,10 @@ public class JwtProvider {
 
 	// Filter에서 사용
 	public boolean validateAccessToken(String accessToken) {
+		String redisServiceValues = redisService.getValues(accessToken);
 		try {
-			if (redisService.getValues(accessToken) != null // NPE 방지
-				&& redisService.getValues(accessToken).equals("logout")) { // 로그아웃 했을 경우
+			if (redisServiceValues != null // NPE 방지
+				&& redisServiceValues.equals("logout")) { // 로그아웃 했을 경우
 				return false;
 			}
 			Jwts.parserBuilder()
