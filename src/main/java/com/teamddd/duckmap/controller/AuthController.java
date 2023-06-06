@@ -27,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/auth")
 public class AuthController {
 	private final AuthService authService;
-	private final long COOKIE_EXPIRATION = 7776000;
+	private static final long COOKIE_EXPIRATION = 7776000;
 
 	@Operation(summary = "로그인")
 	@PostMapping("/login")
