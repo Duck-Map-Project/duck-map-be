@@ -50,14 +50,14 @@ public class MemberService {
 	}
 
 	public MemberRes getMyInfoBySecurity() {
-		return memberRepository.findById(MemberUtils.getAuthMember().getId())
+		return memberRepository.findByEmail(MemberUtils.getAuthMember().getUsername())
 			.map(MemberRes::of)
 			.orElseThrow(InvalidMemberException::new);
 	}
 
 	@Transactional
 	public void updateUsername(String username) {
-		Member member = memberRepository.findByEmail(MemberUtils.getAuthMember().getEmail())
+		Member member = memberRepository.findByEmail(MemberUtils.getAuthMember().getUsername())
 			.orElseThrow(InvalidMemberException::new);
 		member.updateUsername(username);
 		memberRepository.save(member);
@@ -65,7 +65,7 @@ public class MemberService {
 
 	@Transactional
 	public void updatePassword(String currentPassword, String newPassword) {
-		Member member = memberRepository.findById(MemberUtils.getAuthMember().getId())
+		Member member = memberRepository.findByEmail(MemberUtils.getAuthMember().getUsername())
 			.orElseThrow(InvalidMemberException::new);
 		if (!passwordEncoder.matches(currentPassword, member.getPassword())) {
 			throw new RuntimeException("비밀번호가 맞지 않습니다");
