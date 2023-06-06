@@ -56,10 +56,11 @@ public class MemberService {
 	}
 
 	@Transactional
-	public void updateUsername(String username) {
+	public void updateUserInfo(String username, String image) {
 		Member member = memberRepository.findByEmail(MemberUtils.getAuthMember().getUsername())
 			.orElseThrow(InvalidMemberException::new);
 		member.updateUsername(username);
+		member.updateImage(image);
 		memberRepository.save(member);
 	}
 

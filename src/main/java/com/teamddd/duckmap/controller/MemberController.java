@@ -48,7 +48,7 @@ public class MemberController {
 	@Operation(summary = "회원정보 수정", description = "로그인한 회원의 닉네임, 프로필 사진 변경 요청")
 	@PutMapping("/me")
 	public void updateUser(@Validated @RequestBody UpdateMemberReq updateMemberReq) {
-		memberService.updateUsername(updateMemberReq.getUsername());
+		memberService.updateUserInfo(updateMemberReq.getUsername(), updateMemberReq.getImage());
 	}
 
 	@Operation(summary = "비밀번호 변경", description = "로그인한 회원 비밀번호 변경")

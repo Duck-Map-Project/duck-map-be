@@ -26,7 +26,6 @@ public class MemberRes {
 			.email(member.getEmail())
 			.userProfile(
 				ImageRes.builder()
-					.apiUrl("")
 					.filename(member.getImage())
 					.build()
 			)
