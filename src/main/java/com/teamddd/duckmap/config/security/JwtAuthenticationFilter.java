@@ -35,7 +35,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				log.info("Save authentication in SecurityContextHolder.");
 			}
 		} catch (InvalidTokenException e) { // 잘못된 토큰일 경우
+			SecurityContextHolder.clearContext();
 		} catch (InvalidMemberException e) { // 회원을 찾을 수 없을 경우
+			SecurityContextHolder.clearContext();
 		}
 		filterChain.doFilter(request, response);
 	}
