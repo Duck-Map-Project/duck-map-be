@@ -21,8 +21,6 @@ import lombok.RequiredArgsConstructor;
 @Configuration
 public class SecurityConfig {
 	private final JwtProvider jwtProvider;
-	private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
-	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
 	// 비밀번호 암호화
 	@Bean
@@ -44,10 +42,6 @@ public class SecurityConfig {
 			.csrf().disable()
 			.addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 토큰 기반 인증이므로 세션 사용 안함
-			.and()
-			.exceptionHandling()
-			.authenticationEntryPoint(jwtAuthenticationEntryPoint) //customEntryPoint
-			.accessDeniedHandler(jwtAccessDeniedHandler) // cutomAccessDeniedHandler
 			.and()
 			.headers()
 			.frameOptions().sameOrigin();
