@@ -12,7 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.teamddd.duckmap.config.redis.RedisService;
+import com.teamddd.duckmap.service.RedisService;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;

@@ -1,4 +1,4 @@
-package com.teamddd.duckmap.config.redis;
+package com.teamddd.duckmap.service;
 
 import java.util.concurrent.TimeUnit;
 

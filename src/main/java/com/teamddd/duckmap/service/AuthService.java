@@ -11,7 +11,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.teamddd.duckmap.config.redis.RedisService;
 import com.teamddd.duckmap.config.security.JwtProvider;
 import com.teamddd.duckmap.config.security.TokenDto;
 import com.teamddd.duckmap.dto.user.auth.LoginReq;
