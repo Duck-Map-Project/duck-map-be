@@ -1,6 +1,7 @@
 package com.teamddd.duckmap.config.security;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -17,8 +18,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @EnableWebSecurity
 @EnableMethodSecurity
+@Configuration
 public class SecurityConfig {
 	private final JwtProvider jwtProvider;
+	private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
 	// 비밀번호 암호화
 	@Bean
@@ -38,9 +42,16 @@ public class SecurityConfig {
 		http
 			.httpBasic().disable() // rest api 만을 고려하여 기본설정 해제
 			.csrf().disable()
+			.addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 토큰 기반 인증이므로 세션 사용 안함
 			.and()
-			.addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
+			.exceptionHandling()
+			.authenticationEntryPoint(jwtAuthenticationEntryPoint) //customEntryPoint
+			.accessDeniedHandler(jwtAccessDeniedHandler) // cutomAccessDeniedHandler
+			.and()
+			.headers()
+			.frameOptions().sameOrigin();
+
 		// JwtAuthenticationFilter를 UsernamePasswordAuthenticationFilter 전에 넣음
 
 		return http.build();
