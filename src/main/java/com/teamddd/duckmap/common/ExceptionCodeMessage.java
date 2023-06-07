@@ -10,7 +10,10 @@ public enum ExceptionCodeMessage {
 	ACCESS_DENIED_EXCEPTION("A004", "권한이 없는 사용자입니다"),
 
 	DUPLICATE_EMAIL_EXCEPTION("M001", "이미 사용중인 이메일입니다"),
-	DUPLICATE_USERNAME_EXCEPTION("M002", "이미 사용중인 닉네임입니다");
+	DUPLICATE_USERNAME_EXCEPTION("M002", "이미 사용중인 닉네임입니다"),
+
+	/* ArtistType */
+	NON_EXISTENT_ARTIST_TYPE_EXCEPTION("AT001", "잘못된 아티스트 구분 정보입니다");
 
 	private final String code;
 	private final String message;
