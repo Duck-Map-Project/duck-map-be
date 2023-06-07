@@ -13,7 +13,10 @@ public enum ExceptionCodeMessage {
 	DUPLICATE_USERNAME_EXCEPTION("M002", "이미 사용중인 닉네임입니다"),
 
 	/* ArtistType */
-	NON_EXISTENT_ARTIST_TYPE_EXCEPTION("AT001", "잘못된 아티스트 구분 정보입니다");
+	NON_EXISTENT_ARTIST_TYPE_EXCEPTION("AT001", "잘못된 아티스트 구분 정보입니다"),
+
+	/* Artist */
+	NON_EXISTENT_ARTIST_EXCEPTION("A001", "잘못된 아티스트 정보입니다");
 
 	private final String code;
 	private final String message;
