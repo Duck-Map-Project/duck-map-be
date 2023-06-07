@@ -22,6 +22,7 @@ import com.teamddd.duckmap.dto.artist.ArtistTypeRes;
 import com.teamddd.duckmap.dto.artist.CreateArtistReq;
 import com.teamddd.duckmap.dto.artist.CreateArtistRes;
 import com.teamddd.duckmap.dto.artist.UpdateArtistReq;
+import com.teamddd.duckmap.service.ArtistService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -32,12 +33,18 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @RequestMapping("/artists")
 public class ArtistController {
+
+	private final ArtistService artistService;
+
 	@Operation(summary = "아티스트 등록")
 	@PostMapping
 	public CreateArtistRes createArtist(
 		@Validated @RequestBody CreateArtistReq createArtistReq) {
+
+		Long artistId = artistService.createArtist(createArtistReq);
+
 		return CreateArtistRes.builder()
-			.id(1L)
+			.id(artistId)
 			.build();
 	}
 
