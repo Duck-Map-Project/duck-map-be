@@ -2,9 +2,7 @@ package com.teamddd.duckmap.controller;
 
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,10 +13,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.teamddd.duckmap.config.security.SecurityRule;
 import com.teamddd.duckmap.dto.artist.ArtistTypeRes;
 import com.teamddd.duckmap.dto.artist.CreateArtistTypeReq;
 import com.teamddd.duckmap.dto.artist.CreateArtistTypeRes;
 import com.teamddd.duckmap.dto.artist.UpdateArtistTypeReq;
+import com.teamddd.duckmap.service.ArtistTypeService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -29,32 +29,26 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @RequestMapping("/artists/types")
 public class ArtistTypeController {
+
+	private final ArtistTypeService artistTypeService;
+
+	@PreAuthorize(SecurityRule.HAS_ROLE_ADMIN)
 	@Operation(summary = "아티스트 구분 등록")
 	@PostMapping
 	public CreateArtistTypeRes createArtistType(
 		@Validated @RequestBody CreateArtistTypeReq createArtistTypeReq) {
+
+		Long artistTypeId = artistTypeService.createArtistType(createArtistTypeReq);
+
 		return CreateArtistTypeRes.builder()
-			.id(1L)
+			.id(artistTypeId)
 			.build();
 	}
 
 	@Operation(summary = "아티스트 구분 모두 조회")
 	@GetMapping
-	public Page<ArtistTypeRes> getAllArtistType(Pageable pageable) {
-		return new PageImpl<>(List.of(
-			ArtistTypeRes.builder()
-				.id(1L)
-				.type("아이돌")
-				.build(),
-			ArtistTypeRes.builder()
-				.id(2L)
-				.type("배우")
-				.build(),
-			ArtistTypeRes.builder()
-				.id(3L)
-				.type("모델")
-				.build()
-		));
+	public List<ArtistTypeRes> getAllArtistType() {
+		return artistTypeService.getArtistTypes();
 	}
 
 	@Operation(summary = "아티스트 구분 pk로 조회")

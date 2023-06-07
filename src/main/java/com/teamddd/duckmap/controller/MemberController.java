@@ -1,7 +1,5 @@
 package com.teamddd.duckmap.controller;
 
-import java.time.LocalDateTime;
-
 import javax.servlet.http.HttpSession;
 
 import org.springframework.validation.annotation.Validated;
@@ -14,13 +12,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.teamddd.duckmap.dto.ImageRes;
 import com.teamddd.duckmap.dto.user.CreateMemberReq;
 import com.teamddd.duckmap.dto.user.CreateMemberRes;
 import com.teamddd.duckmap.dto.user.MemberRes;
 import com.teamddd.duckmap.dto.user.UpdateMemberReq;
 import com.teamddd.duckmap.dto.user.UpdatePasswordReq;
-import com.teamddd.duckmap.entity.Role;
 import com.teamddd.duckmap.service.MemberService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -45,29 +41,20 @@ public class MemberController {
 
 	@Operation(summary = "회원 정보 조회", description = "로그인한 회원 정보 조회")
 	@GetMapping("/me")
-	public MemberRes getUserInfo(HttpSession session) {
-		return MemberRes.builder()
-			.id(1L)
-			.username("user1")
-			.email("sample@naver.com")
-			.userProfile(
-				ImageRes.builder()
-					.filename("user1.jpg")
-					.build()
-			)
-			.role(Role.USER)
-			.loginAt(LocalDateTime.now())
-			.build();
+	public MemberRes getUserInfo() {
+		return memberService.getMyInfoBySecurity();
 	}
 
 	@Operation(summary = "회원정보 수정", description = "로그인한 회원의 닉네임, 프로필 사진 변경 요청")
 	@PutMapping("/me")
-	public void updateUser(HttpSession session, @Validated @RequestBody UpdateMemberReq updateMemberReq) {
+	public void updateUser(@Validated @RequestBody UpdateMemberReq updateMemberReq) {
+		memberService.updateMemberInfo(updateMemberReq.getUsername(), updateMemberReq.getImage());
 	}
 
 	@Operation(summary = "비밀번호 변경", description = "로그인한 회원 비밀번호 변경")
 	@PatchMapping("/me/password")
 	public void updatePassword(@Validated @RequestBody UpdatePasswordReq updatePasswordReq) {
+		memberService.updatePassword(updatePasswordReq.getCurrentPassword(), updatePasswordReq.getNewPassword());
 	}
 
 	@Operation(summary = "회원 탈퇴")

@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
+@EnableMethodSecurity
 @Configuration
 public class SecurityConfig {
 	private final JwtProvider jwtProvider;
@@ -38,14 +40,12 @@ public class SecurityConfig {
 		http
 			.httpBasic().disable() // rest api 만을 고려하여 기본설정 해제
 			.csrf().disable()
+			.addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 토큰 기반 인증이므로 세션 사용 안함
 			.and()
-			.authorizeRequests() // 요청에 대한 사용 권한 체크
-			.antMatchers("/admin/**").hasRole("ADMIN")
-			.antMatchers("/api/post/**").authenticated()
-			.anyRequest().permitAll() // 그외 나머지 요청은 누구나 접근 가능
-			.and()
-			.addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
+			.headers()
+			.frameOptions().sameOrigin();
+
 		// JwtAuthenticationFilter를 UsernamePasswordAuthenticationFilter 전에 넣음
 
 		return http.build();
