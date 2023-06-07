@@ -18,15 +18,14 @@ import lombok.extern.slf4j.Slf4j;
 public class ArtistService {
 
 	private final ArtistRepository artistRepository;
+	private final ArtistTypeService artistTypeService;
 
 	@Transactional
 	public Long createArtist(CreateArtistReq createArtistReq) {
+		ArtistType artistType = artistTypeService.getArtistType(createArtistReq.getArtistTypeId());
+
 		Artist artist = Artist.builder()
-			.artistType(
-				ArtistType.builder()
-					.id(createArtistReq.getArtistTypeId())
-					.build()
-			)
+			.artistType(artistType)
 			.name(createArtistReq.getName())
 			.image(createArtistReq.getImage())
 			.group(
