@@ -50,7 +50,7 @@ class ArtistTypeServiceTest {
 
 	@DisplayName("아티스트 타입 목록 전체를 조회한다")
 	@Test
-	void getArtistTypes() throws Exception {
+	void getArtistTypeResList() throws Exception {
 		//given
 		ArtistType type1 = createArtistType("그룹");
 		ArtistType type2 = createArtistType("아이돌");
@@ -58,7 +58,7 @@ class ArtistTypeServiceTest {
 		artistTypeRepository.saveAll(List.of(type1, type2, type3));
 
 		//when
-		List<ArtistTypeRes> artistTypes = artistTypeService.getArtistTypes();
+		List<ArtistTypeRes> artistTypes = artistTypeService.getArtistTypeResList();
 
 		//then
 		assertThat(artistTypes).hasSize(3)

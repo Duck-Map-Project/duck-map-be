@@ -48,7 +48,7 @@ public class ArtistTypeController {
 	@Operation(summary = "아티스트 구분 모두 조회")
 	@GetMapping
 	public List<ArtistTypeRes> getAllArtistType() {
-		return artistTypeService.getArtistTypes();
+		return artistTypeService.getArtistTypeResList();
 	}
 
 	@Operation(summary = "아티스트 구분 pk로 조회")
