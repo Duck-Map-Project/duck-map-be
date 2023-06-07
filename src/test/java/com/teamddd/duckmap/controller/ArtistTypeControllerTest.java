@@ -1,5 +1,6 @@
 package com.teamddd.duckmap.controller;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -16,7 +17,9 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.teamddd.duckmap.dto.artist.ArtistTypeRes;
 import com.teamddd.duckmap.dto.artist.CreateArtistTypeReq;
+import com.teamddd.duckmap.service.ArtistTypeService;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -26,6 +29,23 @@ class ArtistTypeControllerTest {
 	private MockMvc mockMvc;
 	@Autowired
 	private ObjectMapper objectMapper;
+	@Autowired
+	private ArtistTypeService artistTypeService;
+
+	@DisplayName("아티스트 구분 전체 목록을 조회한다")
+	@Test
+	void getAllArtistType() throws Exception {
+		//given
+		assertThat(artistTypeService.getArtistTypes()).hasOnlyElementsOfType(ArtistTypeRes.class);
+
+		//when //then
+		mockMvc.perform(
+				get("/artists/types")
+			)
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$").isArray());
+	}
 
 	@Nested
 	@DisplayName("아티스트 타입을 생성한다")
