@@ -38,7 +38,7 @@ public class ArtistTypeService {
 			.orElseThrow(NonExistentArtistTypeException::new);
 	}
 
-	public List<ArtistTypeRes> getArtistTypes() {
+	public List<ArtistTypeRes> getArtistTypeResList() {
 		List<ArtistType> types = artistTypeRepository.findAll();
 		return types.stream()
 			.map(ArtistTypeRes::of)

@@ -40,7 +40,7 @@ class ArtistTypeControllerTest {
 	void getAllArtistType() throws Exception {
 		//given
 		List<ArtistTypeRes> result = List.of();
-		when(artistTypeService.getArtistTypes()).thenReturn(result);
+		when(artistTypeService.getArtistTypeResList()).thenReturn(result);
 
 		//when //then
 		mockMvc.perform(
