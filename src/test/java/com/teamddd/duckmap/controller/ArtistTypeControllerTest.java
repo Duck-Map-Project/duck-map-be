@@ -1,9 +1,11 @@
 package com.teamddd.duckmap.controller;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -11,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -29,14 +32,15 @@ class ArtistTypeControllerTest {
 	private MockMvc mockMvc;
 	@Autowired
 	private ObjectMapper objectMapper;
-	@Autowired
+	@MockBean
 	private ArtistTypeService artistTypeService;
 
 	@DisplayName("아티스트 구분 전체 목록을 조회한다")
 	@Test
 	void getAllArtistType() throws Exception {
 		//given
-		assertThat(artistTypeService.getArtistTypes()).hasOnlyElementsOfType(ArtistTypeRes.class);
+		List<ArtistTypeRes> result = List.of();
+		when(artistTypeService.getArtistTypes()).thenReturn(result);
 
 		//when //then
 		mockMvc.perform(
