@@ -88,7 +88,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Discord notification
-        uses: Ilshidur/action-discord@master
+        uses: sarisia/actions-status-discord@main
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         with:
