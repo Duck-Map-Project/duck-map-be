@@ -7,11 +7,11 @@ import lombok.Getter;
 
 @Getter
 public class CreateArtistReq {
-	private Long groupId;
-	@NotBlank
-	private String name;
-	@NotNull
-	private String image;
-	@NotNull
+	@NotNull(message = "아티스트 구분은 필수값입니다")
 	private Long artistTypeId;
+	private Long groupId;
+	@NotBlank(message = "아티스트 이름은 필수값입니다")
+	private String name;
+	@NotBlank(message = "아티스트 사진은 필수값입니다")
+	private String image;
 }
