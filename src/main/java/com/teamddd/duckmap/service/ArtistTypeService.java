@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.teamddd.duckmap.dto.artist.ArtistTypeRes;
 import com.teamddd.duckmap.dto.artist.CreateArtistTypeReq;
 import com.teamddd.duckmap.entity.ArtistType;
+import com.teamddd.duckmap.exception.NonExistentArtistTypeException;
 import com.teamddd.duckmap.repository.ArtistTypeRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,11 @@ public class ArtistTypeService {
 		artistTypeRepository.save(artistType);
 
 		return artistType.getId();
+	}
+
+	public ArtistType getArtistType(Long artistTypeId) throws NonExistentArtistTypeException {
+		return artistTypeRepository.findById(artistTypeId)
+			.orElseThrow(NonExistentArtistTypeException::new);
 	}
 
 	public List<ArtistTypeRes> getArtistTypes() {
