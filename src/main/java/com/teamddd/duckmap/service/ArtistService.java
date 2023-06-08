@@ -1,8 +1,16 @@
 package com.teamddd.duckmap.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.teamddd.duckmap.dto.artist.ArtistRes;
+import com.teamddd.duckmap.dto.artist.ArtistSearchParam;
 import com.teamddd.duckmap.dto.artist.CreateArtistReq;
 import com.teamddd.duckmap.entity.Artist;
 import com.teamddd.duckmap.entity.ArtistType;
@@ -44,5 +52,18 @@ public class ArtistService {
 	public Artist getArtist(Long artistId) throws NonExistentArtistException {
 		return artistRepository.findById(artistId)
 			.orElseThrow(NonExistentArtistException::new);
+	}
+
+	public Page<ArtistRes> getArtistResPageByTypeAndName(ArtistSearchParam artistSearchParam, Pageable pageable) {
+		Page<Artist> artistPage = artistRepository.findByTypeAndName(
+			artistSearchParam.getArtistTypeId(),
+			artistSearchParam.getArtistName(),
+			pageable);
+
+		List<ArtistRes> artistResList = artistPage.getContent().stream()
+			.map(ArtistRes::of)
+			.collect(Collectors.toList());
+
+		return new PageImpl<>(artistResList, artistPage.getPageable(), artistPage.getTotalElements());
 	}
 }
