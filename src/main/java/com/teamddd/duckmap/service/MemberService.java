@@ -72,4 +72,12 @@ public class MemberService {
 		}
 		member.updatePassword(passwordEncoder.encode((newPassword)));
 	}
+
+	@Transactional
+	public void deleteMember() {
+		Member member = memberRepository.findByEmail(MemberUtils.getAuthMember().getUsername())
+			.orElseThrow(InvalidMemberException::new);
+		memberRepository.delete(member);
+	}
+
 }
