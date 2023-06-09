@@ -11,6 +11,7 @@ import com.teamddd.duckmap.entity.Role;
 import com.teamddd.duckmap.exception.DuplicateEmailException;
 import com.teamddd.duckmap.exception.DuplicateUsernameException;
 import com.teamddd.duckmap.exception.InvalidMemberException;
+import com.teamddd.duckmap.exception.InvalidPasswordException;
 import com.teamddd.duckmap.repository.MemberRepository;
 import com.teamddd.duckmap.util.MemberUtils;
 
@@ -68,8 +69,22 @@ public class MemberService {
 		Member member = memberRepository.findByEmail(MemberUtils.getAuthMember().getUsername())
 			.orElseThrow(InvalidMemberException::new);
 		if (!passwordEncoder.matches(currentPassword, member.getPassword())) {
-			throw new RuntimeException("비밀번호가 맞지 않습니다");
+			throw new InvalidPasswordException();
 		}
 		member.updatePassword(passwordEncoder.encode((newPassword)));
+	}
+
+	@Transactional
+	public void deleteMember(Long id) {
+		memberRepository.deleteById(id);
+	}
+
+	public Long validatePassword(String password) {
+		Member member = memberRepository.findByEmail(MemberUtils.getAuthMember().getUsername())
+			.orElseThrow(InvalidMemberException::new);
+		if (!passwordEncoder.matches(password, member.getPassword())) {
+			throw new InvalidPasswordException();
+		}
+		return member.getId();
 	}
 }
