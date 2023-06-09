@@ -5,6 +5,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -12,12 +14,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.teamddd.duckmap.dto.artist.ArtistRes;
 import com.teamddd.duckmap.dto.artist.CreateArtistReq;
 import com.teamddd.duckmap.service.ArtistService;
 
@@ -31,6 +36,31 @@ class ArtistControllerTest {
 	private ObjectMapper objectMapper;
 	@MockBean
 	private ArtistService artistService;
+
+	@DisplayName("아티스트 구분과 이름으로 아티스트 목록을 조회한다")
+	@Test
+	void getArtists() throws Exception {
+		//given
+		PageRequest pageRequest = PageRequest.of(0, 5);
+		PageImpl<ArtistRes> result = new PageImpl<>(List.of(), pageRequest, 0);
+
+		when(artistService.getArtistResPageByTypeAndName(any(), any()))
+			.thenReturn(result);
+
+		//when //then
+		mockMvc.perform(
+				get("/artists")
+					.param("artistTypeId", "1")
+					.param("artistName", "name")
+					.param("page", "0")
+					.param("size", "5")
+			)
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.number").value(0))
+			.andExpect(jsonPath("$.size").value(5))
+			.andExpect(jsonPath("$.content").isArray());
+	}
 
 	@DisplayName("아티스트를 등록한다")
 	@Nested

@@ -1,9 +1,6 @@
 package com.teamddd.duckmap.controller;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -53,60 +50,8 @@ public class ArtistController {
 
 	@Operation(summary = "아티스트 목록 조회")
 	@GetMapping
-	public Page<ArtistRes> getAllArtists(Pageable pageable, ArtistSearchParam searchParam) {
-		return new PageImpl<>(List.of(
-			ArtistRes.builder()
-				.id(1L)
-				.groupId(null)
-				.groupName("")
-				.name("세븐틴")
-				.image(
-					ImageRes.builder()
-						.filename("artist_img_svt.jpg")
-						.build()
-				)
-				.artistType(
-					ArtistTypeRes.builder()
-						.id(1L)
-						.type("아이돌")
-						.build()
-				)
-				.build(),
-			ArtistRes.builder()
-				.id(2L)
-				.groupId(null)
-				.groupName("")
-				.name("이제훈")
-				.image(
-					ImageRes.builder()
-						.filename("artist_img_ljh.jpg")
-						.build()
-				)
-				.artistType(
-					ArtistTypeRes.builder()
-						.id(2L)
-						.type("배우")
-						.build()
-				)
-				.build(),
-			ArtistRes.builder()
-				.id(3L)
-				.groupId(null)
-				.groupName("")
-				.name("아이브")
-				.image(
-					ImageRes.builder()
-						.filename("artist_img_ive.jpg")
-						.build()
-				)
-				.artistType(
-					ArtistTypeRes.builder()
-						.id(1L)
-						.type("아이돌")
-						.build()
-				)
-				.build()
-		));
+	public Page<ArtistRes> getArtists(ArtistSearchParam searchParam, Pageable pageable) {
+		return artistService.getArtistResPageByTypeAndName(searchParam, pageable);
 	}
 
 	@Operation(summary = "아티스트 pk로 조회")
