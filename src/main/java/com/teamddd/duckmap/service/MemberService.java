@@ -75,10 +75,16 @@ public class MemberService {
 	}
 
 	@Transactional
-	public void deleteMember() {
-		Member member = memberRepository.findByEmail(MemberUtils.getAuthMember().getUsername())
-			.orElseThrow(InvalidMemberException::new);
-		memberRepository.delete(member);
+	public void deleteMember(Long id) {
+		memberRepository.deleteById(id);
 	}
 
+	public Long validatePassword(String password) {
+		Member member = memberRepository.findByEmail(MemberUtils.getAuthMember().getUsername())
+			.orElseThrow(InvalidMemberException::new);
+		if (!passwordEncoder.matches(password, member.getPassword())) {
+			throw new InvalidPasswordException();
+		}
+		return member.getId();
+	}
 }

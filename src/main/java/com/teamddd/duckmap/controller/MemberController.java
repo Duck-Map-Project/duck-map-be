@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.teamddd.duckmap.dto.user.CreateMemberReq;
 import com.teamddd.duckmap.dto.user.CreateMemberRes;
+import com.teamddd.duckmap.dto.user.DeleteMemberReq;
 import com.teamddd.duckmap.dto.user.MemberRes;
 import com.teamddd.duckmap.dto.user.UpdateMemberReq;
 import com.teamddd.duckmap.dto.user.UpdatePasswordReq;
@@ -60,9 +61,11 @@ public class MemberController {
 
 	@Operation(summary = "회원 탈퇴")
 	@DeleteMapping("/me")
-	public void deleteMember(@RequestHeader("Authorization") String requestAccessToken) {
+	public void deleteMember(@RequestHeader("Authorization") String requestAccessToken,
+		@Validated @RequestBody DeleteMemberReq deleteMemberReq) {
+		Long id = memberService.validatePassword(deleteMemberReq.getPassword());
 		authService.logout(requestAccessToken);
-		memberService.deleteMember();
+		memberService.deleteMember(id);
 	}
 
 }
