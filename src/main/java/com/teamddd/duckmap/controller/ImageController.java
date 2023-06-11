@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.teamddd.duckmap.common.Props;
 import com.teamddd.duckmap.dto.ImageRes;
+import com.teamddd.duckmap.exception.NotContentTypeImageException;
 import com.teamddd.duckmap.util.FileUtils;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,12 +31,14 @@ public class ImageController {
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ImageRes saveImage(@RequestParam MultipartFile file) {
 		if (file.isEmpty() || file.getContentType() == null || !file.getContentType().startsWith("image")) {
-			return ImageRes.builder()
-				.filename("구현하면 400 반환 예정 - content type은 image로 시작해야 합니다")
-				.build();
+			throw new NotContentTypeImageException();
 		}
+
+		String imageDir = props.getImageDir();
+		String filename = FileUtils.storeFile(file, imageDir);
+
 		return ImageRes.builder()
-			.filename("filename.jpg")
+			.filename(filename)
 			.build();
 	}
 
