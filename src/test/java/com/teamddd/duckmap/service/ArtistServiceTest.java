@@ -31,7 +31,7 @@ import com.teamddd.duckmap.repository.ArtistRepository;
 @SpringBootTest
 class ArtistServiceTest {
 
-	@Autowired
+	@SpyBean
 	ArtistService artistService;
 	@SpyBean
 	ArtistRepository artistRepository;
@@ -99,6 +99,40 @@ class ArtistServiceTest {
 				Tuple.tuple("type2", "artist5", "group2"),
 				Tuple.tuple("type2", "artist6", "group2"),
 				Tuple.tuple("type2", "artist7", "group2"));
+	}
+
+	@DisplayName("소속 아티스트 목록을 조회한다")
+	@Test
+	void getArtistsByGroup() throws Exception {
+		//given
+		ArtistType type1 = createArtistType("type1");
+		ArtistType type2 = createArtistType("type2");
+
+		Artist artist1 = createArtist(type1, "group1", null);
+		Artist artist2 = createArtist(type2, "artist2", artist1);
+		Artist artist3 = createArtist(type2, "artist3", artist1);
+		Artist artist4 = createArtist(type2, "artist4", artist1);
+		List<Artist> artists = List.of(artist2, artist3, artist4);
+
+		Long groupId = 1L;
+		Artist group = Artist.builder()
+			.id(groupId)
+			.build();
+
+		when(artistRepository.findById(groupId)).thenReturn(Optional.of(group));
+		when(artistRepository.findByGroup(group))
+			.thenReturn(artists);
+
+		//when
+		List<ArtistRes> artistResList = artistService.getArtistsByGroup(groupId);
+
+		//then
+		assertThat(artistResList).hasSize(3)
+			.extracting("artistType.type", "name", "groupName")
+			.containsExactlyInAnyOrder(
+				Tuple.tuple("type2", "artist2", "group1"),
+				Tuple.tuple("type2", "artist3", "group1"),
+				Tuple.tuple("type2", "artist4", "group1"));
 	}
 
 	ArtistType createArtistType(String type) {
