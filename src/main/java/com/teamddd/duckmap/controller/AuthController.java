@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -52,33 +51,20 @@ public class AuthController {
 
 	// 토큰 재발급
 	@PostMapping("/reissue")
-	public ResponseEntity<?> reissue(@CookieValue(name = "refresh-token") String requestRefreshToken,
-		@RequestHeader("Authorization") String requestAccessToken) {
-		TokenDto reissuedTokenDto = authService.reissue(requestAccessToken, requestRefreshToken);
+	public ResponseEntity<?> reissue(@RequestHeader("Authorization") String requestAccessToken) {
+		TokenDto reissuedTokenDto = authService.reissue(requestAccessToken);
 
 		if (reissuedTokenDto != null) { // 토큰 재발급 성공
-			// RT 저장
-			ResponseCookie responseCookie = ResponseCookie.from("refresh-token", reissuedTokenDto.getRefreshToken())
-				.maxAge(COOKIE_EXPIRATION)
-				.httpOnly(true)
-				.secure(true)
-				.build();
 			return ResponseEntity
 				.status(HttpStatus.OK)
-				.header(HttpHeaders.SET_COOKIE, responseCookie.toString())
 				// AT 저장
 				.header(HttpHeaders.AUTHORIZATION, "Bearer " + reissuedTokenDto.getAccessToken())
 				.build();
 
 		} else { // Refresh Token 탈취 가능성
-			// Cookie 삭제 후 재로그인 유도
-			ResponseCookie responseCookie = ResponseCookie.from("refresh-token", "")
-				.maxAge(0)
-				.path("/")
-				.build();
+			// 재로그인 유도
 			return ResponseEntity
 				.status(HttpStatus.UNAUTHORIZED)
-				.header(HttpHeaders.SET_COOKIE, responseCookie.toString())
 				.build();
 		}
 	}
