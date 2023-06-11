@@ -104,9 +104,6 @@ public class JwtProvider {
 	// 토큰의 유효성 + 만료일자 확인
 	public boolean validateRefreshToken(String refreshToken) {
 		try {
-			if (redisService.getValues(refreshToken).equals("delete")) { // 회원 탈퇴했을 경우
-				return false;
-			}
 			Jwts.parserBuilder()
 				.setSigningKey(signingKey)
 				.build()
