@@ -63,21 +63,18 @@ public class AuthService {
 
 	// 토큰 재발급: validate 메서드가 true 반환할 때만 사용 -> AT, RT 재발급
 	@Transactional
-	public TokenDto reissue(String requestAccessTokenInHeader, String requestRefreshToken) {
+	public TokenDto reissue(String requestAccessTokenInHeader) {
 		String requestAccessToken = resolveToken(requestAccessTokenInHeader);
 
 		Authentication authentication = jwtProvider.getAuthentication(requestAccessToken);
 		String principal = getPrincipal(requestAccessToken);
-
 		String refreshTokenInRedis = redisService.getValues("RT(" + SERVER + "):" + principal);
 		if (refreshTokenInRedis == null) { // Redis에 저장되어 있는 RT가 없을 경우
 			return null; // -> 재로그인 요청
 		}
-
-		// 요청된 RT의 유효성 검사 & Redis에 저장되어 있는 RT와 같은지 비교
-		if (!jwtProvider.validateRefreshToken(requestRefreshToken) || !refreshTokenInRedis.equals(
-			requestRefreshToken)) {
-			redisService.deleteValues("RT(" + SERVER + "):" + principal); // 탈취 가능성 -> 삭제
+		// RT의 유효성 검사
+		if (!jwtProvider.validateRefreshToken(refreshTokenInRedis)) {
+			redisService.deleteValues("RT(" + SERVER + "):" + principal); //삭제
 			return null; // -> 재로그인 요청
 		}
 
