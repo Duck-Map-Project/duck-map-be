@@ -66,4 +66,14 @@ public class ArtistService {
 
 		return new PageImpl<>(artistResList, artistPage.getPageable(), artistPage.getTotalElements());
 	}
+
+	public List<ArtistRes> getArtistsByGroup(Long groupId) {
+		Artist group = getArtist(groupId);
+
+		List<Artist> artists = artistRepository.findByGroup(group);
+
+		return artists.stream()
+			.map(ArtistRes::of)
+			.collect(Collectors.toList());
+	}
 }
