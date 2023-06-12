@@ -1,5 +1,7 @@
 package com.teamddd.duckmap.controller;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -52,6 +54,12 @@ public class ArtistController {
 	@GetMapping
 	public Page<ArtistRes> getArtists(ArtistSearchParam searchParam, Pageable pageable) {
 		return artistService.getArtistResPageByTypeAndName(searchParam, pageable);
+	}
+
+	@Operation(summary = "아티스트 pk로 소속 아티스트 목록 조회")
+	@GetMapping("/{id}/artists")
+	public List<ArtistRes> getArtistsByGroup(@PathVariable Long id) {
+		return artistService.getArtistsByGroup(id);
 	}
 
 	@Operation(summary = "아티스트 pk로 조회")
