@@ -12,6 +12,10 @@ public enum ExceptionCodeMessage {
 	DUPLICATE_EMAIL_EXCEPTION("M001", "이미 사용중인 이메일입니다"),
 	DUPLICATE_USERNAME_EXCEPTION("M002", "이미 사용중인 닉네임입니다"),
 
+	/* Image File */
+	NON_EXISTENT_FILE_EXCEPTION("F001", "존재하지 않는 파일입니다"),
+	NOT_CONTENT_TYPE_IMAGE_EXCEPTION("F002", "이미지 파일만 저장 가능합니다"),
+
 	/* ArtistType */
 	NON_EXISTENT_ARTIST_TYPE_EXCEPTION("AT001", "잘못된 아티스트 구분 정보입니다");
 
