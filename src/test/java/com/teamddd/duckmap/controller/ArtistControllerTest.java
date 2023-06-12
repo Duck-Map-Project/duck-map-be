@@ -62,6 +62,21 @@ class ArtistControllerTest {
 			.andExpect(jsonPath("$.content").isArray());
 	}
 
+	@DisplayName("소속 아티스트의 목록을 조회한다")
+	@Test
+	void getArtistsByGroup() throws Exception {
+		//given
+		List<ArtistRes> result = List.of();
+		when(artistService.getArtistsByGroup(any())).thenReturn(result);
+
+		//when //then
+		mockMvc.perform(
+				get("/artists/1/artists"))
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$").isArray());
+	}
+
 	@DisplayName("아티스트를 등록한다")
 	@Nested
 	class CreateArtist {
