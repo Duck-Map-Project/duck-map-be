@@ -17,7 +17,10 @@ public enum ExceptionCodeMessage {
 	NOT_CONTENT_TYPE_IMAGE_EXCEPTION("F002", "이미지 파일만 저장 가능합니다"),
 
 	/* ArtistType */
-	NON_EXISTENT_ARTIST_TYPE_EXCEPTION("AT001", "잘못된 아티스트 구분 정보입니다");
+	NON_EXISTENT_ARTIST_TYPE_EXCEPTION("AT001", "잘못된 아티스트 구분 정보입니다"),
+
+	/* Artist */
+	NON_EXISTENT_ARTIST_EXCEPTION("A001", "잘못된 아티스트 정보입니다");
 
 	private final String code;
 	private final String message;

@@ -3,8 +3,8 @@ package com.teamddd.duckmap.controller;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.teamddd.duckmap.config.security.SecurityRule;
 import com.teamddd.duckmap.dto.ImageRes;
 import com.teamddd.duckmap.dto.artist.ArtistRes;
 import com.teamddd.duckmap.dto.artist.ArtistSearchParam;
@@ -22,6 +23,7 @@ import com.teamddd.duckmap.dto.artist.ArtistTypeRes;
 import com.teamddd.duckmap.dto.artist.CreateArtistReq;
 import com.teamddd.duckmap.dto.artist.CreateArtistRes;
 import com.teamddd.duckmap.dto.artist.UpdateArtistReq;
+import com.teamddd.duckmap.service.ArtistService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -32,71 +34,32 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @RequestMapping("/artists")
 public class ArtistController {
+
+	private final ArtistService artistService;
+
+	@PreAuthorize(SecurityRule.HAS_ROLE_ADMIN)
 	@Operation(summary = "아티스트 등록")
 	@PostMapping
 	public CreateArtistRes createArtist(
 		@Validated @RequestBody CreateArtistReq createArtistReq) {
+
+		Long artistId = artistService.createArtist(createArtistReq);
+
 		return CreateArtistRes.builder()
-			.id(1L)
+			.id(artistId)
 			.build();
 	}
 
 	@Operation(summary = "아티스트 목록 조회")
 	@GetMapping
-	public Page<ArtistRes> getAllArtists(Pageable pageable, ArtistSearchParam searchParam) {
-		return new PageImpl<>(List.of(
-			ArtistRes.builder()
-				.id(1L)
-				.groupId(null)
-				.groupName("")
-				.name("세븐틴")
-				.image(
-					ImageRes.builder()
-						.filename("artist_img_svt.jpg")
-						.build()
-				)
-				.artistType(
-					ArtistTypeRes.builder()
-						.id(1L)
-						.type("아이돌")
-						.build()
-				)
-				.build(),
-			ArtistRes.builder()
-				.id(2L)
-				.groupId(null)
-				.groupName("")
-				.name("이제훈")
-				.image(
-					ImageRes.builder()
-						.filename("artist_img_ljh.jpg")
-						.build()
-				)
-				.artistType(
-					ArtistTypeRes.builder()
-						.id(2L)
-						.type("배우")
-						.build()
-				)
-				.build(),
-			ArtistRes.builder()
-				.id(3L)
-				.groupId(null)
-				.groupName("")
-				.name("아이브")
-				.image(
-					ImageRes.builder()
-						.filename("artist_img_ive.jpg")
-						.build()
-				)
-				.artistType(
-					ArtistTypeRes.builder()
-						.id(1L)
-						.type("아이돌")
-						.build()
-				)
-				.build()
-		));
+	public Page<ArtistRes> getArtists(ArtistSearchParam searchParam, Pageable pageable) {
+		return artistService.getArtistResPageByTypeAndName(searchParam, pageable);
+	}
+
+	@Operation(summary = "아티스트 pk로 소속 아티스트 목록 조회")
+	@GetMapping("/{id}/artists")
+	public List<ArtistRes> getArtistsByGroup(@PathVariable Long id) {
+		return artistService.getArtistsByGroup(id);
 	}
 
 	@Operation(summary = "아티스트 pk로 조회")
