@@ -70,6 +70,7 @@ public class JwtProvider {
 			.setHeaderParam("alg", "HS512")
 			.setExpiration(new Date(now + REFRESH_TOKEN_VALID_TIME))
 			.setSubject("refresh-token")
+			.claim(EMAIL_KEY, email)
 			.signWith(signingKey)
 			.compact();
 
@@ -94,6 +95,18 @@ public class JwtProvider {
 	public Authentication getAuthentication(String token) {
 		String email = getClaims(token).get(EMAIL_KEY).toString();
 		UserDetailsImpl userDetails = userDetailsService.loadUserByUsername(email);
+		return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+	}
+
+	/**
+	 * Refresh 토큰으로부터 클레임을 만들고, 이를 통해 User 객체를 생성하여 Authentication 객체를 반환
+	 * @param refresh_token
+	 * @return
+	 */
+	public Authentication getAuthenticationByRefreshToken(String refresh_token) {
+		String userPrincipal = getClaims(refresh_token).get(EMAIL_KEY).toString();
+		UserDetailsImpl userDetails = userDetailsService.loadUserByUsername(userPrincipal);
+
 		return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
 	}
 
