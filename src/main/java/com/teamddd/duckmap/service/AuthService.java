@@ -61,13 +61,13 @@ public class AuthService {
 		return jwtProvider.validateAccessTokenOnlyExpired(requestAccessToken); // true = 재발급
 	}
 
-	// 토큰 재발급: validate 메서드가 true 반환할 때만 사용 -> AT, RT 재발급
+	// 토큰 재발급: AT, RT 재발급
 	@Transactional
-	public TokenDto reissue(String requestAccessTokenInHeader) {
-		String requestAccessToken = resolveToken(requestAccessTokenInHeader);
+	public TokenDto reissue(String requestRefreshTokenInHeader) {
 
-		Authentication authentication = jwtProvider.getAuthentication(requestAccessToken);
-		String principal = getPrincipal(requestAccessToken);
+		Authentication authentication = jwtProvider.getAuthenticationByRefreshToken(requestRefreshTokenInHeader);
+		String principal = getPrincipalByRefreshToken(requestRefreshTokenInHeader);
+
 		String refreshTokenInRedis = redisService.getValues("RT(" + SERVER + "):" + principal);
 		if (refreshTokenInRedis == null) { // Redis에 저장되어 있는 RT가 없을 경우
 			return null; // -> 재로그인 요청
@@ -106,6 +106,11 @@ public class AuthService {
 	// AT로부터 principal 추출
 	public String getPrincipal(String requestAccessToken) {
 		return jwtProvider.getAuthentication(requestAccessToken).getName();
+	}
+
+	// RT로부터 principal 추출
+	public String getPrincipalByRefreshToken(String requestRefreshToken) {
+		return jwtProvider.getAuthenticationByRefreshToken(requestRefreshToken).getName();
 	}
 
 	// "Bearer {AT}"에서 {AT} 추출
