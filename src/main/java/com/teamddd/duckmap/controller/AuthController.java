@@ -1,5 +1,6 @@
 package com.teamddd.duckmap.controller;
 
+import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -34,7 +35,14 @@ public class AuthController {
 		// User 등록 및 Refresh Token 저장
 		TokenDto tokenDto = authService.login(loginUserRQ);
 
+		// RT 저장
+		HttpCookie httpCookie = ResponseCookie.from("refresh-token", tokenDto.getRefreshToken())
+			.maxAge(COOKIE_EXPIRATION)
+			.httpOnly(true)
+			.secure(true)
+			.build();
 		return ResponseEntity.ok()
+			.header(HttpHeaders.SET_COOKIE, httpCookie.toString())
 			// AT 저장
 			.header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenDto.getAccessToken())
 			.build();
