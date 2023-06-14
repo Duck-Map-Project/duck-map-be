@@ -25,8 +25,8 @@ public class SendMailService {
 	JavaMailSender mailSender;
 
 	public int makeRandomNumber() {
-		Random r = new Random();
-		return r.nextInt(999999); // 랜덤 6자리 난수설정
+		Random random = new Random();
+		return random.nextInt(999999); // 랜덤 6자리 난수설정
 	}
 
 	public String sendVerification(String email) {
@@ -34,12 +34,9 @@ public class SendMailService {
 		String setFrom = fromEmail;
 		String toMail = email;
 		String title = "비밀번호 찾기 인증번호 입니다."; // 이메일 제목
-		String content =
-			"대동덕지도" +    //html 형식으로 작성
-				"<br><br>" +
-				"인증 번호는 " + verifyCode + "입니다." +
-				"<br>" +
-				"해당 인증번호를 인증번호 확인란에 기입하여 주세요."; //이메일 내용 삽입
+		String content = "대동덕지도" //html 형식으로 작성
+			+ "<br><br>" + "인증 번호는 " + verifyCode + "입니다." + "<br>"
+			+ "해당 인증번호를 인증번호 확인란에 기입하여 주세요."; //이메일 내용 삽입
 		mailSend(setFrom, toMail, title, content);
 		return Integer.toString(verifyCode);
 	}

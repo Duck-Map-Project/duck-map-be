@@ -117,8 +117,7 @@ public class AuthController {
 	@PostMapping("/send-verification")
 	public String sendVerification(@Validated @RequestBody VerificationReq verificationReq) {
 		memberService.getMemberByEmail(verificationReq.getEmail());
-		String verifyCode = mailService.sendVerification(verificationReq.getEmail());
-		return verifyCode;
+		return mailService.sendVerification(verificationReq.getEmail());
 	}
 
 }
