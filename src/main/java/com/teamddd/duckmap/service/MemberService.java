@@ -50,6 +50,10 @@ public class MemberService {
 		});
 	}
 
+	public void getMemberByEmail(String email) {
+		memberRepository.findByEmail(email).orElseThrow(InvalidMemberException::new);
+	}
+
 	public MemberRes getMyInfoBySecurity() {
 		return memberRepository.findByEmail(MemberUtils.getAuthMember().getUsername())
 			.map(MemberRes::of)
