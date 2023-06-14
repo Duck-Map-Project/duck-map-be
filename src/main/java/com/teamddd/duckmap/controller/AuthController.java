@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.teamddd.duckmap.config.security.TokenDto;
+import com.teamddd.duckmap.dto.user.auth.CheckVerifyCodeReq;
 import com.teamddd.duckmap.dto.user.auth.LoginReq;
 import com.teamddd.duckmap.dto.user.auth.VerificationReq;
 import com.teamddd.duckmap.service.AuthService;
@@ -118,6 +119,16 @@ public class AuthController {
 	public String sendVerification(@Validated @RequestBody VerificationReq verificationReq) {
 		memberService.getMemberByEmail(verificationReq.getEmail());
 		return mailService.sendVerification(verificationReq.getEmail());
+	}
+
+	@Operation(summary = "인증번호 일치 확인")
+	@PostMapping("/verify-code")
+	public ResponseEntity<?> validate(@Validated @RequestBody CheckVerifyCodeReq checkVerifyCodeReq) {
+		if (mailService.checkVerifyCode(checkVerifyCodeReq)) {
+			return ResponseEntity.status(HttpStatus.OK).build(); // 인증번호 일치
+		} else {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build(); // 인증번호 일치하지 않음
+		}
 	}
 
 }

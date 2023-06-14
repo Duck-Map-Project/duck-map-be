@@ -12,6 +12,8 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.teamddd.duckmap.dto.user.auth.CheckVerifyCodeReq;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -23,6 +25,10 @@ public class SendMailService {
 	private String fromEmail;
 	@Autowired
 	JavaMailSender mailSender;
+
+	public boolean checkVerifyCode(CheckVerifyCodeReq verifyCodeReq) {
+		return verifyCodeReq.getVerifyCode().equals(verifyCodeReq.getUserInputVerifyCode());
+	}
 
 	public int makeRandomNumber() {
 		Random random = new Random();
