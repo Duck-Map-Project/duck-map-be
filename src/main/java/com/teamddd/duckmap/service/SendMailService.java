@@ -23,8 +23,6 @@ public class SendMailService {
 	private String fromEmail;
 	@Value("${resetpassword.url}")
 	private String resetPwUrl;
-	@Value("${resetpassword.localurl}")
-	private String resetPwLocalUrl;
 	@Autowired
 	JavaMailSender mailSender;
 
@@ -39,8 +37,8 @@ public class SendMailService {
 		String title = "요청하신 비밀번호 재설정 입니다."; // 이메일 제목
 		String content = "대동덕지도" //html 형식으로 작성
 			+ "<br><br>" + "아래 링크를 클릭하면 비밀번호 재설정 페이지로 이동합니다." + "<br>"
-			+ "<a href=\"" + resetPwLocalUrl + "/" + uuid + "\">"
-			+ resetPwLocalUrl + "/" + uuid + "</a>" + "<br><br>"
+			+ "<a href=\"" + resetPwUrl + "/" + uuid + "\">"
+			+ resetPwUrl + "/" + uuid + "</a>" + "<br><br>"
 			+ "해당 링크는 24시간 동안만 유효합니다." + "<br>"; //이메일 내용 삽입
 		mailSend(setFrom, email, title, content);
 		saveUuidAndEmail(uuid, email);
