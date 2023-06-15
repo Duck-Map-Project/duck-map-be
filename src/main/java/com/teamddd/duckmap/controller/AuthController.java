@@ -116,7 +116,7 @@ public class AuthController {
 	@Operation(summary = "인증번호 생성 및 이메일 전송")
 	@PostMapping("/send-verification")
 	public String sendVerification(@Validated @RequestBody VerificationReq verificationReq) {
-		memberService.getMemberByEmail(verificationReq.getEmail());
+		memberService.checkMemberByEmail(verificationReq.getEmail());
 		return mailService.sendVerification(verificationReq.getEmail());
 	}
 

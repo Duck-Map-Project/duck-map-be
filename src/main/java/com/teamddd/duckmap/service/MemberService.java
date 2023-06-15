@@ -50,7 +50,7 @@ public class MemberService {
 		});
 	}
 
-	public void getMemberByEmail(String email) {
+	public void checkMemberByEmail(String email) {
 		memberRepository.findByEmail(email).orElseThrow(InvalidMemberException::new);
 	}
 
