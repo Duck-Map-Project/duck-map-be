@@ -19,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SendMailService {
 	private final RedisService redisService;
-	private final long UUID_VALID_TIME = 60 * 60 * 24 * 1000L; // 24시간
 	@Value("${spring.mail.username}")
 	private String fromEmail;
 	@Value("${resetpassword.url}")
@@ -33,7 +32,8 @@ public class SendMailService {
 		return UUID.randomUUID().toString();
 	}
 
-	public String sendMailToUser(String email) {
+	@Transactional
+	public String sendEmailToUser(String email) {
 		String uuid = makeUuid();
 		String setFrom = fromEmail;
 		String title = "요청하신 비밀번호 재설정 입니다."; // 이메일 제목
@@ -68,8 +68,9 @@ public class SendMailService {
 	// UUID와 Email을 Redis에 저장
 	@Transactional
 	public void saveUuidAndEmail(String uuid, String email) {
+		long uuidValidTime = 60 * 60 * 24 * 1000L; // 24시간
 		redisService.setValuesWithTimeout(uuid, // key
 			email, // value
-			UUID_VALID_TIME); // timeout(milliseconds)
+			uuidValidTime); // timeout(milliseconds)
 	}
 }

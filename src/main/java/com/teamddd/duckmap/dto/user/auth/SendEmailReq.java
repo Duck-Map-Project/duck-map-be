@@ -6,7 +6,7 @@ import javax.validation.constraints.NotBlank;
 import lombok.Getter;
 
 @Getter
-public class SendMailReq {
+public class SendEmailReq {
 	@NotBlank
 	@Email
 	private String email;
