@@ -1,6 +1,6 @@
 package com.teamddd.duckmap.service;
 
-import java.util.Random;
+import java.util.UUID;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -18,26 +18,33 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class SendMailService {
-
+	private final RedisService redisService;
+	private final long UUID_VALID_TIME = 60 * 60 * 24 * 1000L; // 24시간
 	@Value("${spring.mail.username}")
 	private String fromEmail;
+	@Value("${resetpassword.url}")
+	private String resetPwUrl;
+	@Value("${resetpassword.localurl}")
+	private String resetPwLocalUrl;
 	@Autowired
 	JavaMailSender mailSender;
 
-	public int makeRandomNumber() {
-		Random random = new Random();
-		return random.nextInt(999999); // 랜덤 6자리 난수설정
+	public String makeUuid() {
+		return UUID.randomUUID().toString();
 	}
 
-	public String sendVerification(String email) {
-		int verifyCode = makeRandomNumber();
+	public String sendMailToUser(String email) {
+		String uuid = makeUuid();
 		String setFrom = fromEmail;
-		String title = "비밀번호 찾기 인증번호 입니다."; // 이메일 제목
+		String title = "요청하신 비밀번호 재설정 입니다."; // 이메일 제목
 		String content = "대동덕지도" //html 형식으로 작성
-			+ "<br><br>" + "인증 번호는 " + verifyCode + "입니다." + "<br>"
-			+ "해당 인증번호를 인증번호 확인란에 기입하여 주세요."; //이메일 내용 삽입
+			+ "<br><br>" + "아래 링크를 클릭하면 비밀번호 재설정 페이지로 이동합니다." + "<br>"
+			+ "<a href=\"" + resetPwLocalUrl + "/" + uuid + "\">"
+			+ resetPwLocalUrl + "/" + uuid + "</a>" + "<br><br>"
+			+ "해당 링크는 24시간 동안만 유효합니다." + "<br>"; //이메일 내용 삽입
 		mailSend(setFrom, email, title, content);
-		return Integer.toString(verifyCode);
+		saveUuidAndEmail(uuid, email);
+		return uuid;
 	}
 
 	//이메일 전송 메소드
@@ -56,5 +63,13 @@ public class SendMailService {
 			e.printStackTrace();
 		}
 
+	}
+
+	// UUID와 Email을 Redis에 저장
+	@Transactional
+	public void saveUuidAndEmail(String uuid, String email) {
+		redisService.setValuesWithTimeout(uuid, // key
+			email, // value
+			UUID_VALID_TIME); // timeout(milliseconds)
 	}
 }
