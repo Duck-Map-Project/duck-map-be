@@ -12,6 +12,7 @@ import com.teamddd.duckmap.dto.ErrorResult;
 import com.teamddd.duckmap.exception.InvalidMemberException;
 import com.teamddd.duckmap.exception.InvalidPasswordException;
 import com.teamddd.duckmap.exception.InvalidTokenException;
+import com.teamddd.duckmap.exception.InvalidUuidException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -64,4 +65,12 @@ public class AuthAdvice {
 			.build();
 	}
 
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
+	@ExceptionHandler
+	public ErrorResult invalidUuidException(InvalidUuidException ex) {
+		return ErrorResult.builder()
+			.code(ExceptionCodeMessage.INVALID_UUID_EXCEPTION.code())
+			.message(ex.getMessage())
+			.build();
+	}
 }
