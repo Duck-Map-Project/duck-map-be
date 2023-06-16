@@ -46,20 +46,7 @@ public class EventCategoryController {
 	@Operation(summary = "이벤트 카테고리 목록 조회")
 	@GetMapping
 	public List<EventCategoryRes> getEventCategories() {
-		return List.of(
-			EventCategoryRes.builder()
-				.id(1L)
-				.category("생일카페")
-				.build(),
-			EventCategoryRes.builder()
-				.id(2L)
-				.category("전시회")
-				.build(),
-			EventCategoryRes.builder()
-				.id(3L)
-				.category("럭키드로우")
-				.build()
-		);
+		return eventCategoryService.getEventCategoryResList();
 	}
 
 	@Operation(summary = "이벤트 카테고리 수정")
