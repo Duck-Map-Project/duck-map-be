@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.teamddd.duckmap.config.security.JwtProvider;
 import com.teamddd.duckmap.config.security.TokenDto;
 import com.teamddd.duckmap.dto.user.auth.LoginReq;
+import com.teamddd.duckmap.exception.InvalidTokenException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -56,9 +57,11 @@ public class AuthService {
 	}
 
 	// AT가 만료일자만 초과한 유효한 토큰인지 검사
-	public boolean validate(String requestAccessTokenInHeader) {
+	public void validate(String requestAccessTokenInHeader) {
 		String requestAccessToken = resolveToken(requestAccessTokenInHeader);
-		return jwtProvider.validateAccessTokenOnlyExpired(requestAccessToken); // true = 재발급
+		if (!jwtProvider.validateAccessTokenOnlyExpired(requestAccessToken)) {
+			throw new InvalidTokenException();
+		}
 	}
 
 	// 토큰 재발급: AT, RT 재발급
