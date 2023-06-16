@@ -2,6 +2,7 @@ package com.teamddd.duckmap.service;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +14,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.teamddd.duckmap.dto.event.category.CreateEventCategoryReq;
+import com.teamddd.duckmap.dto.event.category.EventCategoryRes;
 import com.teamddd.duckmap.entity.EventCategory;
 import com.teamddd.duckmap.repository.EventCategoryRepository;
 
@@ -42,6 +44,30 @@ class EventCategoryServiceTest {
 		assertThat(findCategory.get())
 			.extracting("category")
 			.isEqualTo("category1");
+	}
+
+	@DisplayName("이벤트 카테고리 전체 목록을 조회한다")
+	@Test
+	void getEventCategoryResList() throws Exception {
+		//given
+		EventCategory category1 = createEventCategory("category1");
+		EventCategory category2 = createEventCategory("category2");
+		EventCategory category3 = createEventCategory("category3");
+		eventCategoryRepository.saveAll(List.of(category1, category2, category3));
+
+		//when
+		List<EventCategoryRes> eventCategoryResList = eventCategoryService.getEventCategoryResList();
+
+		//then
+		assertThat(eventCategoryResList).hasSize(3)
+			.extracting("category")
+			.containsExactlyInAnyOrder("category1", "category2", "category3");
+	}
+
+	EventCategory createEventCategory(String category) {
+		return EventCategory.builder()
+			.category(category)
+			.build();
 	}
 
 }
