@@ -65,7 +65,7 @@ public class AuthAdvice {
 			.build();
 	}
 
-	@ResponseStatus(HttpStatus.UNAUTHORIZED)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler
 	public ErrorResult invalidUuidException(InvalidUuidException ex) {
 		return ErrorResult.builder()
