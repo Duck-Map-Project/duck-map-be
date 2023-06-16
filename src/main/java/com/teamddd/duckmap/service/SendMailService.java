@@ -33,7 +33,7 @@ public class SendMailService {
 	}
 
 	@Transactional
-	public String sendEmailToUser(String email) {
+	public String sendResetPasswordEmail(String email) {
 		String uuid = makeUuid();
 		String title = "요청하신 비밀번호 재설정 입니다."; // 이메일 제목
 		String content = "대동덕지도" //html 형식으로 작성
