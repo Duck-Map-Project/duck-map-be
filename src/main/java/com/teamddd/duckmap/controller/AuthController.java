@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.teamddd.duckmap.config.security.TokenDto;
 import com.teamddd.duckmap.dto.user.auth.LoginReq;
 import com.teamddd.duckmap.dto.user.auth.SendResetPasswordEmailReq;
+import com.teamddd.duckmap.dto.user.auth.SendResetPasswordEmailRes;
 import com.teamddd.duckmap.service.AuthService;
 import com.teamddd.duckmap.service.MemberService;
 import com.teamddd.duckmap.service.SendMailService;
@@ -54,16 +55,15 @@ public class AuthController {
 			.build();
 	}
 
+	//토큰 유효성 확인
+	@Operation(summary = "access 토큰 유효성 확인")
 	@PostMapping("/validate")
-	public ResponseEntity<?> validate(@RequestHeader("Authorization") String requestAccessToken) {
-		if (!authService.validate(requestAccessToken)) {
-			return ResponseEntity.status(HttpStatus.OK).build(); // 재발급 필요X
-		} else {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 재발급 필요
-		}
+	public void validate(@RequestHeader("Authorization") String requestAccessToken) {
+		authService.validate(requestAccessToken);
 	}
 
 	// 토큰 재발급
+	@Operation(summary = "access&refresh 토큰 재발급")
 	@PostMapping("/reissue")
 	public ResponseEntity<?> reissue(@CookieValue(name = "refresh-token") String requestRefreshToken) {
 		log.info(requestRefreshToken);
@@ -115,9 +115,13 @@ public class AuthController {
 	//UUID 생성 및 이메일 전송
 	@Operation(summary = "UUID 생성 및 이메일 전송")
 	@PostMapping("/send-reset-password")
-	public String sendResetPassword(@Validated @RequestBody SendResetPasswordEmailReq resetPasswordEmailReq) {
+	public SendResetPasswordEmailRes sendResetPassword(
+		@Validated @RequestBody SendResetPasswordEmailReq resetPasswordEmailReq) {
 		memberService.checkMemberByEmail(resetPasswordEmailReq.getEmail());
-		return mailService.sendResetPasswordEmail(resetPasswordEmailReq.getEmail());
+		String uuid = mailService.sendResetPasswordEmail(resetPasswordEmailReq.getEmail());
+		return SendResetPasswordEmailRes.builder()
+			.UUID(uuid)
+			.build();
 	}
 
 }
