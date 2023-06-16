@@ -2,9 +2,6 @@ package com.teamddd.duckmap.controller;
 
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -48,8 +45,8 @@ public class EventCategoryController {
 
 	@Operation(summary = "이벤트 카테고리 목록 조회")
 	@GetMapping
-	public Page<EventCategoryRes> getEventCategories(Pageable pageable) {
-		return new PageImpl<>(List.of(
+	public List<EventCategoryRes> getEventCategories() {
+		return List.of(
 			EventCategoryRes.builder()
 				.id(1L)
 				.category("생일카페")
@@ -62,7 +59,7 @@ public class EventCategoryController {
 				.id(3L)
 				.category("럭키드로우")
 				.build()
-		));
+		);
 	}
 
 	@Operation(summary = "이벤트 카테고리 수정")
