@@ -6,7 +6,7 @@ import javax.validation.constraints.NotBlank;
 import lombok.Getter;
 
 @Getter
-public class VerificationReq {
+public class SendResetPasswordEmailReq {
 	@NotBlank
 	@Email
 	private String email;

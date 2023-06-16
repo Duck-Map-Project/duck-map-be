@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.teamddd.duckmap.config.security.TokenDto;
 import com.teamddd.duckmap.dto.user.auth.LoginReq;
-import com.teamddd.duckmap.dto.user.auth.VerificationReq;
+import com.teamddd.duckmap.dto.user.auth.SendResetPasswordEmailReq;
 import com.teamddd.duckmap.service.AuthService;
 import com.teamddd.duckmap.service.MemberService;
 import com.teamddd.duckmap.service.SendMailService;
@@ -112,12 +112,12 @@ public class AuthController {
 			.build();
 	}
 
-	//인증번호 생성 및 이메일 전송
-	@Operation(summary = "인증번호 생성 및 이메일 전송")
-	@PostMapping("/send-verification")
-	public String sendVerification(@Validated @RequestBody VerificationReq verificationReq) {
-		memberService.checkMemberByEmail(verificationReq.getEmail());
-		return mailService.sendVerification(verificationReq.getEmail());
+	//UUID 생성 및 이메일 전송
+	@Operation(summary = "UUID 생성 및 이메일 전송")
+	@PostMapping("/send-reset-password")
+	public String sendResetPassword(@Validated @RequestBody SendResetPasswordEmailReq resetPasswordEmailReq) {
+		memberService.checkMemberByEmail(resetPasswordEmailReq.getEmail());
+		return mailService.sendResetPasswordEmail(resetPasswordEmailReq.getEmail());
 	}
 
 }
