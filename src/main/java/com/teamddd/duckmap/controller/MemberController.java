@@ -15,6 +15,7 @@ import com.teamddd.duckmap.dto.user.CreateMemberReq;
 import com.teamddd.duckmap.dto.user.CreateMemberRes;
 import com.teamddd.duckmap.dto.user.DeleteMemberReq;
 import com.teamddd.duckmap.dto.user.MemberRes;
+import com.teamddd.duckmap.dto.user.ResetPasswordReq;
 import com.teamddd.duckmap.dto.user.UpdateMemberReq;
 import com.teamddd.duckmap.dto.user.UpdatePasswordReq;
 import com.teamddd.duckmap.service.AuthService;
@@ -66,6 +67,12 @@ public class MemberController {
 		Long id = memberService.validatePassword(deleteMemberReq.getPassword());
 		authService.logout(requestAccessToken);
 		memberService.deleteMember(id);
+	}
+
+	@Operation(summary = "비밀번호 재설정", description = "비밀번호를 새로 재설정")
+	@PatchMapping("/reset-password/{id}")
+	public void resetPassword(@Validated @RequestBody ResetPasswordReq resetPasswordReq) {
+		memberService.resetPassword(resetPasswordReq.getUuid(), resetPasswordReq.getNewPassword());
 	}
 
 }

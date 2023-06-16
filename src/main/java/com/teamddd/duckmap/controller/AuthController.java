@@ -15,7 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.teamddd.duckmap.config.security.TokenDto;
 import com.teamddd.duckmap.dto.user.auth.LoginReq;
+import com.teamddd.duckmap.dto.user.auth.SendResetPasswordEmailReq;
 import com.teamddd.duckmap.service.AuthService;
+import com.teamddd.duckmap.service.MemberService;
+import com.teamddd.duckmap.service.SendMailService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +30,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/auth")
 public class AuthController {
 	private final AuthService authService;
+	private final MemberService memberService;
+	private final SendMailService mailService;
 	private static final long COOKIE_EXPIRATION = 604800;
 
 	@Operation(summary = "로그인")
@@ -105,6 +110,14 @@ public class AuthController {
 			.status(HttpStatus.OK)
 			.header(HttpHeaders.SET_COOKIE, responseCookie.toString())
 			.build();
+	}
+
+	//UUID 생성 및 이메일 전송
+	@Operation(summary = "UUID 생성 및 이메일 전송")
+	@PostMapping("/send-reset-password")
+	public String sendResetPassword(@Validated @RequestBody SendResetPasswordEmailReq resetPasswordEmailReq) {
+		memberService.checkMemberByEmail(resetPasswordEmailReq.getEmail());
+		return mailService.sendResetPasswordEmail(resetPasswordEmailReq.getEmail());
 	}
 
 }

@@ -12,6 +12,7 @@ import com.teamddd.duckmap.exception.DuplicateEmailException;
 import com.teamddd.duckmap.exception.DuplicateUsernameException;
 import com.teamddd.duckmap.exception.InvalidMemberException;
 import com.teamddd.duckmap.exception.InvalidPasswordException;
+import com.teamddd.duckmap.exception.InvalidUuidException;
 import com.teamddd.duckmap.repository.MemberRepository;
 import com.teamddd.duckmap.util.MemberUtils;
 
@@ -23,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class MemberService {
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final RedisService redisService;
 
 	@Transactional
 	public Long join(CreateMemberReq createMemberReq) {
@@ -48,6 +50,10 @@ public class MemberService {
 		memberRepository.findByUsername(username).ifPresent(member -> {
 			throw new DuplicateUsernameException();
 		});
+	}
+
+	public void checkMemberByEmail(String email) {
+		memberRepository.findByEmail(email).orElseThrow(InvalidMemberException::new);
 	}
 
 	public MemberRes getMyInfoBySecurity() {
@@ -87,4 +93,24 @@ public class MemberService {
 		}
 		return member.getId();
 	}
+
+	@Transactional
+	public void resetPassword(String uuid, String newPassword) {
+		//redis에 uuid가 있는지 확인, 없으면 error
+		String email = redisService.getValues(uuid);
+		if (email == null) {
+			throw new InvalidUuidException();
+		}
+
+		//redis에서 uuid로 email을 찾아온다.
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(InvalidMemberException::new);
+
+		//비밀번호 재설정
+		member.updatePassword(passwordEncoder.encode((newPassword)));
+
+		//비밀번호 업데이트 후 redis에서 uuid를 지운다.
+		redisService.deleteValues(uuid);
+	}
+
 }
