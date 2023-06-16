@@ -2,6 +2,7 @@ package com.teamddd.duckmap.dto.event.event;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -24,10 +25,10 @@ public class CreateEventReq {
 	private String twitterUrl;
 	@NotNull
 	@Size(min = 1)
-	private List<Long> artistIds;
+	private Set<Long> artistIds;
 	@NotNull
 	@Size(min = 1)
-	private List<Long> categoryIds;
+	private Set<Long> categoryIds;
 	@NotNull
 	@Size(min = 1)
 	private List<String> imageFilenames;
