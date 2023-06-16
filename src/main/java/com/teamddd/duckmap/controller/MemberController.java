@@ -18,6 +18,7 @@ import com.teamddd.duckmap.dto.user.MemberRes;
 import com.teamddd.duckmap.dto.user.ResetPasswordReq;
 import com.teamddd.duckmap.dto.user.UpdateMemberReq;
 import com.teamddd.duckmap.dto.user.UpdatePasswordReq;
+import com.teamddd.duckmap.entity.Member;
 import com.teamddd.duckmap.service.AuthService;
 import com.teamddd.duckmap.service.MemberService;
 
@@ -64,9 +65,9 @@ public class MemberController {
 	@DeleteMapping("/me")
 	public void deleteMember(@RequestHeader("Authorization") String requestAccessToken,
 		@Validated @RequestBody DeleteMemberReq deleteMemberReq) {
-		Long id = memberService.validatePassword(deleteMemberReq.getPassword());
+		Member member = memberService.validatePassword(deleteMemberReq.getPassword());
 		authService.logout(requestAccessToken);
-		memberService.deleteMember(id);
+		memberService.deleteMember(member.getId());
 	}
 
 	@Operation(summary = "비밀번호 재설정", description = "비밀번호를 새로 재설정")
