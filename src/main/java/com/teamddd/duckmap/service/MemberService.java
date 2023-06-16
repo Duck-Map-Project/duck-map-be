@@ -72,11 +72,7 @@ public class MemberService {
 
 	@Transactional
 	public void updatePassword(String currentPassword, String newPassword) {
-		Member member = memberRepository.findByEmail(MemberUtils.getAuthMember().getUsername())
-			.orElseThrow(InvalidMemberException::new);
-		if (!passwordEncoder.matches(currentPassword, member.getPassword())) {
-			throw new InvalidPasswordException();
-		}
+		Member member = validatePassword(currentPassword);
 		member.updatePassword(passwordEncoder.encode((newPassword)));
 	}
 
@@ -85,13 +81,13 @@ public class MemberService {
 		memberRepository.deleteById(id);
 	}
 
-	public Long validatePassword(String password) {
+	public Member validatePassword(String password) {
 		Member member = memberRepository.findByEmail(MemberUtils.getAuthMember().getUsername())
 			.orElseThrow(InvalidMemberException::new);
 		if (!passwordEncoder.matches(password, member.getPassword())) {
 			throw new InvalidPasswordException();
 		}
-		return member.getId();
+		return member;
 	}
 
 	@Transactional
