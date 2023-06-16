@@ -23,7 +23,7 @@ public class SendMailService {
 	private final RedisService redisService;
 	@Value("${spring.mail.username}")
 	private String fromEmail;
-	@Value("${resetpassword.url}")
+	@Value("${props.reset-password-url}")
 	private String resetPwUrl;
 	@Autowired
 	JavaMailSender mailSender;
