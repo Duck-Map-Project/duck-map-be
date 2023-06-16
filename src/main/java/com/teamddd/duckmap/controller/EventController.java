@@ -29,6 +29,9 @@ import com.teamddd.duckmap.dto.event.event.EventsRes;
 import com.teamddd.duckmap.dto.event.event.HashtagRes;
 import com.teamddd.duckmap.dto.event.event.UpdateEventReq;
 import com.teamddd.duckmap.dto.review.ReviewRes;
+import com.teamddd.duckmap.entity.Member;
+import com.teamddd.duckmap.service.EventService;
+import com.teamddd.duckmap.util.MemberUtils;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -40,11 +43,17 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/events")
 public class EventController {
 
+	private final EventService eventService;
+
 	@Operation(summary = "이벤트 등록", description = "address 형식 변경 가능성 있음")
 	@PostMapping
 	public CreateEventRes createEvent(@Validated @RequestBody CreateEventReq createEventReq) {
+		Member member = MemberUtils.getAuthMember().getUser();
+
+		Long eventId = eventService.createEvent(createEventReq, member);
+
 		return CreateEventRes.builder()
-			.id(1L)
+			.id(eventId)
 			.build();
 	}
 
