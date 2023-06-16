@@ -10,6 +10,7 @@ import javax.persistence.EntityManager;
 
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,6 +26,7 @@ import com.teamddd.duckmap.dto.artist.ArtistSearchParam;
 import com.teamddd.duckmap.dto.artist.CreateArtistReq;
 import com.teamddd.duckmap.entity.Artist;
 import com.teamddd.duckmap.entity.ArtistType;
+import com.teamddd.duckmap.exception.NonExistentArtistException;
 import com.teamddd.duckmap.repository.ArtistRepository;
 
 @Transactional
@@ -147,5 +149,45 @@ class ArtistServiceTest {
 			.name(name)
 			.group(group)
 			.build();
+	}
+
+	@DisplayName("아티스트 id 목록으로 아티스트 목록을 조회한다")
+	@Nested
+	class GetArtistsByIds {
+		@DisplayName("유효한 id로만 조회한 경우")
+		@Test
+		void getArtistsByIds1() throws Exception {
+			//given
+			Artist artist1 = createArtist(null, "artist1", null);
+			Artist artist2 = createArtist(null, "artist2", null);
+			Artist artist3 = createArtist(null, "artist3", null);
+			artistRepository.saveAll(List.of(artist1, artist2, artist3));
+
+			List<Long> inIds = List.of(artist2.getId(), artist3.getId());
+
+			//when
+			List<Artist> findArtists = artistService.getArtistsByIds(inIds);
+
+			//then
+			assertThat(findArtists).hasSize(2)
+				.extracting("name")
+				.containsExactlyInAnyOrder("artist2", "artist3");
+		}
+
+		@DisplayName("유효하지 않은 id가 포함된 조회한 경우")
+		@Test
+		void getArtistsByIds2() throws Exception {
+			//given
+			Artist artist1 = createArtist(null, "artist1", null);
+			Artist artist2 = createArtist(null, "artist2", null);
+			Artist artist3 = createArtist(null, "artist3", null);
+			artistRepository.saveAll(List.of(artist1, artist2, artist3));
+
+			List<Long> inIds = List.of(artist2.getId(), 100L);
+
+			//when //then
+			assertThatThrownBy(() -> artistService.getArtistsByIds(inIds))
+				.isInstanceOf(NonExistentArtistException.class);
+		}
 	}
 }

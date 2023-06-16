@@ -1,6 +1,8 @@
 package com.teamddd.duckmap.service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -52,6 +54,16 @@ public class ArtistService {
 	public Artist getArtist(Long artistId) throws NonExistentArtistException {
 		return artistRepository.findById(artistId)
 			.orElseThrow(NonExistentArtistException::new);
+	}
+
+	public List<Artist> getArtistsByIds(List<Long> ids) {
+		List<Artist> artists = artistRepository.findByIdIn(ids);
+
+		Set<Long> duplicatedIds = new HashSet<>(ids);
+		if (duplicatedIds.size() == artists.size()) {
+			return artists;
+		}
+		throw new NonExistentArtistException();
 	}
 
 	public Page<ArtistRes> getArtistResPageByTypeAndName(ArtistSearchParam artistSearchParam, Pageable pageable) {
