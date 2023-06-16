@@ -114,8 +114,8 @@ public class AuthController {
 
 	//UUID 생성 및 이메일 전송
 	@Operation(summary = "UUID 생성 및 이메일 전송")
-	@PostMapping("/send-email")
-	public String sendEmail(@Validated @RequestBody SendEmailReq sendEmailReq) {
+	@PostMapping("/send-reset-password")
+	public String sendResetPassword(@Validated @RequestBody SendEmailReq sendEmailReq) {
 		memberService.checkMemberByEmail(sendEmailReq.getEmail());
 		return mailService.sendEmailToUser(sendEmailReq.getEmail());
 	}
