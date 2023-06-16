@@ -5,6 +5,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -19,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teamddd.duckmap.dto.event.category.CreateEventCategoryReq;
+import com.teamddd.duckmap.dto.event.category.EventCategoryRes;
 import com.teamddd.duckmap.service.EventCategoryService;
 
 @SpringBootTest
@@ -31,6 +34,22 @@ class EventCategoryControllerTest {
 	private ObjectMapper objectMapper;
 	@MockBean
 	private EventCategoryService eventCategoryService;
+
+	@DisplayName("이벤트 카테고리 전체 목록을 조회한다")
+	@Test
+	void getEventCategories() throws Exception {
+		//given
+		List<EventCategoryRes> result = List.of();
+		when(eventCategoryService.getEventCategoryResList()).thenReturn(result);
+
+		//when //then
+		mockMvc.perform(
+				get("/events/categories")
+			)
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$").isArray());
+	}
 
 	@DisplayName("이벤트 카테고리를 생성한다")
 	@Nested
