@@ -33,7 +33,7 @@ class EventRepositoryTest {
 	@Autowired
 	EntityManager em;
 
-	@DisplayName("user pk로 event 목록 검색, EventLike, EventBookmark와 join하여 조회")
+	@DisplayName("member pk로 event 목록 검색, EventLike, EventBookmark와 join하여 조회")
 	@Test
 	void findMyEvents() throws Exception {
 		//given
@@ -65,7 +65,7 @@ class EventRepositoryTest {
 
 		//then
 		assertThat(myEvents).hasSize(2)
-			.extracting("event.user.id", "event.storeName", "like.id", "bookmark.id")
+			.extracting("event.member.id", "event.storeName", "like.id", "bookmark.id")
 			.containsExactly(Tuple.tuple(member.getId(), "event1", eventLike1.getId(), null),
 				Tuple.tuple(member.getId(), "event3", null, eventBookmark3.getId()));
 
@@ -124,7 +124,7 @@ class EventRepositoryTest {
 			.containsExactly("#hashtag2", "#hashtag3");
 	}
 
-	@DisplayName("user fk가 좋아요한 event 목록 조회")
+	@DisplayName("member fk가 좋아요한 event 목록 조회")
 	@Test
 	void findMyLikeEvents() throws Exception {
 		//given
@@ -167,7 +167,7 @@ class EventRepositoryTest {
 
 		//then
 		assertThat(events).hasSize(3)
-			.extracting("event.storeName", "like.id", "like.user.id", "bookmark.id")
+			.extracting("event.storeName", "like.id", "like.member.id", "bookmark.id")
 			.containsExactly(
 				Tuple.tuple("event1", eventLike1.getId(), member.getId(), null),
 				Tuple.tuple("event2", eventLike2.getId(), member.getId(), eventBookmark2.getId()),
@@ -203,9 +203,9 @@ class EventRepositoryTest {
 	}
 
 	@Nested
-	@DisplayName("event pk로 조회, user fk로 EventLike, EventBookmark join 조회")
+	@DisplayName("event pk로 조회, member fk로 EventLike, EventBookmark join 조회")
 	class FindByIdWithLikeAndBookmark {
-		@DisplayName("user fk가 null")
+		@DisplayName("member fk가 null")
 		@Test
 		void findByIdWithLikeAndBookmark1() throws Exception {
 			//given
@@ -229,7 +229,7 @@ class EventRepositoryTest {
 				.contains("event1", null, null);
 		}
 
-		@DisplayName("user fk가 주어진 경우")
+		@DisplayName("member fk가 주어진 경우")
 		@Test
 		void findByIdWithLikeAndBookmark2() throws Exception {
 			//given
@@ -252,7 +252,7 @@ class EventRepositoryTest {
 				.get();
 
 			//then
-			assertThat(findEvent).extracting("event.storeName", "like.user.id", "bookmark.user.id")
+			assertThat(findEvent).extracting("event.storeName", "like.member.id", "bookmark.member.id")
 				.contains("event1", member2.getId(), member2.getId());
 		}
 	}
@@ -378,7 +378,7 @@ class EventRepositoryTest {
 			assertThat(events.getTotalPages()).isEqualTo(2);
 		}
 
-		@DisplayName("user pk로 EventLike, EventBookmark와 join하여 조회")
+		@DisplayName("member pk로 EventLike, EventBookmark와 join하여 조회")
 		@Test
 		void findByArtistAndDate3() throws Exception {
 			//given
