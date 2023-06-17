@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.teamddd.duckmap.common.ExceptionCodeMessage;
 import com.teamddd.duckmap.dto.ErrorResult;
+import com.teamddd.duckmap.exception.AuthenticationRequiredException;
 import com.teamddd.duckmap.exception.InvalidMemberException;
 import com.teamddd.duckmap.exception.InvalidPasswordException;
 import com.teamddd.duckmap.exception.InvalidTokenException;
@@ -70,6 +71,15 @@ public class AuthAdvice {
 	public ErrorResult invalidUuidException(InvalidUuidException ex) {
 		return ErrorResult.builder()
 			.code(ExceptionCodeMessage.INVALID_UUID_EXCEPTION.code())
+			.message(ex.getMessage())
+			.build();
+	}
+
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
+	@ExceptionHandler
+	public ErrorResult authenticationRequiredException(AuthenticationRequiredException ex) {
+		return ErrorResult.builder()
+			.code(ExceptionCodeMessage.AUTHENTICATION_REQUIRED_EXCEPTION.code())
 			.message(ex.getMessage())
 			.build();
 	}

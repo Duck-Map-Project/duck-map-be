@@ -4,6 +4,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.teamddd.duckmap.config.security.UserDetailsImpl;
+import com.teamddd.duckmap.exception.AuthenticationRequiredException;
 import com.teamddd.duckmap.exception.InvalidTokenException;
 
 import lombok.AccessLevel;
@@ -18,7 +19,7 @@ public class MemberUtils {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		Object principal = auth.getPrincipal();
 		if (!(principal instanceof UserDetailsImpl)) {
-			throw new InvalidTokenException();
+			throw new AuthenticationRequiredException();
 		}
 		return ((UserDetailsImpl)principal);
 	}
