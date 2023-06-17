@@ -62,6 +62,30 @@ class ArtistRepositoryTest {
 				Tuple.tuple(artist3.getId(), artist3.getName(), group1.getId()));
 	}
 
+	@DisplayName("pk 목록으로 artist 목록 조회")
+	@Test
+	void findByIdIn() throws Exception {
+		//given
+		Artist artist1 = createArtist("artist1", null, null);
+		Artist artist2 = createArtist("artist2", null, null);
+		Artist artist3 = createArtist("artist3", null, null);
+		Artist artist4 = createArtist("artist4", null, null);
+		em.persist(artist1);
+		em.persist(artist2);
+		em.persist(artist3);
+		em.persist(artist4);
+
+		List<Long> inIds = List.of(artist2.getId(), artist4.getId());
+
+		//when
+		List<Artist> findArtists = artistRepository.findByIdIn(inIds);
+
+		//then
+		assertThat(findArtists).hasSize(2)
+			.extracting("name")
+			.containsExactlyInAnyOrder("artist2", "artist4");
+	}
+
 	private ArtistType createArtistType(String type) {
 		return ArtistType.builder().type(type).build();
 	}
