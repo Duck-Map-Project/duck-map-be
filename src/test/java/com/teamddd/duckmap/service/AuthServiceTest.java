@@ -30,7 +30,6 @@ public class AuthServiceTest {
 		ReflectionTestUtils.setField(request, "username", "user1");
 		ReflectionTestUtils.setField(request, "email", "string@string.com");
 		ReflectionTestUtils.setField(request, "password", "@Alaa1234523");
-		System.out.println("request = " + request);
 		Long memberId = memberService.join(request);
 
 		LoginReq loginReq = new LoginReq();
