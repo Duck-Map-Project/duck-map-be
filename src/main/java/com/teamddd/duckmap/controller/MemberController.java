@@ -4,6 +4,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -72,8 +73,9 @@ public class MemberController {
 
 	@Operation(summary = "비밀번호 재설정", description = "비밀번호를 새로 재설정")
 	@PatchMapping("/reset-password/{id}")
-	public void resetPassword(@Validated @RequestBody ResetPasswordReq resetPasswordReq) {
-		memberService.resetPassword(resetPasswordReq.getUuid(), resetPasswordReq.getNewPassword());
+	public void resetPassword(@PathVariable("id") String uuid,
+		@Validated @RequestBody ResetPasswordReq resetPasswordReq) {
+		memberService.resetPassword(uuid, resetPasswordReq.getNewPassword());
 	}
 
 }
