@@ -29,18 +29,16 @@ public class AuthServiceTest {
 		CreateMemberReq request = new CreateMemberReq();
 		ReflectionTestUtils.setField(request, "username", "user1");
 		ReflectionTestUtils.setField(request, "email", "string@string.com");
-		ReflectionTestUtils.setField(request, "password", "@Aaaa1234523");
+		ReflectionTestUtils.setField(request, "password", "@Alaa1234523");
 		Long memberId = memberService.join(request);
 
 		LoginReq loginReq = new LoginReq();
 		ReflectionTestUtils.setField(loginReq, "email", "string@string.com");
-		ReflectionTestUtils.setField(loginReq, "password", "@Aaaa1234523");
+		ReflectionTestUtils.setField(loginReq, "password", "@Alaa1234523");
 		//when
-
 		TokenDto tokenDto = authService.login(loginReq);
 
 		//then
-
 		String email = MemberUtils.getAuthMember().getUsername();
 		assertThat(email).isEqualTo("string@string.com");
 	}
