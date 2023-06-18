@@ -40,9 +40,7 @@ public class AuthServiceTest {
 		TokenDto tokenDto = authService.login(loginReq);
 
 		//then
-
 		String email = MemberUtils.getAuthMember().getUsername();
-		System.out.println("email = " + email);
 		assertThat(email).isEqualTo("string@string.com");
 	}
 }
