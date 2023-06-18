@@ -16,10 +16,9 @@ public class MemberUtils {
 
 	public static UserDetailsImpl getAuthMember() throws AuthenticationRequiredException {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		Object principal = auth.getPrincipal();
-		if (!(principal instanceof UserDetailsImpl)) {
+		if (auth == null || !auth.isAuthenticated() || !(auth.getPrincipal() instanceof UserDetailsImpl)) {
 			throw new AuthenticationRequiredException();
 		}
-		return ((UserDetailsImpl)principal);
+		return (UserDetailsImpl)auth.getPrincipal();
 	}
 }
