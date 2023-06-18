@@ -89,7 +89,7 @@ class ArtistTypeServiceTest {
 
 			//then
 			assertThat(findArtistType).extracting("id", "type")
-				.contains(1L, "type1");
+				.contains(artistTypeId, "type1");
 		}
 
 		@DisplayName("잘못된 값으로 아티스트 타입을 조회할 수 없다")
