@@ -6,7 +6,6 @@ import java.util.List;
 import com.teamddd.duckmap.dto.ImageRes;
 import com.teamddd.duckmap.dto.artist.ArtistRes;
 import com.teamddd.duckmap.dto.event.category.EventCategoryRes;
-import com.teamddd.duckmap.dto.review.ReviewRes;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -31,6 +30,4 @@ public class EventRes {
 	private boolean like;
 	private int likeCount;
 	private boolean bookmark;
-
-	private List<ReviewRes> reviews;
 }
