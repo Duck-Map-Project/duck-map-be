@@ -10,8 +10,6 @@ import com.teamddd.duckmap.entity.Event;
 import com.teamddd.duckmap.entity.Member;
 import com.teamddd.duckmap.entity.Review;
 import com.teamddd.duckmap.entity.ReviewImage;
-import com.teamddd.duckmap.exception.NonExistentEventException;
-import com.teamddd.duckmap.repository.EventRepository;
 import com.teamddd.duckmap.repository.ReviewRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -23,13 +21,12 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ReviewService {
 
-	private final EventRepository eventRepository;
+	private final EventService eventService;
 	private final ReviewRepository reviewRepository;
 
 	@Transactional
 	public Long createReview(CreateReviewReq createReviewReq, Member member) {
-		Event event = eventRepository.findById(createReviewReq.getEventId())
-			.orElseThrow(NonExistentEventException::new);
+		Event event = eventService.getEvent(createReviewReq.getEventId());
 
 		Review review = Review.builder()
 			.member(member)
