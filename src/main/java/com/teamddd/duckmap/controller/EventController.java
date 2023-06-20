@@ -1,5 +1,6 @@
 package com.teamddd.duckmap.controller;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -68,8 +69,8 @@ public class EventController {
 			.id(id)
 			.storeName("상호명")
 			.inProgress(true)
-			.fromDate(LocalDateTime.now().minusDays(2L))
-			.toDate(LocalDateTime.now().plusDays(1L))
+			.fromDate(LocalDate.now().minusDays(2L))
+			.toDate(LocalDate.now().plusDays(1L))
 			.address("주소")
 			.businessHour("10:00 - 18:00")
 			.hashtag("#뫄뫄 #생일축하해")
