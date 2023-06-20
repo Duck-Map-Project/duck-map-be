@@ -1,6 +1,6 @@
 package com.teamddd.duckmap.dto.event.event;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 import com.teamddd.duckmap.dto.ImageRes;
@@ -17,8 +17,8 @@ public class EventRes {
 	private Long id;
 	private String storeName;
 	private boolean inProgress;
-	private LocalDateTime fromDate;
-	private LocalDateTime toDate;
+	private LocalDate fromDate;
+	private LocalDate toDate;
 	private String address;
 	private String businessHour;
 	private String hashtag;
