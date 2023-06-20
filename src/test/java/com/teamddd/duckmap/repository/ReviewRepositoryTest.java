@@ -3,6 +3,7 @@ package com.teamddd.duckmap.repository;
 import static org.assertj.core.api.Assertions.*;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 
@@ -24,7 +25,7 @@ import com.teamddd.duckmap.entity.Review;
 
 @Transactional
 @SpringBootTest
-public class ReviewRepositoryTest {
+class ReviewRepositoryTest {
 	@Autowired
 	ReviewRepository reviewRepository;
 	@Autowired
@@ -141,6 +142,37 @@ public class ReviewRepositoryTest {
 
 		assertThat(reviews2.getTotalElements()).isEqualTo(2);
 		assertThat(reviews2.getTotalPages()).isEqualTo(1);
+	}
+
+	@DisplayName("Event fk로 조회한 Review 목록의 score 평균 계산")
+	@Test
+	void avgScoreByEvent() throws Exception {
+		//given
+		Event event = createEvent("event");
+		em.persist(event);
+
+		// score sum = 25, avg = 4.1666...
+		Review review1 = createReview(null, event, "", 3);
+		Review review2 = createReview(null, event, "", 4);
+		Review review3 = createReview(null, event, "", 3);
+		Review review4 = createReview(null, event, "", 5);
+		Review review5 = createReview(null, event, "", 5);
+		Review review6 = createReview(null, event, "", 5);
+		em.persist(review1);
+		em.persist(review2);
+		em.persist(review3);
+		em.persist(review4);
+		em.persist(review5);
+		em.persist(review6);
+
+		Long eventId = event.getId();
+
+		//when
+		Optional<Double> avgScore = reviewRepository.avgScoreByEvent(eventId);
+
+		//then
+		assertThat(avgScore).isNotEmpty();
+		assertThat(avgScore.get()).isEqualTo(4.2);
 	}
 
 	private Event createEvent(String storeName) {
