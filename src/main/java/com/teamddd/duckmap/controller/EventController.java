@@ -1,7 +1,6 @@
 package com.teamddd.duckmap.controller;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -29,7 +28,6 @@ import com.teamddd.duckmap.dto.event.event.EventSearchParam;
 import com.teamddd.duckmap.dto.event.event.EventsRes;
 import com.teamddd.duckmap.dto.event.event.HashtagRes;
 import com.teamddd.duckmap.dto.event.event.UpdateEventReq;
-import com.teamddd.duckmap.dto.review.ReviewRes;
 import com.teamddd.duckmap.entity.Member;
 import com.teamddd.duckmap.service.EventService;
 import com.teamddd.duckmap.util.MemberUtils;
@@ -100,29 +98,6 @@ public class EventController {
 			.like(true)
 			.likeCount(23)
 			.bookmark(false)
-			.reviews(List.of(
-				ReviewRes.builder()
-					.id(1L)
-					.userProfile(imageRes)
-					.username("user_nickname")
-					.createdAt(LocalDateTime.now().minusDays(2))
-					.score(5)
-					.content("review content")
-					.photos(List.of(
-						imageRes,
-						imageRes
-					))
-					.build(),
-				ReviewRes.builder()
-					.id(2L)
-					.userProfile(imageRes)
-					.username("user2_nickname")
-					.createdAt(LocalDateTime.now().minusDays(3))
-					.score(4)
-					.content("review content")
-					.photos(List.of(imageRes))
-					.build()
-			))
 			.build();
 	}
 
