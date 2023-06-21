@@ -49,6 +49,7 @@ public class ReviewService {
 		return review.getId();
 	}
 
+	//Review 단건 조회
 	public Review getReview(Long reviewId) throws NonExistentReviewException {
 		return reviewRepository.findById(reviewId)
 			.orElseThrow(NonExistentReviewException::new);
