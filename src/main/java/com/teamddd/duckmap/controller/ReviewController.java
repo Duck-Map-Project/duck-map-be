@@ -44,9 +44,7 @@ public class ReviewController {
 	@PostMapping
 	public CreateReviewRes createReview(@Validated @RequestBody CreateReviewReq createReviewReq) {
 		Member member = MemberUtils.getAuthMember().getUser();
-
 		Long reviewId = reviewService.createReview(createReviewReq, member);
-
 		return CreateReviewRes.builder()
 			.id(reviewId)
 			.build();
@@ -55,22 +53,7 @@ public class ReviewController {
 	@Operation(summary = "리뷰 pk로 조회")
 	@GetMapping("/{id}")
 	public ReviewRes getReview(@PathVariable Long id) {
-		ImageRes imageRes = ImageRes.builder()
-			.filename("filename.png")
-			.build();
-
-		return ReviewRes.builder()
-			.id(1L)
-			.userProfile(imageRes)
-			.username("user_nickname")
-			.createdAt(LocalDateTime.now().minusDays(4))
-			.score(5)
-			.content("review content")
-			.photos(List.of(
-				imageRes,
-				imageRes
-			))
-			.build();
+		return reviewService.getReviewById(id);
 	}
 
 	@Operation(summary = "리뷰 수정")
