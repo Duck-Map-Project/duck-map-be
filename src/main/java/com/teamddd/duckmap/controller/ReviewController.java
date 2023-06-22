@@ -53,7 +53,7 @@ public class ReviewController {
 	@Operation(summary = "리뷰 pk로 조회")
 	@GetMapping("/{id}")
 	public ReviewRes getReview(@PathVariable Long id) {
-		return reviewService.getReviewById(id);
+		return reviewService.getReviewRes(id);
 	}
 
 	@Operation(summary = "리뷰 수정")

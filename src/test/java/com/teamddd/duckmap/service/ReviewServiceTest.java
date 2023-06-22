@@ -95,7 +95,7 @@ public class ReviewServiceTest {
 			Long reviewId = reviewService.createReview(request, member);
 
 			//when
-			ReviewRes reviewRes = reviewService.getReviewById(reviewId);
+			ReviewRes reviewRes = reviewService.getReviewRes(reviewId);
 
 			//then
 			assertThat(reviewRes).extracting("content", "score")
@@ -109,7 +109,7 @@ public class ReviewServiceTest {
 			Long reviewId = 1L;
 
 			//when //then
-			assertThatThrownBy(() -> reviewService.getReviewById(reviewId))
+			assertThatThrownBy(() -> reviewService.getReviewRes(reviewId))
 				.isInstanceOf(NonExistentReviewException.class)
 				.hasMessage("잘못된 리뷰 정보입니다");
 		}

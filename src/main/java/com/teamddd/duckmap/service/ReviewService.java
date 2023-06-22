@@ -55,7 +55,7 @@ public class ReviewService {
 			.orElseThrow(NonExistentReviewException::new);
 	}
 
-	public ReviewRes getReviewById(Long reviewId) throws NonExistentReviewException {
+	public ReviewRes getReviewRes(Long reviewId) throws NonExistentReviewException {
 		return reviewRepository.findById(reviewId)
 			.map(ReviewRes::of)
 			.orElseThrow(NonExistentReviewException::new);
