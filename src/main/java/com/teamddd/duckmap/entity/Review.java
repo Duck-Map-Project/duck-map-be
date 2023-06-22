@@ -41,6 +41,7 @@ public class Review extends BaseTimeEntity {
 	@JoinColumn(name = "event_id")
 	private Event event;
 
+	@Builder.Default
 	@OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ReviewImage> reviewImages = new ArrayList<>();
 }

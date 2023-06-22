@@ -42,7 +42,7 @@ public class ReviewServiceTest {
 		CreateReviewReq request = new CreateReviewReq();
 		ReflectionTestUtils.setField(request, "content", "content");
 		ReflectionTestUtils.setField(request, "score", 5);
-		ReflectionTestUtils.setField(request, "imageFilenames", List.of("filename"));
+		ReflectionTestUtils.setField(request, "imageFilenames", List.of("filename1", "filename2"));
 		ReflectionTestUtils.setField(request, "eventId", 1L);
 
 		Member member = Member.builder()
@@ -66,6 +66,8 @@ public class ReviewServiceTest {
 		assertThat(findReview.get())
 			.extracting("content", "score", "event.storeName", "member.username")
 			.containsOnly("content", 5, "store", "member1");
+		assertThat(findReview.get().getReviewImages()).hasSize(2)
+			.extracting("image").containsExactlyInAnyOrder("filename1", "filename2");
 
 	}
 
