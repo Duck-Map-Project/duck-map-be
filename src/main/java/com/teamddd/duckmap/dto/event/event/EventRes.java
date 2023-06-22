@@ -1,12 +1,11 @@
 package com.teamddd.duckmap.dto.event.event;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 import com.teamddd.duckmap.dto.ImageRes;
 import com.teamddd.duckmap.dto.artist.ArtistRes;
 import com.teamddd.duckmap.dto.event.category.EventCategoryRes;
-import com.teamddd.duckmap.dto.review.ReviewRes;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -17,8 +16,8 @@ public class EventRes {
 	private Long id;
 	private String storeName;
 	private boolean inProgress;
-	private LocalDateTime fromDate;
-	private LocalDateTime toDate;
+	private LocalDate fromDate;
+	private LocalDate toDate;
 	private String address;
 	private String businessHour;
 	private String hashtag;
@@ -31,6 +30,4 @@ public class EventRes {
 	private boolean like;
 	private int likeCount;
 	private boolean bookmark;
-
-	private List<ReviewRes> reviews;
 }

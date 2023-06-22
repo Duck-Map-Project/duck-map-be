@@ -1,6 +1,6 @@
 package com.teamddd.duckmap.controller;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -28,7 +28,9 @@ import com.teamddd.duckmap.dto.event.event.EventSearchParam;
 import com.teamddd.duckmap.dto.event.event.EventsRes;
 import com.teamddd.duckmap.dto.event.event.HashtagRes;
 import com.teamddd.duckmap.dto.event.event.UpdateEventReq;
-import com.teamddd.duckmap.dto.review.ReviewRes;
+import com.teamddd.duckmap.entity.Member;
+import com.teamddd.duckmap.service.EventService;
+import com.teamddd.duckmap.util.MemberUtils;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -40,80 +42,30 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/events")
 public class EventController {
 
+	private final EventService eventService;
+
 	@Operation(summary = "이벤트 등록", description = "address 형식 변경 가능성 있음")
 	@PostMapping
 	public CreateEventRes createEvent(@Validated @RequestBody CreateEventReq createEventReq) {
+		Member member = MemberUtils.getAuthMember().getUser();
+
+		Long eventId = eventService.createEvent(createEventReq, member);
+
 		return CreateEventRes.builder()
-			.id(1L)
+			.id(eventId)
 			.build();
 	}
 
 	@Operation(summary = "이벤트 pk로 조회")
 	@GetMapping("/{id}")
 	public EventRes getEvent(@PathVariable Long id) {
-		ImageRes imageRes = ImageRes.builder()
-			.filename("filename.png")
-			.build();
+		Long memberId = MemberUtils.getMember()
+			.map(Member::getId)
+			.orElse(null);
 
-		return EventRes.builder()
-			.id(id)
-			.storeName("상호명")
-			.inProgress(true)
-			.fromDate(LocalDateTime.now().minusDays(2L))
-			.toDate(LocalDateTime.now().plusDays(1L))
-			.address("주소")
-			.businessHour("10:00 - 18:00")
-			.hashtag("#뫄뫄 #생일축하해")
-			.twitterUrl("https://twitter.com/home?lang=ko")
-			.artists(List.of(
-				ArtistRes.builder()
-					.id(2L)
-					.groupId(1L)
-					.name("태연")
-					.image(imageRes)
-					.artistType(
-						ArtistTypeRes.builder()
-							.id(1L)
-							.type("아이돌")
-							.build()
-					)
-					.build()
-			))
-			.categories(List.of(
-				EventCategoryRes.builder()
-					.id(1L)
-					.category("생일카페")
-					.build()
-			))
-			.images(List.of(imageRes))
-			.score(4.5)
-			.like(true)
-			.likeCount(23)
-			.bookmark(false)
-			.reviews(List.of(
-				ReviewRes.builder()
-					.id(1L)
-					.userProfile(imageRes)
-					.username("user_nickname")
-					.createdAt(LocalDateTime.now().minusDays(2))
-					.score(5)
-					.content("review content")
-					.photos(List.of(
-						imageRes,
-						imageRes
-					))
-					.build(),
-				ReviewRes.builder()
-					.id(2L)
-					.userProfile(imageRes)
-					.username("user2_nickname")
-					.createdAt(LocalDateTime.now().minusDays(3))
-					.score(4)
-					.content("review content")
-					.photos(List.of(imageRes))
-					.build()
-			))
-			.build();
+		LocalDate today = LocalDate.now();
+
+		return eventService.getEventRes(id, memberId, today);
 	}
 
 	@Operation(summary = "이벤트 수정")
