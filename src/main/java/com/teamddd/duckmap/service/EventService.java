@@ -38,10 +38,11 @@ public class EventService {
 	private final EventCategoryService eventCategoryService;
 	private final ReviewRepository reviewRepository;
 	private final EventLikeRepository eventLikeRepository;
-  
-  public Event getEvent(Long eventId) throws NonExistentEventException {
+
+	public Event getEvent(Long eventId) throws NonExistentEventException {
 		return eventRepository.findById(eventId)
 			.orElseThrow(NonExistentEventException::new);
+	}
 
 	@Transactional
 	public Long createEvent(CreateEventReq createEventReq, Member member) {
@@ -76,6 +77,7 @@ public class EventService {
 				createEventReq.getImageFilenames().stream()
 					.map(filename -> EventImage.builder()
 						.image(filename)
+						.thumbnail(true)
 						.build())
 					.collect(Collectors.toList())
 			)
