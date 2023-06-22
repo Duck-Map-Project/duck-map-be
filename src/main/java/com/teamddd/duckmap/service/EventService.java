@@ -77,7 +77,6 @@ public class EventService {
 				createEventReq.getImageFilenames().stream()
 					.map(filename -> EventImage.builder()
 						.image(filename)
-						.thumbnail(true)
 						.build())
 					.collect(Collectors.toList())
 			)
