@@ -28,7 +28,10 @@ public enum ExceptionCodeMessage {
 	NON_EXISTENT_ARTIST_EXCEPTION("A001", "잘못된 아티스트 정보입니다"),
 
 	/* EventCategory */
-	NON_EXISTENT_EVENT_CATEGORY_EXCEPTION("EC001", "잘못된 이벤트 카테고리 정보입니다");
+	NON_EXISTENT_EVENT_CATEGORY_EXCEPTION("EC001", "잘못된 이벤트 카테고리 정보입니다"),
+
+	/* Event */
+	NON_EXISTENT_EVENT_EXCEPTION("E001", "잘못된 이벤트 정보입니다");
 
 	private final String code;
 	private final String message;
