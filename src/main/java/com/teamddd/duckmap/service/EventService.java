@@ -59,28 +59,32 @@ public class EventService {
 			.businessHour(createEventReq.getBusinessHour())
 			.hashtag(createEventReq.getHashtag())
 			.twitterUrl(createEventReq.getTwitterUrl())
-			.eventArtists(
-				artists.stream()
-					.map(artist -> EventArtist.builder()
-						.artist(artist)
-						.build())
-					.collect(Collectors.toList())
-			)
-			.eventInfoCategories(
-				categories.stream()
-					.map(category -> EventInfoCategory.builder()
-						.eventCategory(category)
-						.build())
-					.collect(Collectors.toList())
-			)
-			.eventImages(
-				createEventReq.getImageFilenames().stream()
-					.map(filename -> EventImage.builder()
-						.image(filename)
-						.build())
-					.collect(Collectors.toList())
-			)
 			.build();
+
+		artists.stream()
+			.map(artist -> EventArtist.builder()
+				.event(event)
+				.artist(artist)
+				.build())
+			.forEach(eventArtist -> event.getEventArtists().add(eventArtist));
+
+		categories.stream()
+			.map(category -> EventInfoCategory.builder()
+				.event(event)
+				.eventCategory(category)
+				.build())
+			.forEach(eventInfoCategory -> event.getEventInfoCategories().add(eventInfoCategory));
+
+		List<String> imageFilenames = createEventReq.getImageFilenames();
+		for (int i = 0; i < imageFilenames.size(); i++) {
+			event.getEventImages().add(
+				EventImage.builder()
+					.event(event)
+					.image(imageFilenames.get(i))
+					.thumbnail(i == 0)
+					.build()
+			);
+		}
 
 		eventRepository.save(event);
 
@@ -92,8 +96,9 @@ public class EventService {
 			.orElseThrow(NonExistentEventException::new);
 
 		Event event = eventLikeBookmarkDto.getEvent();
-		boolean isLike = eventLikeBookmarkDto.getLike() == null ? false : true;
-		boolean isBookmark = eventLikeBookmarkDto.getBookmark() == null ? false : true;
+		Long likeId = eventLikeBookmarkDto.getLike() == null ? null : eventLikeBookmarkDto.getLike().getId();
+		Long bookmarkId =
+			eventLikeBookmarkDto.getBookmark() == null ? null : eventLikeBookmarkDto.getBookmark().getId();
 
 		int likeCount = Math.toIntExact(eventLikeRepository.countByEventId(eventId));
 		double score = reviewRepository.avgScoreByEvent(eventId).orElse(0.0);
@@ -128,8 +133,8 @@ public class EventService {
 					.collect(Collectors.toList())
 			)
 			.score(score)
-			.like(isLike)
-			.bookmark(isBookmark)
+			.likeId(likeId)
+			.bookmarkId(bookmarkId)
 			.likeCount(likeCount)
 			.build();
 	}
