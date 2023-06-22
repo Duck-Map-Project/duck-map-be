@@ -1,6 +1,6 @@
 package com.teamddd.duckmap.service;
 
-import java.util.stream.Collectors;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,14 +35,17 @@ public class ReviewService {
 			.event(event)
 			.content(createReviewReq.getContent())
 			.score(createReviewReq.getScore())
-			.reviewImages(
-				createReviewReq.getImageFilenames().stream()
-					.map(filename -> ReviewImage.builder()
-						.image(filename)
-						.build())
-					.collect(Collectors.toList())
-			)
 			.build();
+
+		List<String> imageFilenames = createReviewReq.getImageFilenames();
+		for (String imageFilename : imageFilenames) {
+			review.getReviewImages().add(
+				ReviewImage.builder()
+					.review(review)
+					.image(imageFilename)
+					.build()
+			);
+		}
 
 		reviewRepository.save(review);
 
