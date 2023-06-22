@@ -50,7 +50,7 @@ public class ReviewController {
 			.build();
 	}
 
-	@Operation(summary = "리뷰 pk로 조회")
+	@Operation(summary = "리뷰 상세 조회")
 	@GetMapping("/{id}")
 	public ReviewRes getReview(@PathVariable Long id) {
 		return reviewService.getReviewRes(id);
