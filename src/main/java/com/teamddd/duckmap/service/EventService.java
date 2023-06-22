@@ -92,8 +92,9 @@ public class EventService {
 			.orElseThrow(NonExistentEventException::new);
 
 		Event event = eventLikeBookmarkDto.getEvent();
-		boolean isLike = eventLikeBookmarkDto.getLike() == null ? false : true;
-		boolean isBookmark = eventLikeBookmarkDto.getBookmark() == null ? false : true;
+		Long likeId = eventLikeBookmarkDto.getLike() == null ? null : eventLikeBookmarkDto.getLike().getId();
+		Long bookmarkId =
+			eventLikeBookmarkDto.getBookmark() == null ? null : eventLikeBookmarkDto.getBookmark().getId();
 
 		int likeCount = Math.toIntExact(eventLikeRepository.countByEventId(eventId));
 		double score = reviewRepository.avgScoreByEvent(eventId).orElse(0.0);
@@ -128,8 +129,8 @@ public class EventService {
 					.collect(Collectors.toList())
 			)
 			.score(score)
-			.like(isLike)
-			.bookmark(isBookmark)
+			.likeId(likeId)
+			.bookmarkId(bookmarkId)
 			.likeCount(likeCount)
 			.build();
 	}
