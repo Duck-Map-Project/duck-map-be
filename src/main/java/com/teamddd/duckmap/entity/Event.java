@@ -51,4 +51,9 @@ public class Event extends BaseTimeEntity {
 
 	@OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<EventImage> eventImages = new ArrayList<>();
+
+	public boolean isInProgress(LocalDate date) {
+		return (date.isEqual(fromDate) || date.isAfter(fromDate))
+			&& (date.isEqual(toDate) || date.isBefore(toDate));
+	}
 }
