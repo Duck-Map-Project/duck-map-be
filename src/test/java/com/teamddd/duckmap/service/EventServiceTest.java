@@ -54,6 +54,11 @@ class EventServiceTest {
 	@Test
 	void createEvent() throws Exception {
 		//given
+		Artist artist1 = createArtist("artist1", null);
+		em.persist(artist1);
+		EventCategory category1 = createEventCategory("category1");
+		em.persist(category1);
+
 		CreateEventReq request = new CreateEventReq();
 		ReflectionTestUtils.setField(request, "storeName", "store name");
 		ReflectionTestUtils.setField(request, "fromDate", LocalDate.now());
@@ -65,8 +70,8 @@ class EventServiceTest {
 
 		Member member = Member.builder().username("member1").build();
 
-		List<Artist> artists = List.of();
-		List<EventCategory> categories = List.of();
+		List<Artist> artists = List.of(artist1);
+		List<EventCategory> categories = List.of(category1);
 		when(artistService.getArtistsByIds(any())).thenReturn(artists);
 		when(eventCategoryService.getEventCategoriesByIds(any())).thenReturn(categories);
 
@@ -78,7 +83,12 @@ class EventServiceTest {
 
 		Optional<Event> findEvent = eventRepository.findById(eventId);
 		assertThat(findEvent).isNotEmpty();
-		assertThat(findEvent.get()).extracting("storeName", "member.username").containsOnly("store name", "member1");
+		assertThat(findEvent.get()).extracting("storeName", "member.username")
+			.containsOnly("store name", "member1");
+		assertThat(findEvent.get().getEventArtists()).hasSize(1)
+			.extracting("artist.name").containsExactlyInAnyOrder("artist1");
+		assertThat(findEvent.get().getEventInfoCategories()).hasSize(1)
+			.extracting("eventCategory.category").containsExactlyInAnyOrder("category1");
 	}
 
 	@DisplayName("Event Id로 EventRes 조회")
