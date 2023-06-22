@@ -33,12 +33,15 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class EventService {
-
 	private final EventRepository eventRepository;
 	private final ArtistService artistService;
 	private final EventCategoryService eventCategoryService;
 	private final ReviewRepository reviewRepository;
 	private final EventLikeRepository eventLikeRepository;
+  
+  public Event getEvent(Long eventId) throws NonExistentEventException {
+		return eventRepository.findById(eventId)
+			.orElseThrow(NonExistentEventException::new);
 
 	@Transactional
 	public Long createEvent(CreateEventReq createEventReq, Member member) {

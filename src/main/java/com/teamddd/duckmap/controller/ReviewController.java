@@ -25,6 +25,9 @@ import com.teamddd.duckmap.dto.review.ReviewRes;
 import com.teamddd.duckmap.dto.review.ReviewSearchParam;
 import com.teamddd.duckmap.dto.review.ReviewsRes;
 import com.teamddd.duckmap.dto.review.UpdateReviewReq;
+import com.teamddd.duckmap.entity.Member;
+import com.teamddd.duckmap.service.ReviewService;
+import com.teamddd.duckmap.util.MemberUtils;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -35,34 +38,22 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @RequestMapping("/reviews")
 public class ReviewController {
+	private final ReviewService reviewService;
 
 	@Operation(summary = "리뷰 등록")
 	@PostMapping
 	public CreateReviewRes createReview(@Validated @RequestBody CreateReviewReq createReviewReq) {
+		Member member = MemberUtils.getAuthMember().getUser();
+		Long reviewId = reviewService.createReview(createReviewReq, member);
 		return CreateReviewRes.builder()
-			.id(1L)
+			.id(reviewId)
 			.build();
 	}
 
-	@Operation(summary = "리뷰 pk로 조회")
+	@Operation(summary = "리뷰 상세 조회")
 	@GetMapping("/{id}")
 	public ReviewRes getReview(@PathVariable Long id) {
-		ImageRes imageRes = ImageRes.builder()
-			.filename("filename.png")
-			.build();
-
-		return ReviewRes.builder()
-			.id(1L)
-			.userProfile(imageRes)
-			.username("user_nickname")
-			.createdAt(LocalDateTime.now().minusDays(4))
-			.score(5)
-			.content("review content")
-			.photos(List.of(
-				imageRes,
-				imageRes
-			))
-			.build();
+		return reviewService.getReviewRes(id);
 	}
 
 	@Operation(summary = "리뷰 수정")
