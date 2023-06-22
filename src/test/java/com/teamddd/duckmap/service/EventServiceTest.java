@@ -139,8 +139,8 @@ class EventServiceTest {
 		EventRes eventRes = eventService.getEventRes(eventId, null, now);
 
 		//then
-		assertThat(eventRes).extracting("id", "storeName", "inProgress", "like", "bookmark", "score", "likeCount")
-			.containsOnly(eventId, "event1", true, false, false, 4.4, 12);
+		assertThat(eventRes).extracting("id", "storeName", "inProgress", "likeId", "bookmarkId", "score", "likeCount")
+			.containsOnly(eventId, "event1", true, null, null, 4.4, 12);
 
 		assertThat(eventRes.getArtists()).extracting("name", "artistType.type")
 			.containsExactlyInAnyOrder(Tuple.tuple("artist1", "artist_type"), Tuple.tuple("artist2", "artist_type"));
