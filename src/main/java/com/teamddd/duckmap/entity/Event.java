@@ -43,12 +43,15 @@ public class Event extends BaseTimeEntity {
 	@JoinColumn(name = "member_id")
 	private Member member;
 
+	@Builder.Default
 	@OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<EventArtist> eventArtists = new ArrayList<>();
 
+	@Builder.Default
 	@OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<EventInfoCategory> eventInfoCategories = new ArrayList<>();
 
+	@Builder.Default
 	@OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<EventImage> eventImages = new ArrayList<>();
 
