@@ -114,8 +114,8 @@ public class EventController {
 				.image(
 					imageRes
 				)
-				.like(true)
-				.bookmark(true)
+				.likeId(1L)
+				.bookmarkId(1L)
 				.build(),
 			EventsRes.builder()
 				.id(2L)
@@ -147,8 +147,8 @@ public class EventController {
 						.filename("event_image2.jpg")
 						.build()
 				)
-				.like(true)
-				.bookmark(false)
+				.likeId(2L)
+				.bookmarkId(null)
 				.build()
 		));
 	}
@@ -189,8 +189,8 @@ public class EventController {
 				.image(
 					imageRes
 				)
-				.like(false)
-				.bookmark(true)
+				.likeId(null)
+				.bookmarkId(2L)
 				.build(),
 			EventsRes.builder()
 				.id(2L)
@@ -222,8 +222,8 @@ public class EventController {
 						.filename("event_image2.jpg")
 						.build()
 				)
-				.like(true)
-				.bookmark(true)
+				.likeId(3L)
+				.bookmarkId(3L)
 				.build()
 		));
 	}
@@ -264,8 +264,8 @@ public class EventController {
 				.image(
 					imageRes
 				)
-				.like(true)
-				.bookmark(false)
+				.likeId(4L)
+				.bookmarkId(null)
 				.build(),
 			EventsRes.builder()
 				.id(2L)
@@ -297,8 +297,8 @@ public class EventController {
 						.filename("event_image2.jpg")
 						.build()
 				)
-				.like(true)
-				.bookmark(true)
+				.likeId(5L)
+				.bookmarkId(4L)
 				.build()
 		));
 	}

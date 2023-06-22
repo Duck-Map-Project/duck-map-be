@@ -27,7 +27,7 @@ public class EventRes {
 	private List<ImageRes> images;
 
 	private double score;
-	private boolean like;
+	private Long likeId;
 	private int likeCount;
-	private boolean bookmark;
+	private Long bookmarkId;
 }
