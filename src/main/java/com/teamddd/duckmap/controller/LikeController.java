@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.teamddd.duckmap.dto.event.like.LikeRes;
+import com.teamddd.duckmap.entity.EventLike;
 import com.teamddd.duckmap.entity.Member;
 import com.teamddd.duckmap.service.EventLikeService;
 import com.teamddd.duckmap.util.MemberUtils;
@@ -26,9 +27,9 @@ public class LikeController {
 	@PostMapping("/{id}/likes")
 	public LikeRes likeEvent(@PathVariable Long id) {
 		Member member = MemberUtils.getAuthMember().getUser();
-		Long likeId = eventLikeService.likeEvent(id, member);
+		EventLike eventLike = eventLikeService.likeEvent(id, member);
 		return LikeRes.builder()
-			.id(likeId)
+			.id(eventLike.getId())
 			.build();
 	}
 

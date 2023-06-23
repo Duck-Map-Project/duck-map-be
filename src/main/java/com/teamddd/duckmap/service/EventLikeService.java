@@ -20,7 +20,7 @@ public class EventLikeService {
 	private final EventLikeRepository eventLikeRepository;
 
 	@Transactional
-	public Long likeEvent(Long eventId, Member member) {
+	public EventLike likeEvent(Long eventId, Member member) {
 		Event event = eventService.getEvent(eventId);
 
 		EventLike eventLike = EventLike.builder()
@@ -30,16 +30,20 @@ public class EventLikeService {
 
 		eventLikeRepository.save(eventLike);
 
-		return eventLike.getId();
+		return eventLike;
 	}
 
 	@Transactional
 	public void deleteLikeEvent(Long id, Member loginMember) {
-		Member member = eventLikeRepository.getMemberById(id)
-			.orElseThrow(NonExistentMemberException::new);
+		Member member = getMember(id);
 		if (!member.equals(loginMember)) {
 			throw new AuthenticationRequiredException();
 		}
 		eventLikeRepository.deleteById(id);
+	}
+
+	public Member getMember(Long likeId) throws NonExistentMemberException {
+		return eventLikeRepository.getMemberById(likeId)
+			.orElseThrow(NonExistentMemberException::new);
 	}
 }
