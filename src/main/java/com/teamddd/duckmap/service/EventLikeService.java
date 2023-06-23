@@ -7,7 +7,7 @@ import com.teamddd.duckmap.entity.Event;
 import com.teamddd.duckmap.entity.EventLike;
 import com.teamddd.duckmap.entity.Member;
 import com.teamddd.duckmap.exception.AuthenticationRequiredException;
-import com.teamddd.duckmap.exception.NonExistentEventLikeMemberException;
+import com.teamddd.duckmap.exception.NonExistentEventLikeException;
 import com.teamddd.duckmap.repository.EventLikeRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -34,16 +34,16 @@ public class EventLikeService {
 	}
 
 	@Transactional
-	public void deleteLikeEvent(Long id, Member loginMember) {
-		Member member = getMember(id);
-		if (!member.equals(loginMember)) {
+	public void deleteLikeEvent(Long id, Long loginMemberId) {
+		EventLike eventLike = getEventLike(id);
+		if (!loginMemberId.equals(eventLike.getMember().getId())) {
 			throw new AuthenticationRequiredException();
 		}
 		eventLikeRepository.deleteById(id);
 	}
 
-	public Member getMember(Long likeId) throws NonExistentEventLikeMemberException {
-		return eventLikeRepository.findMemberById(likeId)
-			.orElseThrow(NonExistentEventLikeMemberException::new);
+	public EventLike getEventLike(Long likeId) throws NonExistentEventLikeException {
+		return eventLikeRepository.findById(likeId)
+			.orElseThrow(NonExistentEventLikeException::new);
 	}
 }

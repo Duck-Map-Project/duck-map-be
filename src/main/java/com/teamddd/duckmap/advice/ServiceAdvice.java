@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.teamddd.duckmap.common.ExceptionCodeMessage;
 import com.teamddd.duckmap.dto.ErrorResult;
-import com.teamddd.duckmap.exception.NonExistentEventLikeMemberException;
+import com.teamddd.duckmap.exception.NonExistentEventLikeException;
 import com.teamddd.duckmap.exception.NonExistentFileException;
 import com.teamddd.duckmap.exception.NonExistentMemberException;
 import com.teamddd.duckmap.exception.ServiceException;
@@ -47,9 +47,9 @@ public class ServiceAdvice {
 
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler
-	public ErrorResult nonExistentEventLikeMemberException(NonExistentEventLikeMemberException ex) {
+	public ErrorResult nonExistentEventLikeMemberException(NonExistentEventLikeException ex) {
 		return ErrorResult.builder()
-			.code(ExceptionCodeMessage.NON_EXISTENT_EVENT_LIKE_MEMBER_EXCEPTION.code())
+			.code(ExceptionCodeMessage.NON_EXISTENT_EVENT_LIKE_EXCEPTION.code())
 			.message(ex.getMessage())
 			.build();
 	}

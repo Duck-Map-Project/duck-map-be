@@ -22,7 +22,7 @@ public enum ExceptionCodeMessage {
 	NON_EXISTENT_EVENT_EXCEPTION("E001", "잘못된 이벤트 정보입니다"),
 
 	/* Event Like */
-	NON_EXISTENT_EVENT_LIKE_MEMBER_EXCEPTION("EL001", "좋아요를 한 사용자를 찾을 수 없습니다"),
+	NON_EXISTENT_EVENT_LIKE_EXCEPTION("EL001", "잘못된 이벤트 좋아요 정보입니다"),
 
 	/* Review */
 	NON_EXISTENT_REVIEW_EXCEPTION("R001", "잘못된 리뷰 정보입니다"),
