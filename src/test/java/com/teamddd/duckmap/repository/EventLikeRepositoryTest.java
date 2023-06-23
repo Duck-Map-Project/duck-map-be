@@ -68,4 +68,5 @@ public class EventLikeRepositoryTest {
 	private EventLike createEventLike(Member member, Event event) {
 		return EventLike.builder().member(member).event(event).build();
 	}
+
 }

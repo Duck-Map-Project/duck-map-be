@@ -6,5 +6,4 @@ import com.teamddd.duckmap.entity.EventLike;
 
 public interface EventLikeRepository extends JpaRepository<EventLike, Long> {
 	Long countByEventId(Long eventId);
-
 }
