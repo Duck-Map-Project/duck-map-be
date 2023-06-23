@@ -88,7 +88,7 @@ public class EventLikeServiceTest {
 
 			//when
 			Long likeId = eventLike.getId();
-			when(eventLikeRepository.getMemberById(any())).thenReturn(Optional.ofNullable(member));
+			when(eventLikeRepository.findMemberById(likeId)).thenReturn(Optional.ofNullable(member));
 			eventLikeService.deleteLikeEvent(likeId, member);
 
 			//then
@@ -115,12 +115,12 @@ public class EventLikeServiceTest {
 				.build();
 			em.persist(event);
 
-			when(eventService.getEvent(any())).thenReturn(event);
+			when(eventService.getEvent(event.getId())).thenReturn(event);
 			EventLike eventLike = eventLikeService.likeEvent(event.getId(), member);
 			em.persist(eventLike);
 
 			Long likeId = eventLike.getId();
-			when(eventLikeRepository.getMemberById(any())).thenReturn(Optional.ofNullable(member));
+			when(eventLikeRepository.findMemberById(likeId)).thenReturn(Optional.ofNullable(member));
 
 			//when //then
 			assertThatThrownBy(() -> eventLikeService.deleteLikeEvent(likeId, loginMember))
