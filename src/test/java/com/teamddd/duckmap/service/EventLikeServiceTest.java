@@ -29,7 +29,7 @@ public class EventLikeServiceTest {
 	@MockBean
 	EventService eventService;
 
-	@DisplayName("이벤트 좋아요하기")
+	@DisplayName("이벤트 좋아요")
 	@Test
 	void likeEvent() throws Exception {
 		//given
@@ -43,6 +43,7 @@ public class EventLikeServiceTest {
 			.build();
 
 		when(eventService.getEvent(any())).thenReturn(event);
+
 		//when
 		Long likeId = eventLikeService.likeEvent(event.getId(), member);
 
@@ -54,5 +55,30 @@ public class EventLikeServiceTest {
 		assertThat(findLike.get())
 			.extracting("event.storeName", "member.username")
 			.containsOnly("store", "member1");
+	}
+
+	@DisplayName("이벤트 좋아요 취소")
+	@Test
+	void deleteLikeEvent() throws Exception {
+		//given
+		Member member = Member.builder()
+			.username("member1")
+			.build();
+
+		Event event = Event.builder()
+			.storeName("store")
+			.member(member)
+			.build();
+
+		when(eventService.getEvent(any())).thenReturn(event);
+		Long likeId = eventLikeService.likeEvent(event.getId(), member);
+
+		//when
+		eventLikeService.deleteLikeEvent(likeId);
+
+		//then
+		Optional<EventLike> findLike = eventLikeRepository.findById(likeId);
+		assertThat(findLike).isEmpty();
+
 	}
 }
