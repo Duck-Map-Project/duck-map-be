@@ -2,6 +2,8 @@ package com.teamddd.duckmap.repository;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.Optional;
+
 import javax.persistence.EntityManager;
 
 import org.junit.jupiter.api.Test;
@@ -67,5 +69,26 @@ public class EventLikeRepositoryTest {
 
 	private EventLike createEventLike(Member member, Event event) {
 		return EventLike.builder().member(member).event(event).build();
+	}
+
+	@Test
+	void getMemberById() throws Exception {
+		//given
+		Member member1 = Member.builder().username("member1").build();
+		em.persist(member1);
+
+		Event event1 = createEvent(member1, "event1");
+		em.persist(event1);
+
+		EventLike eventLike1 = createEventLike(member1, event1);
+		em.persist(eventLike1);
+
+		//when
+		Optional<Member> member = eventLikeRepository.findMemberById(eventLike1.getId());
+		Member findMember = member.get();
+
+		//then
+		assertThat(findMember.getUsername()).isEqualTo("member1");
+
 	}
 }
