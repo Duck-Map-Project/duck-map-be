@@ -16,6 +16,7 @@ public enum ExceptionCodeMessage {
 	/* Member */
 	DUPLICATE_EMAIL_EXCEPTION("M001", "이미 사용중인 이메일입니다"),
 	DUPLICATE_USERNAME_EXCEPTION("M002", "이미 사용중인 닉네임입니다"),
+	NON_EXISTENT_MEMBER_EXCEPTION("M003", "잘못된 사용자 정보입니다"),
 
 	/* Event */
 	NON_EXISTENT_EVENT_EXCEPTION("E001", "잘못된 이벤트 정보입니다"),

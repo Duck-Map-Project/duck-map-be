@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.teamddd.duckmap.common.ExceptionCodeMessage;
 import com.teamddd.duckmap.dto.ErrorResult;
 import com.teamddd.duckmap.exception.NonExistentFileException;
+import com.teamddd.duckmap.exception.NonExistentMemberException;
 import com.teamddd.duckmap.exception.ServiceException;
 
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,15 @@ public class ServiceAdvice {
 	public ErrorResult nonExistentFileException(NonExistentFileException ex) {
 		return ErrorResult.builder()
 			.code(ExceptionCodeMessage.NON_EXISTENT_FILE_EXCEPTION.code())
+			.message(ex.getMessage())
+			.build();
+	}
+
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler
+	public ErrorResult nonExistentMemberException(NonExistentMemberException ex) {
+		return ErrorResult.builder()
+			.code(ExceptionCodeMessage.NON_EXISTENT_MEMBER_EXCEPTION.code())
 			.message(ex.getMessage())
 			.build();
 	}
