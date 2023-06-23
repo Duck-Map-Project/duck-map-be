@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.teamddd.duckmap.entity.Event;
 import com.teamddd.duckmap.entity.EventLike;
 import com.teamddd.duckmap.entity.Member;
+import com.teamddd.duckmap.exception.AuthenticationRequiredException;
+import com.teamddd.duckmap.exception.NonExistentMemberException;
 import com.teamddd.duckmap.repository.EventLikeRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -32,7 +34,12 @@ public class EventLikeService {
 	}
 
 	@Transactional
-	public void deleteLikeEvent(Long id) {
+	public void deleteLikeEvent(Long id, Member loginMember) {
+		Member member = eventLikeRepository.getMemberById(id)
+			.orElseThrow(NonExistentMemberException::new);
+		if (!member.equals(loginMember)) {
+			throw new AuthenticationRequiredException();
+		}
 		eventLikeRepository.deleteById(id);
 	}
 }

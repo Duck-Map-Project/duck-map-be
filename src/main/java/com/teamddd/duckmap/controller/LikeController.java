@@ -35,6 +35,7 @@ public class LikeController {
 	@Operation(summary = "이벤트 좋아요 취소")
 	@DeleteMapping("/{id}/likes")
 	public void deleteLikeEvent(@PathVariable Long id) {
-		eventLikeService.deleteLikeEvent(id);
+		Member member = MemberUtils.getAuthMember().getUser();
+		eventLikeService.deleteLikeEvent(id, member);
 	}
 }
