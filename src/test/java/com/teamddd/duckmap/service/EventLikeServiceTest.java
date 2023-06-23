@@ -84,12 +84,10 @@ public class EventLikeServiceTest {
 
 			when(eventService.getEvent(any())).thenReturn(event);
 			EventLike eventLike = eventLikeService.likeEvent(event.getId(), member);
-			em.persist(eventLike);
 
 			//when
 			Long likeId = eventLike.getId();
-			when(eventLikeRepository.findMemberById(likeId)).thenReturn(Optional.ofNullable(member));
-			eventLikeService.deleteLikeEvent(likeId, member);
+			eventLikeService.deleteLikeEvent(likeId, member.getId());
 
 			//then
 			Optional<EventLike> findLike = eventLikeRepository.findById(likeId);
@@ -120,10 +118,9 @@ public class EventLikeServiceTest {
 			em.persist(eventLike);
 
 			Long likeId = eventLike.getId();
-			when(eventLikeRepository.findMemberById(likeId)).thenReturn(Optional.ofNullable(member));
 
 			//when //then
-			assertThatThrownBy(() -> eventLikeService.deleteLikeEvent(likeId, loginMember))
+			assertThatThrownBy(() -> eventLikeService.deleteLikeEvent(likeId, loginMember.getId()))
 				.isInstanceOf(AuthenticationRequiredException.class)
 				.hasMessage("인증이 필요합니다");
 		}
