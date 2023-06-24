@@ -39,8 +39,9 @@ jobs:
       ## create application.yml
       - name: make application.yml
         run: |
-          cd ./src/test
-          touch ./resources/application.yml
+          mkdir ./src/test/resources
+          cd ./src/test/resources
+          touch ./application.yml
           echo "${{ secrets.YAML_TEST }}" > ./application.yml
 
       - name: Build with Gradle
