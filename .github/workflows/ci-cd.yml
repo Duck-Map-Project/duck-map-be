@@ -43,6 +43,7 @@ jobs:
           touch ./application-prod.yml
           echo "${{ secrets.YAML_PROD }}" > ./application-prod.yml
           cd ../../..
+          mkdir ./src/test/resources
           cd ./src/test/resources
           touch ./application.yml
           echo "${{ secrets.YAML_TEST }}" > ./application.yml
