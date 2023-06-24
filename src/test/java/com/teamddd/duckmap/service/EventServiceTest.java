@@ -16,16 +16,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.teamddd.duckmap.dto.event.event.CreateEventReq;
 import com.teamddd.duckmap.dto.event.event.EventRes;
+import com.teamddd.duckmap.dto.event.event.EventSearchServiceReq;
+import com.teamddd.duckmap.dto.event.event.EventsRes;
 import com.teamddd.duckmap.entity.Artist;
 import com.teamddd.duckmap.entity.ArtistType;
 import com.teamddd.duckmap.entity.Event;
 import com.teamddd.duckmap.entity.EventArtist;
 import com.teamddd.duckmap.entity.EventCategory;
+import com.teamddd.duckmap.entity.EventImage;
 import com.teamddd.duckmap.entity.EventInfoCategory;
 import com.teamddd.duckmap.entity.Member;
 import com.teamddd.duckmap.repository.EventLikeRepository;
@@ -148,6 +154,80 @@ class EventServiceTest {
 			.containsExactlyInAnyOrder("event_category1", "event_category2");
 	}
 
+	@DisplayName("Artist id, date로 EventsRes 목록 조회")
+	@Test
+	void getEventsResList() throws Exception {
+		//given
+		LocalDate now = LocalDate.now();
+
+		// save Artist
+		ArtistType artistType = createArtistType();
+		em.persist(artistType);
+		Artist artist1 = createArtist("artist1", artistType);
+		Artist artist2 = createArtist("artist2", artistType);
+		em.persist(artist1);
+		em.persist(artist2);
+
+		// save EventCategory
+		EventCategory eventCategory1 = createEventCategory("event_category1");
+		EventCategory eventCategory2 = createEventCategory("event_category2");
+		em.persist(eventCategory1);
+		em.persist(eventCategory2);
+
+		//save Event
+		Event event1 = createEvent(null, "event1", now.minusDays(2), now.plusDays(1), "");
+		Event event2 = createEvent(null, "event2", now.plusDays(1), now.plusDays(1), "");
+		em.persist(event1);
+		em.persist(event2);
+
+		// Artist, EventCategory, EventImage -> event
+		EventArtist eventArtist1 = createEventArtist(event1, artist1);
+		EventArtist eventArtist2 = createEventArtist(event2, artist1);
+		EventArtist eventArtist3 = createEventArtist(event2, artist2);
+		em.persist(eventArtist1);
+		em.persist(eventArtist2);
+		em.persist(eventArtist3);
+		EventInfoCategory eventInfoCategory1 = createEventInfoCategory(event1, eventCategory1);
+		EventInfoCategory eventInfoCategory2 = createEventInfoCategory(event2, eventCategory2);
+		em.persist(eventInfoCategory1);
+		em.persist(eventInfoCategory2);
+		EventImage image1 = createEventImage(event1, "image1", false);
+		EventImage image2 = createEventImage(event1, "image2", true);
+		EventImage image3 = createEventImage(event2, "image3", true);
+		EventImage image4 = createEventImage(event2, "image4", false);
+		em.persist(image1);
+		em.persist(image2);
+		em.persist(image3);
+		em.persist(image4);
+
+		em.flush();
+		em.clear();
+
+		Artist searchArtist = artist1;
+
+		Pageable pageable = PageRequest.of(0, 3);
+
+		EventSearchServiceReq request = EventSearchServiceReq.builder()
+			.memberId(null)
+			.date(now)
+			.artistId(searchArtist.getId())
+			// .onlyInProgress(false) default == false
+			.pageable(pageable)
+			.build();
+
+		when(artistService.getArtist(any())).thenReturn(searchArtist);
+
+		//when
+		Page<EventsRes> eventsResList = eventService.getEventsResList(request);
+
+		//then
+		assertThat(eventsResList).hasSize(2)
+			.extracting("storeName", "likeId", "bookmarkId")
+			.containsExactly(
+				Tuple.tuple("event1", null, null),
+				Tuple.tuple("event2", null, null));
+	}
+
 	Event createEvent(Member member, String storeName, LocalDate fromDate, LocalDate toDate, String hashtag) {
 		return Event.builder()
 			.member(member)
@@ -177,5 +257,13 @@ class EventServiceTest {
 
 	EventInfoCategory createEventInfoCategory(Event event, EventCategory category) {
 		return EventInfoCategory.builder().event(event).eventCategory(category).build();
+	}
+
+	EventImage createEventImage(Event event, String image, boolean thumbnail) {
+		return EventImage.builder()
+			.event(event)
+			.image(image)
+			.thumbnail(thumbnail)
+			.build();
 	}
 }

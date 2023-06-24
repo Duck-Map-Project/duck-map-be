@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,8 @@ import com.teamddd.duckmap.dto.event.category.EventCategoryRes;
 import com.teamddd.duckmap.dto.event.event.CreateEventReq;
 import com.teamddd.duckmap.dto.event.event.EventLikeBookmarkDto;
 import com.teamddd.duckmap.dto.event.event.EventRes;
+import com.teamddd.duckmap.dto.event.event.EventSearchServiceReq;
+import com.teamddd.duckmap.dto.event.event.EventsRes;
 import com.teamddd.duckmap.entity.Artist;
 import com.teamddd.duckmap.entity.Event;
 import com.teamddd.duckmap.entity.EventArtist;
@@ -137,5 +140,17 @@ public class EventService {
 			.bookmarkId(bookmarkId)
 			.likeCount(likeCount)
 			.build();
+	}
+
+	public Page<EventsRes> getEventsResList(EventSearchServiceReq request) {
+		Artist searhArtist = artistService.getArtist(request.getArtistId());
+
+		LocalDate searchDate = request.isOnlyInProgress() ? request.getDate() : null;
+		Page<EventLikeBookmarkDto> eventLikeBookmarkDtos = eventRepository.findByArtistAndDate(searhArtist.getId(),
+			searchDate, request.getMemberId(),
+			request.getPageable());
+
+		return eventLikeBookmarkDtos
+			.map(eventLikeBookmarkDto -> EventsRes.of(eventLikeBookmarkDto, request.getDate()));
 	}
 }
