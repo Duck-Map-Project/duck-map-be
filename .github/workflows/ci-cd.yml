@@ -7,11 +7,12 @@ on:
 
 permissions:
   contents: read
+  checks: write
 
 jobs:
   CI-CD:
     runs-on: ubuntu-latest
-
+    
     steps:
     
     ## jdk setting
@@ -40,10 +41,9 @@ jobs:
           touch ./application-prod.yml
           echo "${{ secrets.YAML_PROD }}" > ./application-prod.yml
           
-    
     ## gradle build
     - name: Build with Gradle
-      run: ./gradlew build -x test
+      run: ./gradlew build
       
     ## docker build & push to production
     - name: Docker build & push to prod
@@ -71,32 +71,24 @@ jobs:
             -p 8080:8080 \
             --name duckmap-container \
             ${{ secrets.DOCKER_REPO }}
-        
-  ## time
-  current-time:
-    needs: CI-CD
-    runs-on: ubuntu-latest
-    steps:
-      - name: Get Current Time
-        uses: 1466587594/get-current-time@v2
-        id: current-time
-        with:
-          format: YYYY-MM-DDTHH:mm:ss
-          utcOffset: "+09:00" # 기준이 UTC이기 때문에 한국시간인 KST를 맞추기 위해 +9시간 추가
-
-      - name: Print Current Time
-        run: echo "Current Time=${{steps.current-time.outputs.formattedTime}}" # current-time 에서 지정한 포맷대로 현재 시간 출력
-        shell: bash
-        
+            
+    # 테스트 결과를 Action summary에 남긴다
+    - name: GitHub Actions job summary
+      uses: EnricoMi/publish-unit-test-result-action@v2.8.0
+      if: always()
+      with:
+        files: '**/build/test-results/test/TEST-*.xml'
+        comment_mode: off
+      
   ## discord
   action-discord:
     needs: CI-CD
+    if: always()
     runs-on: ubuntu-latest
-    steps:
+    steps: 
       - name: Discord notification
         uses: sarisia/actions-status-discord@v1.12.0
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-        with:
-          status: ${{ job.status }}
         if: always()
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: ${{ needs.CI-CD.result }}
