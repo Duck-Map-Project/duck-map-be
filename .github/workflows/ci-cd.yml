@@ -71,19 +71,21 @@ jobs:
             -p 8080:8080 \
             --name duckmap-container \
             ${{ secrets.DOCKER_REPO }}
+            
+    # 테스트 결과를 Action summary에 남긴다
+    - name: GitHub Actions job summary
+      uses: EnricoMi/publish-unit-test-result-action@v2.8.0
+      if: always()
+      with:
+        files: '**/build/test-results/test/TEST-*.xml'
+        comment_mode: off
       
   ## discord
   action-discord:
     needs: CI-CD
+    if: always()
     runs-on: ubuntu-latest
-    steps:
-      - name: GitHub Actions job summary
-        uses: EnricoMi/publish-unit-test-result-action@v2
-        if: failure()
-        with:
-          files: '**/build/test-results/test/TEST-*.xml'
-          comment_mode: off
-          
+    steps: 
       - name: Discord notification
         uses: sarisia/actions-status-discord@v1.12.0
         if: always()
