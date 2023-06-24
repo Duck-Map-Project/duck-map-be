@@ -36,8 +36,8 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-gradle-
     
-    ## create application-prod.yml
-    - name: make application-prod.yml
+    ## create application.yml
+    - name: make application.yml
       run: |
           cd ./src/main/resources
           touch ./application-prod.yml
