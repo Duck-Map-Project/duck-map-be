@@ -4,6 +4,8 @@ on:
   push:
     branches: 
       - main
+    paths:
+      - '!.git**'
 
 permissions:
   contents: read
@@ -34,12 +36,16 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-gradle-
     
-    ## create application-prod.yml
-    - name: make application-prod.yml
+    ## create application.yml
+    - name: make application.yml
       run: |
           cd ./src/main/resources
           touch ./application-prod.yml
           echo "${{ secrets.YAML_PROD }}" > ./application-prod.yml
+          cd ../../..
+          cd ./src/test/resources
+          touch ./application.yml
+          echo "${{ secrets.YAML_TEST }}" > ./application.yml
           
     ## gradle build
     - name: Build with Gradle
