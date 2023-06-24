@@ -7,5 +7,5 @@ import lombok.Getter;
 @Builder
 public class EventSearchParam {
 	private Long artistId;
-	private boolean inProgress;
+	private boolean onlyInProgress;
 }
