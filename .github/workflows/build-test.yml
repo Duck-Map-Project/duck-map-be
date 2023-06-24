@@ -38,24 +38,19 @@ jobs:
     
     - name: Build with Gradle
       uses: gradle/gradle-build-action@v2.4.2
-      id: gradle
       with:
         arguments: build
-    
-  report-result:
-    needs: build-test
-    runs-on: ubuntu-latest
-    steps:
-      # 테스트 결과를 PR에 코멘트로 등록합니다
-      - name: PR comment
-        uses: EnricoMi/publish-unit-test-result-action@v2
-        if: failure()
-        with:
-          files: '**/build/test-results/test/TEST-*.xml'
+        
+    # 테스트 결과를 PR에 코멘트로 등록합니다
+    - name: PR comment
+      uses: EnricoMi/publish-unit-test-result-action@v2
+      if: always()
+      with:
+        files: '**/build/test-results/test/TEST-*.xml'
 
-      # 테스트 실패 시, 실패한 코드 라인에 Check 코멘트를 등록합니다
-      - name: code line comment
-        uses: mikepenz/action-junit-report@v3
-        if: failure()
-        with:
-          report_paths: '**/build/test-results/test/TEST-*.xml'
+    # 테스트 실패 시, 실패한 코드 라인에 Check 코멘트를 등록합니다
+    - name: code line comment
+      uses: mikepenz/action-junit-report@v3
+      if: always() # == failure()
+      with:
+        report_paths: '**/build/test-results/test/TEST-*.xml'
