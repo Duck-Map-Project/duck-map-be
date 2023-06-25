@@ -65,7 +65,7 @@ class EventRepositoryTest {
 
 		//then
 		assertThat(myEvents).hasSize(2)
-			.extracting("event.member.id", "event.storeName", "like.id", "bookmark.id")
+			.extracting("event.member.id", "event.storeName", "likeId", "bookmarkId")
 			.containsExactly(Tuple.tuple(member.getId(), "event1", eventLike1.getId(), null),
 				Tuple.tuple(member.getId(), "event3", null, eventBookmark3.getId()));
 
@@ -167,11 +167,11 @@ class EventRepositoryTest {
 
 		//then
 		assertThat(events).hasSize(3)
-			.extracting("event.storeName", "like.id", "like.member.id", "bookmark.id")
+			.extracting("event.storeName", "likeId", "bookmarkId")
 			.containsExactly(
-				Tuple.tuple("event1", eventLike1.getId(), member.getId(), null),
-				Tuple.tuple("event2", eventLike2.getId(), member.getId(), eventBookmark2.getId()),
-				Tuple.tuple("event5", eventLike5.getId(), member.getId(), null));
+				Tuple.tuple("event1", eventLike1.getId(), null),
+				Tuple.tuple("event2", eventLike2.getId(), eventBookmark2.getId()),
+				Tuple.tuple("event5", eventLike5.getId(), null));
 
 		assertThat(events.getTotalElements()).isEqualTo(3);
 		assertThat(events.getTotalPages()).isEqualTo(1);
@@ -225,7 +225,7 @@ class EventRepositoryTest {
 			EventLikeBookmarkDto findEvent = eventRepository.findByIdWithLikeAndBookmark(event.getId(), null).get();
 
 			//then
-			assertThat(findEvent).extracting("event.storeName", "like.id", "bookmark.id")
+			assertThat(findEvent).extracting("event.storeName", "likeId", "bookmarkId")
 				.contains("event1", null, null);
 		}
 
@@ -252,8 +252,8 @@ class EventRepositoryTest {
 				.get();
 
 			//then
-			assertThat(findEvent).extracting("event.storeName", "like.member.id", "bookmark.member.id")
-				.contains("event1", member2.getId(), member2.getId());
+			assertThat(findEvent).extracting("event.storeName", "likeId", "bookmarkId")
+				.contains("event1", eventLike.getId(), eventBookmark.getId());
 		}
 	}
 
@@ -312,7 +312,7 @@ class EventRepositoryTest {
 
 			//then
 			assertThat(events).hasSize(2)
-				.extracting("event.storeName", "like.id", "bookmark.id")
+				.extracting("event.storeName", "likeId", "bookmarkId")
 				.containsExactly(Tuple.tuple("event1", null, null),
 					Tuple.tuple("event2", null, null));
 
@@ -370,7 +370,7 @@ class EventRepositoryTest {
 
 			//then
 			assertThat(events).hasSize(2)
-				.extracting("event.storeName", "like.id", "bookmark.id")
+				.extracting("event.storeName", "likeId", "bookmarkId")
 				.containsExactly(Tuple.tuple("event1", null, null),
 					Tuple.tuple("event2", null, null));
 
@@ -429,7 +429,7 @@ class EventRepositoryTest {
 
 			//then
 			assertThat(events).hasSize(3)
-				.extracting("event.storeName", "like.id", "bookmark.id")
+				.extracting("event.storeName", "likeId", "bookmarkId")
 				.containsExactly(Tuple.tuple("event1", eventLike1.getId(), null),
 					Tuple.tuple("event2", eventLike2.getId(), eventBookmark2.getId()),
 					Tuple.tuple("event3", null, eventBookmark3.getId()));

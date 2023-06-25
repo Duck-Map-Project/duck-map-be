@@ -35,8 +35,8 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
 		return Optional.ofNullable(queryFactory.select(
 				new QEventLikeBookmarkDto(
 					event,
-					eventLike,
-					eventBookmark
+					eventLike.id,
+					eventBookmark.id
 				))
 			.from(event)
 			.leftJoin(eventLike).on(event.eq(eventLike.event).and(eventLikeMemberEqMemberId(memberId)))
@@ -50,8 +50,8 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
 		List<EventLikeBookmarkDto> events = queryFactory.select(
 				new QEventLikeBookmarkDto(
 					event,
-					eventLike,
-					eventBookmark
+					eventLike.id,
+					eventBookmark.id
 				))
 			.from(event)
 			.leftJoin(eventLike).on(event.eq(eventLike.event).and(event.member.id.eq(eventLike.member.id)))
@@ -74,8 +74,8 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
 		List<EventLikeBookmarkDto> events = queryFactory.select(
 				new QEventLikeBookmarkDto(
 					event,
-					eventLike,
-					eventBookmark
+					eventLike.id,
+					eventBookmark.id
 				))
 			.from(event)
 			.join(eventLike).on(event.eq(eventLike.event).and(eventLike.member.id.eq(memberId)))
@@ -97,8 +97,8 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
 		JPAQuery<EventLikeBookmarkDto> eventsQuery = queryFactory.selectDistinct(
 				new QEventLikeBookmarkDto(
 					event,
-					eventLike,
-					eventBookmark
+					eventLike.id,
+					eventBookmark.id
 				))
 			.from(event);
 		if (artistId != null) {

@@ -30,9 +30,8 @@ public class EventsRes {
 
 	public static EventsRes of(EventLikeBookmarkDto eventLikeBookmarkDto, LocalDate date) {
 		Event event = eventLikeBookmarkDto.getEvent();
-		Long likeId = eventLikeBookmarkDto.getLike() == null ? null : eventLikeBookmarkDto.getLike().getId();
-		Long bookmarkId =
-			eventLikeBookmarkDto.getBookmark() == null ? null : eventLikeBookmarkDto.getBookmark().getId();
+		Long likeId = eventLikeBookmarkDto.getLikeId();
+		Long bookmarkId = eventLikeBookmarkDto.getBookmarkId();
 
 		return EventsRes.builder()
 			.id(event.getId())
