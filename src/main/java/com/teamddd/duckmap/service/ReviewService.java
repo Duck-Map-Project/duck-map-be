@@ -1,12 +1,15 @@
 package com.teamddd.duckmap.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.teamddd.duckmap.dto.review.CreateReviewReq;
 import com.teamddd.duckmap.dto.review.ReviewRes;
+import com.teamddd.duckmap.dto.review.ReviewSearchServiceReq;
 import com.teamddd.duckmap.entity.Event;
 import com.teamddd.duckmap.entity.Member;
 import com.teamddd.duckmap.entity.Review;
@@ -24,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ReviewService {
 
 	private final EventService eventService;
+	private final ArtistService artistService;
 	private final ReviewRepository reviewRepository;
 
 	@Transactional
@@ -50,6 +54,17 @@ public class ReviewService {
 		reviewRepository.save(review);
 
 		return review.getId();
+	}
+
+	public Page<ReviewRes> getReviewResList(ReviewSearchServiceReq request) {
+		if (request.getArtistId() != null) {
+			artistService.getArtist(request.getArtistId());
+		}
+		LocalDate searchDate = request.isOnlyInProgress() ? request.getDate() : null;
+		Page<Review> reviews = reviewRepository.findByArtistAndDate(request.getArtistId(),
+			searchDate, request.getPageable());
+
+		return reviews.map(ReviewRes::of);
 	}
 
 	//Review 단건 조회

@@ -1,8 +1,10 @@
 package com.teamddd.duckmap.controller;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +25,7 @@ import com.teamddd.duckmap.dto.review.CreateReviewRes;
 import com.teamddd.duckmap.dto.review.MyReviewsRes;
 import com.teamddd.duckmap.dto.review.ReviewRes;
 import com.teamddd.duckmap.dto.review.ReviewSearchParam;
+import com.teamddd.duckmap.dto.review.ReviewSearchServiceReq;
 import com.teamddd.duckmap.dto.review.ReviewsRes;
 import com.teamddd.duckmap.dto.review.UpdateReviewReq;
 import com.teamddd.duckmap.entity.Member;
@@ -67,9 +70,23 @@ public class ReviewController {
 
 	}
 
-	@Operation(summary = "리뷰 목록 조회")
+	@Operation(summary = "리뷰 목록 조회", description = "artist, 날짜 기준 리뷰 목록 조회 기능 구현")
 	@GetMapping
-	public Page<ReviewsRes> getReviews(Pageable pageable, @ModelAttribute ReviewSearchParam reviewSearchParam) {
+	public Page<ReviewRes> getReviews(Pageable pageable, @ModelAttribute ReviewSearchParam reviewSearchParam) {
+		LocalDate today = LocalDate.now();
+
+		ReviewSearchServiceReq request = ReviewSearchServiceReq.builder()
+			.date(today)
+			.artistId(reviewSearchParam.getArtistId())
+			.onlyInProgress(BooleanUtils.isTrue(reviewSearchParam.getOnlyInProgress()))
+			.pageable(pageable)
+			.build();
+		return reviewService.getReviewResList(request);
+	}
+
+	@Operation(summary = "리뷰 이미지 목록 조회", description = "main 화면에 표시되는 리뷰 이미지 목록 조회")
+	@GetMapping("/images")
+	public Page<ReviewsRes> getReviewImages(Pageable pageable) {
 		ImageRes imageRes = ImageRes.builder()
 			.filename("filename.png")
 			.build();
