@@ -104,7 +104,7 @@ public class BookmarkFolderServiceTest {
 			Member member = Member.builder()
 				.username("member1")
 				.build();
-
+			em.persist(member);
 			Long bookmarkFolderId = bookmarkFolderService.createBookmarkFolder(request, member);
 
 			//when
