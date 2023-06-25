@@ -3,10 +3,12 @@ package com.teamddd.duckmap.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderMemberRes;
 import com.teamddd.duckmap.dto.event.bookmark.CreateBookmarkFolderReq;
 import com.teamddd.duckmap.dto.event.bookmark.UpdateBookmarkFolderReq;
 import com.teamddd.duckmap.entity.EventBookmarkFolder;
 import com.teamddd.duckmap.entity.Member;
+import com.teamddd.duckmap.exception.InvalidMemberException;
 import com.teamddd.duckmap.exception.NonExistentBookmarkFolderException;
 import com.teamddd.duckmap.repository.BookmarkFolderRepository;
 
@@ -40,5 +42,11 @@ public class BookmarkFolderService {
 			.orElseThrow(NonExistentBookmarkFolderException::new);
 		bookmarkFolder.updateEventBookmarkFolder(updateBookmarkFolderReq.getName(), updateBookmarkFolderReq.getImage());
 
+	}
+
+	public BookmarkFolderMemberRes getBookmarkFolderMemberRes(Long bookmarkFolderId) {
+		return bookmarkFolderRepository.findById(bookmarkFolderId)
+			.map(BookmarkFolderMemberRes::of)
+			.orElseThrow(InvalidMemberException::new);
 	}
 }
