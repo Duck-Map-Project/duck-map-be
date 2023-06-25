@@ -30,6 +30,9 @@ public enum ExceptionCodeMessage {
 	/* BookmarkFolder */
 	NON_EXISTENT_BOOKMARK_FOLDER_EXCEPTION("BF001", "잘못된 북마크 폴더 정보입니다"),
 
+	/* Bookmark*/
+	NON_EXISTENT_BOOKMARK_EXCEPTION("B001", "잘못된 북마크 정보입니다"),
+
 	/* Image File */
 	NON_EXISTENT_FILE_EXCEPTION("F001", "존재하지 않는 파일입니다"),
 	NOT_CONTENT_TYPE_IMAGE_EXCEPTION("F002", "이미지 파일만 저장 가능합니다"),
