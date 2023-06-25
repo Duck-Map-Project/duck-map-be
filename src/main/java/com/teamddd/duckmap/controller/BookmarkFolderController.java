@@ -22,6 +22,9 @@ import com.teamddd.duckmap.dto.event.bookmark.BookmarkedEventRes;
 import com.teamddd.duckmap.dto.event.bookmark.CreateBookmarkFolderReq;
 import com.teamddd.duckmap.dto.event.bookmark.CreateBookmarkFolderRes;
 import com.teamddd.duckmap.dto.event.bookmark.UpdateBookmarkFolderReq;
+import com.teamddd.duckmap.entity.Member;
+import com.teamddd.duckmap.service.BookmarkFolderService;
+import com.teamddd.duckmap.util.MemberUtils;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -32,12 +35,16 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @RequestMapping("/bookmark-folders")
 public class BookmarkFolderController {
+	private final BookmarkFolderService bookmarkFolderService;
+
 	@Operation(summary = "북마크 폴더 생성")
 	@PostMapping
 	public CreateBookmarkFolderRes createBookmarkFolder(
 		@Validated @RequestBody CreateBookmarkFolderReq createBookmarkFolderReq) {
+		Member member = MemberUtils.getAuthMember().getUser();
+		Long bookmarkFolderId = bookmarkFolderService.createBookmarkFolder(createBookmarkFolderReq, member);
 		return CreateBookmarkFolderRes.builder()
-			.id(1L)
+			.id(bookmarkFolderId)
 			.build();
 	}
 
@@ -69,17 +76,7 @@ public class BookmarkFolderController {
 	@Operation(summary = "북마크 폴더 pk로 북마크 폴더,사용자 정보 조회", description = "북마크 폴더 외부 공유용 api")
 	@GetMapping("/{id}")
 	public BookmarkFolderMemberRes getBookmarkFolder(@PathVariable Long id) {
-		return BookmarkFolderMemberRes.builder()
-			.id(1L)
-			.name("생일카페 모음")
-			.image(
-				ImageRes.builder()
-					.filename("default_folder.jpg")
-					.build()
-			)
-			.memberId(1L)
-			.username("사용자1")
-			.build();
+		return bookmarkFolderService.getBookmarkFolderMemberRes(id);
 	}
 
 	@Operation(summary = "북마크 폴더 내부의 이벤트 목록 조회")
@@ -109,6 +106,7 @@ public class BookmarkFolderController {
 	@PutMapping("/{id}")
 	public void updateBookmarkFolder(@PathVariable Long id,
 		@Validated @RequestBody UpdateBookmarkFolderReq updateBookmarkFolderReq) {
+		bookmarkFolderService.updateBookmarkFolder(id, updateBookmarkFolderReq);
 	}
 
 	@Operation(summary = "북마크 폴더 삭제")
