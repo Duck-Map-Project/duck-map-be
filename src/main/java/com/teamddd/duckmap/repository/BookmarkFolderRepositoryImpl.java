@@ -5,6 +5,7 @@ import static com.teamddd.duckmap.entity.QEventBookmark.*;
 import static com.teamddd.duckmap.entity.QEventBookmarkFolder.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 
@@ -68,8 +69,8 @@ public class BookmarkFolderRepositoryImpl implements BookmarkFolderRepositoryCus
 	}
 
 	@Override
-	public BookmarkFolderMemberDto findBookmarkFolderAndMemberById(Long bookmarkFolderId) {
-		return queryFactory.select(
+	public Optional<BookmarkFolderMemberDto> findBookmarkFolderAndMemberById(Long bookmarkFolderId) {
+		return Optional.ofNullable(queryFactory.select(
 				new QBookmarkFolderMemberDto(
 					eventBookmarkFolder,
 					eventBookmarkFolder.member.id.as("memberId"),
@@ -77,6 +78,6 @@ public class BookmarkFolderRepositoryImpl implements BookmarkFolderRepositoryCus
 			)
 			.from(eventBookmarkFolder)
 			.where(eventBookmarkFolder.id.eq(bookmarkFolderId))
-			.fetchOne();
+			.fetchOne());
 	}
 }

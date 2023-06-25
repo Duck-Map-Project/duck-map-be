@@ -19,6 +19,7 @@ import com.teamddd.duckmap.entity.Event;
 import com.teamddd.duckmap.entity.EventBookmark;
 import com.teamddd.duckmap.entity.EventBookmarkFolder;
 import com.teamddd.duckmap.entity.Member;
+import com.teamddd.duckmap.exception.NonExistentBookmarkFolderException;
 
 @SpringBootTest
 @Transactional
@@ -173,9 +174,11 @@ public class BookmarkFolderRepositoryTest {
 
 		//when
 		BookmarkFolderMemberDto bookmarkFolderMemberDto = bookmarkFolderRepository
-			.findBookmarkFolderAndMemberById(eventBookmarkFolder.getId());
+			.findBookmarkFolderAndMemberById(eventBookmarkFolder.getId())
+			.orElseThrow(NonExistentBookmarkFolderException::new);
 		BookmarkFolderMemberDto bookmarkFolderMemberDto2 = bookmarkFolderRepository
-			.findBookmarkFolderAndMemberById(eventBookmarkFolder2.getId());
+			.findBookmarkFolderAndMemberById(eventBookmarkFolder2.getId())
+			.orElseThrow(NonExistentBookmarkFolderException::new);
 
 		//then
 		assertThat(bookmarkFolderMemberDto.getUsername()).isEqualTo("user1");
