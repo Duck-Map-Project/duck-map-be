@@ -22,6 +22,9 @@ import com.teamddd.duckmap.dto.event.bookmark.BookmarkedEventRes;
 import com.teamddd.duckmap.dto.event.bookmark.CreateBookmarkFolderReq;
 import com.teamddd.duckmap.dto.event.bookmark.CreateBookmarkFolderRes;
 import com.teamddd.duckmap.dto.event.bookmark.UpdateBookmarkFolderReq;
+import com.teamddd.duckmap.entity.Member;
+import com.teamddd.duckmap.service.BookmarkFolderService;
+import com.teamddd.duckmap.util.MemberUtils;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -32,12 +35,16 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @RequestMapping("/bookmark-folders")
 public class BookmarkFolderController {
+	private final BookmarkFolderService bookmarkFolderService;
+
 	@Operation(summary = "북마크 폴더 생성")
 	@PostMapping
 	public CreateBookmarkFolderRes createBookmarkFolder(
 		@Validated @RequestBody CreateBookmarkFolderReq createBookmarkFolderReq) {
+		Member member = MemberUtils.getAuthMember().getUser();
+		Long bookmarkFolderId = bookmarkFolderService.createBookmarkFolder(createBookmarkFolderReq, member);
 		return CreateBookmarkFolderRes.builder()
-			.id(1L)
+			.id(bookmarkFolderId)
 			.build();
 	}
 
