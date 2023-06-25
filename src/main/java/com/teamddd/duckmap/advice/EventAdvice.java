@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.teamddd.duckmap.common.ExceptionCodeMessage;
 import com.teamddd.duckmap.dto.ErrorResult;
+import com.teamddd.duckmap.exception.NonExistentBookmarkException;
 import com.teamddd.duckmap.exception.NonExistentBookmarkFolderException;
 import com.teamddd.duckmap.exception.NonExistentEventCategoryException;
 import com.teamddd.duckmap.exception.NonExistentEventException;
@@ -50,6 +51,15 @@ public class EventAdvice {
 	public ErrorResult nonExistentBookmarkFolderException(NonExistentBookmarkFolderException ex) {
 		return ErrorResult.builder()
 			.code(ExceptionCodeMessage.NON_EXISTENT_BOOKMARK_FOLDER_EXCEPTION.code())
+			.message(ex.getMessage())
+			.build();
+	}
+
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler
+	public ErrorResult nonExistentBookmarkException(NonExistentBookmarkException ex) {
+		return ErrorResult.builder()
+			.code(ExceptionCodeMessage.NON_EXISTENT_BOOKMARK_EXCEPTION.code())
 			.message(ex.getMessage())
 			.build();
 	}
