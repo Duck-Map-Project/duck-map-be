@@ -36,4 +36,8 @@ public class EventBookmarkFolder extends BaseTimeEntity {
 	@OneToMany(mappedBy = "eventBookmarkFolder")
 	private List<EventBookmark> eventBookmarks = new ArrayList<>();
 
+	public void updateEventBookmarkFolder(String name, String image) {
+		this.name = name;
+		this.image = image;
+	}
 }
