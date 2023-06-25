@@ -3,7 +3,6 @@ package com.teamddd.duckmap.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.teamddd.duckmap.dto.event.bookmark.CreateBookmarkReq;
 import com.teamddd.duckmap.entity.Event;
 import com.teamddd.duckmap.entity.EventBookmark;
 import com.teamddd.duckmap.entity.EventBookmarkFolder;
@@ -25,10 +24,10 @@ public class BookmarkService {
 	private final BookmarkFolderService bookmarkFolderService;
 
 	@Transactional
-	public Long createBookmark(Long eventId, CreateBookmarkReq createBookmarkReq, Member member) {
+	public Long createBookmark(Long eventId, Long bookmarkFolderId, Member member) {
 		Event event = eventService.getEvent(eventId);
 		EventBookmarkFolder bookmarkFolder = bookmarkFolderService
-			.getEventBookmarkFolder(createBookmarkReq.getBookmarkFolderId());
+			.getEventBookmarkFolder(bookmarkFolderId);
 		EventBookmark bookmark = EventBookmark.builder()
 			.member(member)
 			.eventBookmarkFolder(bookmarkFolder)

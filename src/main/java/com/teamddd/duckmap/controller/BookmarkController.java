@@ -32,7 +32,7 @@ public class BookmarkController {
 	public CreateBookmarkRes createBookmark(@PathVariable Long id,
 		@Validated @RequestBody CreateBookmarkReq createBookmarkReq) {
 		Member member = MemberUtils.getAuthMember().getUser();
-		Long bookmarkId = bookmarkService.createBookmark(id, createBookmarkReq, member);
+		Long bookmarkId = bookmarkService.createBookmark(id, createBookmarkReq.getBookmarkFolderId(), member);
 		return CreateBookmarkRes.builder()
 			.id(bookmarkId)
 			.build();
