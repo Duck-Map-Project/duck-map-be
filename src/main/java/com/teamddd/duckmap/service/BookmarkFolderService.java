@@ -47,11 +47,8 @@ public class BookmarkFolderService {
 
 	public BookmarkFolderMemberRes getBookmarkFolderMemberRes(Long bookmarkFolderId) {
 		BookmarkFolderMemberDto bookmarkFolderMemberDto = bookmarkFolderRepository
-			.findBookmarkFolderAndMemberById(bookmarkFolderId);
-
-		if (bookmarkFolderMemberDto == null) {
-			throw new NonExistentBookmarkFolderException();
-		}
+			.findBookmarkFolderAndMemberById(bookmarkFolderId)
+			.orElseThrow(NonExistentBookmarkFolderException::new);
 
 		return BookmarkFolderMemberRes.builder()
 			.id(bookmarkFolderId)

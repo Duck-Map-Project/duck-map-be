@@ -1,5 +1,7 @@
 package com.teamddd.duckmap.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -12,6 +14,6 @@ public interface BookmarkFolderRepositoryCustom {
 
 	Page<EventBookmarkFolder> findBookmarkFoldersByMemberId(Long memberId, Pageable pageable);
 
-	BookmarkFolderMemberDto findBookmarkFolderAndMemberById(Long bookmarkFolderId);
+	Optional<BookmarkFolderMemberDto> findBookmarkFolderAndMemberById(Long bookmarkFolderId);
 
 }
