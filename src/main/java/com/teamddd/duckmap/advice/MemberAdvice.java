@@ -9,6 +9,7 @@ import com.teamddd.duckmap.common.ExceptionCodeMessage;
 import com.teamddd.duckmap.dto.ErrorResult;
 import com.teamddd.duckmap.exception.DuplicateEmailException;
 import com.teamddd.duckmap.exception.DuplicateUsernameException;
+import com.teamddd.duckmap.exception.NonExistentMemberException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,6 +30,15 @@ public class MemberAdvice {
 	public ErrorResult duplicateUsernameException(DuplicateUsernameException ex) {
 		return ErrorResult.builder()
 			.code(ExceptionCodeMessage.DUPLICATE_USERNAME_EXCEPTION.code())
+			.message(ex.getMessage())
+			.build();
+	}
+
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler
+	public ErrorResult nonExistentMemberException(NonExistentMemberException ex) {
+		return ErrorResult.builder()
+			.code(ExceptionCodeMessage.NON_EXISTENT_MEMBER_EXCEPTION.code())
 			.message(ex.getMessage())
 			.build();
 	}
