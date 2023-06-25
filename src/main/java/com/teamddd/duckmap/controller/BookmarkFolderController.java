@@ -116,6 +116,7 @@ public class BookmarkFolderController {
 	@PutMapping("/{id}")
 	public void updateBookmarkFolder(@PathVariable Long id,
 		@Validated @RequestBody UpdateBookmarkFolderReq updateBookmarkFolderReq) {
+		bookmarkFolderService.updateBookmarkFolder(id, updateBookmarkFolderReq);
 	}
 
 	@Operation(summary = "북마크 폴더 삭제")
