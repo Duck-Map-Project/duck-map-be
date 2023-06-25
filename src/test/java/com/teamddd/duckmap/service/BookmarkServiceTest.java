@@ -19,6 +19,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.teamddd.duckmap.dto.event.bookmark.CreateBookmarkReq;
+import com.teamddd.duckmap.dto.event.bookmark.UpdateBookmarkReq;
 import com.teamddd.duckmap.entity.Event;
 import com.teamddd.duckmap.entity.EventBookmark;
 import com.teamddd.duckmap.entity.EventBookmarkFolder;
@@ -35,6 +36,8 @@ public class BookmarkServiceTest {
 	BookmarkRepository bookmarkRepository;
 	@MockBean
 	EventService eventService;
+	@MockBean
+	EventLikeService likeService;
 	@MockBean
 	BookmarkFolderService bookmarkFolderService;
 	@Autowired
@@ -75,6 +78,51 @@ public class BookmarkServiceTest {
 		assertThat(findBookmark.get())
 			.extracting("eventBookmarkFolder.name", "event.storeName", "member.username")
 			.containsOnly("folder1", "store", "member1");
+	}
+
+	@DisplayName("이벤트 북마크 폴더 변경")
+	@Test
+	void updateBookmark() throws Exception {
+		//given
+		Member member = Member.builder()
+			.username("member1")
+			.build();
+		em.persist(member);
+		Event event = Event.builder()
+			.storeName("store")
+			.member(member)
+			.build();
+		em.persist(event);
+		EventBookmarkFolder bookmarkFolder = EventBookmarkFolder.builder()
+			.image("image1")
+			.name("folder1")
+			.build();
+		em.persist(bookmarkFolder);
+		EventBookmarkFolder bookmarkFolder2 = EventBookmarkFolder.builder()
+			.image("image2")
+			.name("folder2")
+			.build();
+		em.persist(bookmarkFolder2);
+
+		when(eventService.getEvent(any())).thenReturn(event);
+		when(bookmarkFolderService.getEventBookmarkFolder(bookmarkFolder.getId())).thenReturn(bookmarkFolder);
+		Long bookmarkId = bookmarkService.createBookmark(event.getId(), bookmarkFolder.getId(), member);
+
+		UpdateBookmarkReq request = new UpdateBookmarkReq();
+		ReflectionTestUtils.setField(request, "bookmarkFolderId", bookmarkFolder2.getId());
+
+		//when
+		when(bookmarkFolderService.getEventBookmarkFolder(bookmarkFolder2.getId())).thenReturn(bookmarkFolder2);
+		bookmarkService.changeBookmarkFolder(event.getId(), request, member);
+
+		//then
+		assertThat(bookmarkId).isNotNull();
+
+		Optional<EventBookmark> findBookmark = bookmarkRepository.findById(bookmarkId);
+		assertThat(findBookmark).isNotEmpty();
+		assertThat(findBookmark.get())
+			.extracting("eventBookmarkFolder.id", "eventBookmarkFolder.name", "event.storeName", "member.username")
+			.containsOnly(bookmarkFolder2.getId(), "folder2", "store", "member1");
 	}
 
 	@DisplayName("이벤트 북마크 삭제(취소)")
