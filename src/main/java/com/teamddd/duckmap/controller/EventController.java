@@ -3,6 +3,7 @@ package com.teamddd.duckmap.controller;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -92,7 +93,7 @@ public class EventController {
 			.memberId(memberId)
 			.date(today)
 			.artistId(eventSearchParam.getArtistId())
-			.onlyInProgress(eventSearchParam.isOnlyInProgress())
+			.onlyInProgress(BooleanUtils.isTrue(eventSearchParam.getOnlyInProgress()))
 			.pageable(pageable)
 			.build();
 
