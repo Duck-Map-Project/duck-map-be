@@ -8,6 +8,7 @@ import com.teamddd.duckmap.entity.Event;
 import com.teamddd.duckmap.entity.EventBookmark;
 import com.teamddd.duckmap.entity.EventBookmarkFolder;
 import com.teamddd.duckmap.entity.Member;
+import com.teamddd.duckmap.exception.AuthenticationRequiredException;
 import com.teamddd.duckmap.repository.BookmarkRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -36,5 +37,19 @@ public class BookmarkService {
 		bookmarkRepository.save(bookmark);
 
 		return bookmark.getId();
+	}
+
+	@Transactional
+	public void deleteBookmark(Long id, Long loginMemberId) {
+		EventBookmark bookmark = getEventBookmark(id);
+		if (!loginMemberId.equals(bookmark.getMember().getId())) {
+			throw new AuthenticationRequiredException();
+		}
+		bookmarkRepository.deleteById(id);
+	}
+
+	public EventBookmark getEventBookmark(Long bookmarkId) {
+		return bookmarkRepository.findById(bookmarkId)
+			.orElseThrow(RuntimeException::new);
 	}
 }
