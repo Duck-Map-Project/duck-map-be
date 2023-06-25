@@ -45,7 +45,7 @@ public class BookmarkService {
 	}
 
 	@Transactional
-	public void changeBookmarkFolder(Long eventId, UpdateBookmarkReq updateBookmarkReq, Member member)
+	public void updateBookmark(Long eventId, UpdateBookmarkReq updateBookmarkReq, Member member)
 		throws NonExistentBookmarkException {
 		EventBookmarkFolder bookmarkFolder = bookmarkFolderService
 			.getEventBookmarkFolder(updateBookmarkReq.getBookmarkFolderId());

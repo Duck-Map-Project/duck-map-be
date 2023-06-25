@@ -113,7 +113,7 @@ public class BookmarkServiceTest {
 
 		//when
 		when(bookmarkFolderService.getEventBookmarkFolder(bookmarkFolder2.getId())).thenReturn(bookmarkFolder2);
-		bookmarkService.changeBookmarkFolder(event.getId(), request, member);
+		bookmarkService.updateBookmark(event.getId(), request, member);
 
 		//then
 		assertThat(bookmarkId).isNotNull();

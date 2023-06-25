@@ -43,7 +43,7 @@ public class BookmarkController {
 	public void updateBookmark(@PathVariable Long id,
 		@Validated @RequestBody UpdateBookmarkReq updateBookmarkReq) {
 		Member member = MemberUtils.getAuthMember().getUser();
-		bookmarkService.changeBookmarkFolder(id, updateBookmarkReq, member);
+		bookmarkService.updateBookmark(id, updateBookmarkReq, member);
 	}
 
 	@Operation(summary = "북마크 취소")
