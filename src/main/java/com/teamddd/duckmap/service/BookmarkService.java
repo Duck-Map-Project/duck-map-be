@@ -9,6 +9,7 @@ import com.teamddd.duckmap.entity.EventBookmark;
 import com.teamddd.duckmap.entity.EventBookmarkFolder;
 import com.teamddd.duckmap.entity.Member;
 import com.teamddd.duckmap.exception.AuthenticationRequiredException;
+import com.teamddd.duckmap.exception.NonExistentBookmarkException;
 import com.teamddd.duckmap.repository.BookmarkRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -48,8 +49,8 @@ public class BookmarkService {
 		bookmarkRepository.deleteById(id);
 	}
 
-	public EventBookmark getEventBookmark(Long bookmarkId) {
+	public EventBookmark getEventBookmark(Long bookmarkId) throws NonExistentBookmarkException {
 		return bookmarkRepository.findById(bookmarkId)
-			.orElseThrow(RuntimeException::new);
+			.orElseThrow(NonExistentBookmarkException::new);
 	}
 }
