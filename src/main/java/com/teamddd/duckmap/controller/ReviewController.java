@@ -87,26 +87,7 @@ public class ReviewController {
 	@Operation(summary = "리뷰 이미지 목록 조회", description = "main 화면에 표시되는 리뷰 이미지 목록 조회")
 	@GetMapping("/images")
 	public Page<ReviewsRes> getReviewImages(Pageable pageable) {
-		ImageRes imageRes = ImageRes.builder()
-			.filename("filename.png")
-			.build();
-		return new PageImpl<>(List.of(
-			ReviewsRes.builder()
-				.id(1L)
-				.inProgress(false)
-				.image(imageRes)
-				.build(),
-			ReviewsRes.builder()
-				.id(2L)
-				.inProgress(true)
-				.image(imageRes)
-				.build(),
-			ReviewsRes.builder()
-				.id(3L)
-				.inProgress(true)
-				.image(imageRes)
-				.build()
-		));
+		return reviewService.getReviewsResPage(pageable);
 	}
 
 	@Operation(summary = "나의 리뷰 목록 조회")
