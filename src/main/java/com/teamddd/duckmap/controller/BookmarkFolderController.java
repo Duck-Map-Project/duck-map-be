@@ -76,17 +76,7 @@ public class BookmarkFolderController {
 	@Operation(summary = "북마크 폴더 pk로 북마크 폴더,사용자 정보 조회", description = "북마크 폴더 외부 공유용 api")
 	@GetMapping("/{id}")
 	public BookmarkFolderMemberRes getBookmarkFolder(@PathVariable Long id) {
-		return BookmarkFolderMemberRes.builder()
-			.id(1L)
-			.name("생일카페 모음")
-			.image(
-				ImageRes.builder()
-					.filename("default_folder.jpg")
-					.build()
-			)
-			.memberId(1L)
-			.username("사용자1")
-			.build();
+		return bookmarkFolderService.getBookmarkFolderMemberRes(id);
 	}
 
 	@Operation(summary = "북마크 폴더 내부의 이벤트 목록 조회")

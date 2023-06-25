@@ -3,6 +3,9 @@ package com.teamddd.duckmap.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.teamddd.duckmap.dto.ImageRes;
+import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderMemberDto;
+import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderMemberRes;
 import com.teamddd.duckmap.dto.event.bookmark.CreateBookmarkFolderReq;
 import com.teamddd.duckmap.dto.event.bookmark.UpdateBookmarkFolderReq;
 import com.teamddd.duckmap.entity.EventBookmarkFolder;
@@ -40,5 +43,23 @@ public class BookmarkFolderService {
 			.orElseThrow(NonExistentBookmarkFolderException::new);
 		bookmarkFolder.updateEventBookmarkFolder(updateBookmarkFolderReq.getName(), updateBookmarkFolderReq.getImage());
 
+	}
+
+	public BookmarkFolderMemberRes getBookmarkFolderMemberRes(Long bookmarkFolderId) {
+		BookmarkFolderMemberDto bookmarkFolderMemberDto = bookmarkFolderRepository
+			.findBookmarkFolderAndMemberById(bookmarkFolderId)
+			.orElseThrow(NonExistentBookmarkFolderException::new);
+
+		return BookmarkFolderMemberRes.builder()
+			.id(bookmarkFolderId)
+			.name(bookmarkFolderMemberDto.getBookmarkFolder().getName())
+			.image(
+				ImageRes.builder()
+					.filename(bookmarkFolderMemberDto.getBookmarkFolder().getImage())
+					.build()
+			)
+			.memberId(bookmarkFolderMemberDto.getMemberId())
+			.username(bookmarkFolderMemberDto.getUsername())
+			.build();
 	}
 }
