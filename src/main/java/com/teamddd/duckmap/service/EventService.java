@@ -143,10 +143,12 @@ public class EventService {
 	}
 
 	public Page<EventsRes> getEventsResList(EventSearchServiceReq request) {
-		Artist searhArtist = artistService.getArtist(request.getArtistId());
+		if (request.getArtistId() != null) {
+			artistService.getArtist(request.getArtistId());
+		}
 
 		LocalDate searchDate = request.isOnlyInProgress() ? request.getDate() : null;
-		Page<EventLikeBookmarkDto> eventLikeBookmarkDtos = eventRepository.findByArtistAndDate(searhArtist.getId(),
+		Page<EventLikeBookmarkDto> eventLikeBookmarkDtos = eventRepository.findByArtistAndDate(request.getArtistId(),
 			searchDate, request.getMemberId(),
 			request.getPageable());
 
