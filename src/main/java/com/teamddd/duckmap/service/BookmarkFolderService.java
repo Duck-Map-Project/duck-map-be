@@ -8,7 +8,6 @@ import com.teamddd.duckmap.dto.event.bookmark.CreateBookmarkFolderReq;
 import com.teamddd.duckmap.dto.event.bookmark.UpdateBookmarkFolderReq;
 import com.teamddd.duckmap.entity.EventBookmarkFolder;
 import com.teamddd.duckmap.entity.Member;
-import com.teamddd.duckmap.exception.InvalidMemberException;
 import com.teamddd.duckmap.exception.NonExistentBookmarkFolderException;
 import com.teamddd.duckmap.repository.BookmarkFolderRepository;
 
@@ -47,6 +46,6 @@ public class BookmarkFolderService {
 	public BookmarkFolderMemberRes getBookmarkFolderMemberRes(Long bookmarkFolderId) {
 		return bookmarkFolderRepository.findById(bookmarkFolderId)
 			.map(BookmarkFolderMemberRes::of)
-			.orElseThrow(InvalidMemberException::new);
+			.orElseThrow(NonExistentBookmarkFolderException::new);
 	}
 }
