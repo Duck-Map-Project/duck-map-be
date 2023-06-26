@@ -47,7 +47,7 @@ public class BookmarkController {
 	}
 
 	@Operation(summary = "북마크 취소")
-	@DeleteMapping("/{id}/bookmarks")
+	@DeleteMapping("/{eventId}/bookmarks")
 	public void deleteBookmark(@PathVariable Long eventId) {
 		Member member = MemberUtils.getAuthMember().getUser();
 		bookmarkService.deleteBookmark(eventId, member.getId());
