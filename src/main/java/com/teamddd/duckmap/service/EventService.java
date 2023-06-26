@@ -16,6 +16,8 @@ import com.teamddd.duckmap.dto.event.event.EventLikeBookmarkDto;
 import com.teamddd.duckmap.dto.event.event.EventRes;
 import com.teamddd.duckmap.dto.event.event.EventSearchServiceReq;
 import com.teamddd.duckmap.dto.event.event.EventsRes;
+import com.teamddd.duckmap.dto.event.event.MyEventsServiceReq;
+import com.teamddd.duckmap.dto.event.event.MyLikeEventsServiceReq;
 import com.teamddd.duckmap.entity.Artist;
 import com.teamddd.duckmap.entity.Event;
 import com.teamddd.duckmap.entity.EventArtist;
@@ -99,9 +101,8 @@ public class EventService {
 			.orElseThrow(NonExistentEventException::new);
 
 		Event event = eventLikeBookmarkDto.getEvent();
-		Long likeId = eventLikeBookmarkDto.getLike() == null ? null : eventLikeBookmarkDto.getLike().getId();
-		Long bookmarkId =
-			eventLikeBookmarkDto.getBookmark() == null ? null : eventLikeBookmarkDto.getBookmark().getId();
+		Long likeId = eventLikeBookmarkDto.getLikeId();
+		Long bookmarkId = eventLikeBookmarkDto.getBookmarkId();
 
 		int likeCount = Math.toIntExact(eventLikeRepository.countByEventId(eventId));
 		double score = reviewRepository.avgScoreByEvent(eventId).orElse(0.0);
@@ -143,14 +144,30 @@ public class EventService {
 	}
 
 	public Page<EventsRes> getEventsResList(EventSearchServiceReq request) {
-		Artist searhArtist = artistService.getArtist(request.getArtistId());
+		if (request.getArtistId() != null) {
+			artistService.getArtist(request.getArtistId());
+		}
 
 		LocalDate searchDate = request.isOnlyInProgress() ? request.getDate() : null;
-		Page<EventLikeBookmarkDto> eventLikeBookmarkDtos = eventRepository.findByArtistAndDate(searhArtist.getId(),
+		Page<EventLikeBookmarkDto> eventLikeBookmarkDtos = eventRepository.findByArtistAndDate(request.getArtistId(),
 			searchDate, request.getMemberId(),
 			request.getPageable());
 
 		return eventLikeBookmarkDtos
 			.map(eventLikeBookmarkDto -> EventsRes.of(eventLikeBookmarkDto, request.getDate()));
+	}
+
+	public Page<EventsRes> getMyEventsRes(MyEventsServiceReq request) {
+		Page<EventLikeBookmarkDto> myEvents = eventRepository.findMyEvents(request.getMemberId(),
+			request.getPageable());
+
+		return myEvents.map(eventLikeBookmarkDto -> EventsRes.of(eventLikeBookmarkDto, request.getDate()));
+	}
+
+	public Page<EventsRes> getMyLikeEventsRes(MyLikeEventsServiceReq request) {
+		Page<EventLikeBookmarkDto> myLikeEvents = eventRepository.findMyLikeEvents(request.getMemberId(),
+			request.getPageable());
+
+		return myLikeEvents.map(eventLikeBookmarkDto -> EventsRes.of(eventLikeBookmarkDto, request.getDate()));
 	}
 }
