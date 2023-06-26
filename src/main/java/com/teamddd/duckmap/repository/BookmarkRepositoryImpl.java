@@ -7,7 +7,6 @@ import java.util.Optional;
 
 import javax.persistence.EntityManager;
 
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkEventDto;
 import com.teamddd.duckmap.dto.event.bookmark.QBookmarkEventDto;
@@ -20,19 +19,16 @@ public class BookmarkRepositoryImpl implements BookmarkRepositoryCustom {
 	}
 
 	@Override
-	public Optional<BookmarkEventDto> findByIdWithEvent(Long eventId, Long memberId) {
+	public Optional<BookmarkEventDto> findByEventIdAndMemberIdWithEvent(Long eventId, Long memberId) {
 		return Optional.ofNullable(queryFactory.select(
 				new QBookmarkEventDto(
 					event,
 					eventBookmark
 				))
-			.from(event)
-			.leftJoin(eventBookmark).on(event.eq(eventBookmark.event).and(eventBookmarkMemberEqMemberId(memberId)))
-			.where(event.id.eq(eventId))
+			.from(eventBookmark)
+			.leftJoin(eventBookmark.event, event)
+			.where(event.id.eq(eventId)
+				.and(eventBookmark.member.id.eq(memberId)))
 			.fetchOne());
-	}
-
-	private BooleanExpression eventBookmarkMemberEqMemberId(Long memberId) {
-		return memberId != null ? eventBookmark.member.id.eq(memberId) : eventBookmark.member.id.isNull();
 	}
 }

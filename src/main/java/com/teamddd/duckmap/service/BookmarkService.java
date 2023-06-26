@@ -10,7 +10,6 @@ import com.teamddd.duckmap.entity.EventBookmark;
 import com.teamddd.duckmap.entity.EventBookmarkFolder;
 import com.teamddd.duckmap.entity.Member;
 import com.teamddd.duckmap.exception.NonExistentBookmarkException;
-import com.teamddd.duckmap.exception.NonExistentEventException;
 import com.teamddd.duckmap.repository.BookmarkRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -58,11 +57,8 @@ public class BookmarkService {
 
 	public EventBookmark getEventBookmark(Long eventId, Long loginMemberId) throws NonExistentBookmarkException {
 		BookmarkEventDto bookmarkEventDto = bookmarkRepository
-			.findByIdWithEvent(eventId, loginMemberId)
-			.orElseThrow(NonExistentEventException::new);
-		if (bookmarkEventDto.getEventBookmark() == null) {
-			throw new NonExistentBookmarkException();
-		}
+			.findByEventIdAndMemberIdWithEvent(eventId, loginMemberId)
+			.orElseThrow(NonExistentBookmarkException::new);
 		return bookmarkEventDto.getEventBookmark();
 	}
 }
