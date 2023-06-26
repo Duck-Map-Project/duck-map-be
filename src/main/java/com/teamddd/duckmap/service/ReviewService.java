@@ -2,10 +2,8 @@ package com.teamddd.duckmap.service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,10 +84,6 @@ public class ReviewService {
 	public Page<ReviewsRes> getReviewsResPage(Pageable pageable) {
 		Page<Review> reviewsPage = reviewRepository.findAll(pageable);
 		LocalDate now = LocalDate.now();
-		List<ReviewsRes> reviewsResList = reviewsPage.getContent().stream()
-			.map(Review -> ReviewsRes.of(Review, now))
-			.collect(Collectors.toList());
-
-		return new PageImpl<>(reviewsResList, reviewsPage.getPageable(), reviewsPage.getTotalElements());
+		return reviewsPage.map(Review -> ReviewsRes.of(Review, now));
 	}
 }
