@@ -29,7 +29,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
 	public Page<Review> findByArtistAndDate(Long artistId, LocalDate date, Pageable pageable) {
 		List<Review> reviews = queryFactory.select(review)
 			.from(review)
-			.leftJoin(review.event, event)
+			.leftJoin(review.event, event).fetchJoin()
 			.join(eventArtist).on(event.eq(eventArtist.event))
 			.where(eqArtistId(artistId), betweenDate(date))
 			.offset(pageable.getOffset())
@@ -38,7 +38,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
 
 		JPAQuery<Long> countQuery = queryFactory.select(review.count())
 			.from(review)
-			.leftJoin(review.event, event)
+			.leftJoin(review.event, event).fetchJoin()
 			.join(eventArtist).on(event.eq(eventArtist.event))
 			.where(eqArtistId(artistId), betweenDate(date));
 
