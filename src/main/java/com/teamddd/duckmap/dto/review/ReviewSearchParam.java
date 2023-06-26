@@ -1,5 +1,6 @@
 package com.teamddd.duckmap.dto.review;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -7,5 +8,6 @@ import lombok.Getter;
 @Builder
 public class ReviewSearchParam {
 	private Long artistId;
-	private boolean inProgress;
+	@Schema(defaultValue = "false")
+	private Boolean onlyInProgress;
 }
