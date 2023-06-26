@@ -147,16 +147,18 @@ public class BookmarkServiceTest {
 				.build();
 			em.persist(bookmarkFolder);
 
-			when(eventService.getEvent(any())).thenReturn(event);
-			when(bookmarkFolderService.getEventBookmarkFolder(any())).thenReturn(bookmarkFolder);
-
-			Long bookmarkId = bookmarkService.createBookmark(event.getId(), bookmarkFolder.getId(), member);
+			EventBookmark bookmark = EventBookmark.builder()
+				.event(event)
+				.eventBookmarkFolder(bookmarkFolder)
+				.member(member)
+				.build();
+			em.persist(bookmark);
 
 			//when
-			bookmarkService.deleteBookmark(bookmarkId, member.getId());
+			bookmarkService.deleteBookmark(event.getId(), member.getId());
 
 			//then
-			Optional<EventBookmark> findBookmark = bookmarkRepository.findById(bookmarkId);
+			Optional<EventBookmark> findBookmark = bookmarkRepository.findById(bookmark.getId());
 			assertThat(findBookmark).isEmpty();
 		}
 
@@ -185,13 +187,15 @@ public class BookmarkServiceTest {
 				.build();
 			em.persist(bookmarkFolder);
 
-			when(eventService.getEvent(any())).thenReturn(event);
-			when(bookmarkFolderService.getEventBookmarkFolder(any())).thenReturn(bookmarkFolder);
-
-			Long bookmarkId = bookmarkService.createBookmark(event.getId(), bookmarkFolder.getId(), member);
+			EventBookmark bookmark = EventBookmark.builder()
+				.event(event)
+				.eventBookmarkFolder(bookmarkFolder)
+				.member(member)
+				.build();
+			em.persist(bookmark);
 
 			//when //then
-			assertThatThrownBy(() -> bookmarkService.deleteBookmark(bookmarkId, loginMember.getId()))
+			assertThatThrownBy(() -> bookmarkService.deleteBookmark(event.getId(), loginMember.getId()))
 				.isInstanceOf(NonExistentBookmarkException.class)
 				.hasMessage("잘못된 북마크 정보입니다");
 		}
