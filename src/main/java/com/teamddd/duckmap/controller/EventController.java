@@ -29,6 +29,7 @@ import com.teamddd.duckmap.dto.event.event.EventSearchParam;
 import com.teamddd.duckmap.dto.event.event.EventSearchServiceReq;
 import com.teamddd.duckmap.dto.event.event.EventsRes;
 import com.teamddd.duckmap.dto.event.event.HashtagRes;
+import com.teamddd.duckmap.dto.event.event.MyEventsServiceReq;
 import com.teamddd.duckmap.dto.event.event.UpdateEventReq;
 import com.teamddd.duckmap.entity.Member;
 import com.teamddd.duckmap.service.EventService;
@@ -103,76 +104,16 @@ public class EventController {
 	@Operation(summary = "나의 이벤트 목록 조회")
 	@GetMapping("/myevent")
 	public Page<EventsRes> getMyEvents(Pageable pageable) {
-		ImageRes imageRes = ImageRes.builder()
-			.filename("event_image.jpg")
+		Member member = MemberUtils.getAuthMember().getUser();
+		LocalDate today = LocalDate.now();
+
+		MyEventsServiceReq request = MyEventsServiceReq.builder()
+			.memberId(member.getId())
+			.pageable(pageable)
+			.date(today)
 			.build();
 
-		return new PageImpl<>(List.of(
-			EventsRes.builder()
-				.id(1L)
-				.storeName("이벤트1")
-				.inProgress(false)
-				.address("서울 서초동")
-				.artists(List.of(
-					ArtistRes.builder()
-						.id(2L)
-						.groupId(1L)
-						.name("태연")
-						.image(imageRes)
-						.artistType(
-							ArtistTypeRes.builder()
-								.id(1L)
-								.type("아이돌")
-								.build()
-						)
-						.build()
-				))
-				.categories(List.of(
-					EventCategoryRes.builder()
-						.id(1L)
-						.category("생일카페")
-						.build()
-				))
-				.image(
-					imageRes
-				)
-				.likeId(null)
-				.bookmarkId(2L)
-				.build(),
-			EventsRes.builder()
-				.id(2L)
-				.storeName("이벤트2")
-				.inProgress(true)
-				.address("서울 한남동")
-				.artists(List.of(
-					ArtistRes.builder()
-						.id(1L)
-						.groupId(null)
-						.name("소녀시대")
-						.image(imageRes)
-						.artistType(
-							ArtistTypeRes.builder()
-								.id(2L)
-								.type("그룹")
-								.build()
-						)
-						.build()
-				))
-				.categories(List.of(
-					EventCategoryRes.builder()
-						.id(2L)
-						.category("전시회")
-						.build()
-				))
-				.image(
-					ImageRes.builder()
-						.filename("event_image2.jpg")
-						.build()
-				)
-				.likeId(3L)
-				.bookmarkId(3L)
-				.build()
-		));
+		return eventService.getMyEventsRes(request);
 	}
 
 	@Operation(summary = "나의 좋아요 이벤트 목록 조회")

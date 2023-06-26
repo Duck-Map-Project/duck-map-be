@@ -26,6 +26,7 @@ import com.teamddd.duckmap.dto.event.event.CreateEventReq;
 import com.teamddd.duckmap.dto.event.event.EventRes;
 import com.teamddd.duckmap.dto.event.event.EventSearchServiceReq;
 import com.teamddd.duckmap.dto.event.event.EventsRes;
+import com.teamddd.duckmap.dto.event.event.MyEventsServiceReq;
 import com.teamddd.duckmap.entity.Artist;
 import com.teamddd.duckmap.entity.ArtistType;
 import com.teamddd.duckmap.entity.Event;
@@ -34,6 +35,7 @@ import com.teamddd.duckmap.entity.EventCategory;
 import com.teamddd.duckmap.entity.EventImage;
 import com.teamddd.duckmap.entity.EventInfoCategory;
 import com.teamddd.duckmap.entity.Member;
+import com.teamddd.duckmap.entity.Role;
 import com.teamddd.duckmap.repository.EventLikeRepository;
 import com.teamddd.duckmap.repository.EventRepository;
 import com.teamddd.duckmap.repository.ReviewRepository;
@@ -228,6 +230,95 @@ class EventServiceTest {
 				Tuple.tuple("event2", null, null));
 	}
 
+	@DisplayName("Member Id로 EventsRes 목록 조회")
+	@Test
+	void getMyEventsRes() throws Exception {
+		//given
+		LocalDate now = LocalDate.now();
+
+		Member member1 = createMember("member1");
+		Member member2 = createMember("member2");
+		em.persist(member1);
+		em.persist(member2);
+
+		// save Artist
+		ArtistType artistType = createArtistType();
+		em.persist(artistType);
+		Artist artist1 = createArtist("artist1", artistType);
+		Artist artist2 = createArtist("artist2", artistType);
+		em.persist(artist1);
+		em.persist(artist2);
+
+		// save EventCategory
+		EventCategory eventCategory1 = createEventCategory("event_category1");
+		EventCategory eventCategory2 = createEventCategory("event_category2");
+		em.persist(eventCategory1);
+		em.persist(eventCategory2);
+
+		//save Event
+		Event event1 = createEvent(member1, "event1", now.minusDays(2), now.plusDays(1), "");
+		Event event2 = createEvent(member2, "event2", now.minusDays(2), now.plusDays(1), "");
+		Event event3 = createEvent(member1, "event3", now.plusDays(1), now.plusDays(1), "");
+		Event event4 = createEvent(member2, "event4", now.plusDays(1), now.plusDays(1), "");
+		em.persist(event1);
+		em.persist(event2);
+		em.persist(event3);
+		em.persist(event4);
+
+		// Artist, EventCategory, EventImage -> event
+		EventArtist eventArtist1 = createEventArtist(event1, artist1);
+		EventArtist eventArtist2 = createEventArtist(event2, artist1);
+		EventArtist eventArtist3 = createEventArtist(event2, artist2);
+		EventArtist eventArtist4 = createEventArtist(event3, artist2);
+		EventArtist eventArtist5 = createEventArtist(event4, artist1);
+		em.persist(eventArtist1);
+		em.persist(eventArtist2);
+		em.persist(eventArtist3);
+		em.persist(eventArtist4);
+		em.persist(eventArtist5);
+		EventInfoCategory eventInfoCategory1 = createEventInfoCategory(event1, eventCategory1);
+		EventInfoCategory eventInfoCategory2 = createEventInfoCategory(event2, eventCategory2);
+		EventInfoCategory eventInfoCategory3 = createEventInfoCategory(event3, eventCategory2);
+		EventInfoCategory eventInfoCategory4 = createEventInfoCategory(event4, eventCategory1);
+		em.persist(eventInfoCategory1);
+		em.persist(eventInfoCategory2);
+		em.persist(eventInfoCategory3);
+		em.persist(eventInfoCategory4);
+		EventImage image1 = createEventImage(event1, "image1", false);
+		EventImage image2 = createEventImage(event1, "image2", true);
+		EventImage image3 = createEventImage(event2, "image3", true);
+		EventImage image4 = createEventImage(event2, "image4", false);
+		EventImage image5 = createEventImage(event3, "image5", true);
+		EventImage image6 = createEventImage(event4, "image6", true);
+		em.persist(image1);
+		em.persist(image2);
+		em.persist(image3);
+		em.persist(image4);
+		em.persist(image5);
+		em.persist(image6);
+
+		em.flush();
+		em.clear();
+
+		Long searchMemberId = member2.getId();
+		Pageable pageable = PageRequest.of(0, 3);
+
+		MyEventsServiceReq request = MyEventsServiceReq.builder()
+			.memberId(searchMemberId)
+			.date(now)
+			.pageable(pageable)
+			.build();
+		//when
+		Page<EventsRes> myEventsResList = eventService.getMyEventsRes(request);
+
+		//then
+		assertThat(myEventsResList).hasSize(2)
+			.extracting("storeName", "inProgress")
+			.containsExactlyInAnyOrder(
+				Tuple.tuple("event2", true),
+				Tuple.tuple("event4", false));
+	}
+
 	Event createEvent(Member member, String storeName, LocalDate fromDate, LocalDate toDate, String hashtag) {
 		return Event.builder()
 			.member(member)
@@ -264,6 +355,15 @@ class EventServiceTest {
 			.event(event)
 			.image(image)
 			.thumbnail(thumbnail)
+			.build();
+	}
+
+	Member createMember(String email) {
+		return Member.builder()
+			.email(email)
+			.username("member_username")
+			.password("member_password")
+			.role(Role.USER)
 			.build();
 	}
 }
