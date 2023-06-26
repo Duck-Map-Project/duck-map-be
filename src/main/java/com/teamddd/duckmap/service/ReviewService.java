@@ -68,7 +68,7 @@ public class ReviewService {
 		Page<Review> reviews = reviewRepository.findByArtistAndDate(request.getArtistId(),
 			searchDate, request.getPageable());
 
-		return reviews.map(ReviewsRes::of);
+		return reviews.map(Review -> ReviewsRes.of(Review, request.getDate()));
 	}
 
 	//Review 단건 조회
@@ -85,9 +85,9 @@ public class ReviewService {
 
 	public Page<ReviewsRes> getReviewsResPage(Pageable pageable) {
 		Page<Review> reviewsPage = reviewRepository.findAll(pageable);
-
+		LocalDate now = LocalDate.now();
 		List<ReviewsRes> reviewsResList = reviewsPage.getContent().stream()
-			.map(ReviewsRes::of)
+			.map(Review -> ReviewsRes.of(Review, now))
 			.collect(Collectors.toList());
 
 		return new PageImpl<>(reviewsResList, reviewsPage.getPageable(), reviewsPage.getTotalElements());

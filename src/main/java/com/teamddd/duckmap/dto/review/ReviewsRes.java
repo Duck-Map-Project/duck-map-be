@@ -16,8 +16,7 @@ public class ReviewsRes {
 	private boolean inProgress;
 	private ImageRes image;
 
-	public static ReviewsRes of(Review review) {
-		LocalDate now = LocalDate.now();
+	public static ReviewsRes of(Review review, LocalDate date) {
 		return ReviewsRes.builder()
 			.id(review.getId())
 			.image(
@@ -29,7 +28,7 @@ public class ReviewsRes {
 							.orElse(null)
 					).build()
 			)
-			.inProgress(review.getEvent().isInProgress(now))
+			.inProgress(review.getEvent().isInProgress(date))
 			.build();
 	}
 
