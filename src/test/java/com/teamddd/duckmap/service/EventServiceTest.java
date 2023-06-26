@@ -27,6 +27,7 @@ import com.teamddd.duckmap.dto.event.event.EventRes;
 import com.teamddd.duckmap.dto.event.event.EventSearchServiceReq;
 import com.teamddd.duckmap.dto.event.event.EventsRes;
 import com.teamddd.duckmap.dto.event.event.MyEventsServiceReq;
+import com.teamddd.duckmap.dto.event.event.MyLikeEventsServiceReq;
 import com.teamddd.duckmap.entity.Artist;
 import com.teamddd.duckmap.entity.ArtistType;
 import com.teamddd.duckmap.entity.Event;
@@ -34,6 +35,7 @@ import com.teamddd.duckmap.entity.EventArtist;
 import com.teamddd.duckmap.entity.EventCategory;
 import com.teamddd.duckmap.entity.EventImage;
 import com.teamddd.duckmap.entity.EventInfoCategory;
+import com.teamddd.duckmap.entity.EventLike;
 import com.teamddd.duckmap.entity.Member;
 import com.teamddd.duckmap.entity.Role;
 import com.teamddd.duckmap.repository.EventLikeRepository;
@@ -319,6 +321,110 @@ class EventServiceTest {
 				Tuple.tuple("event4", false));
 	}
 
+	@DisplayName("Member Id가 좋아요한 EventsRes 목록 조회")
+	@Test
+	void getMyLikeEventsRes() throws Exception {
+		//given
+		LocalDate now = LocalDate.now();
+
+		// save Member
+		Member member1 = createMember("member1");
+		Member member2 = createMember("member2");
+		em.persist(member1);
+		em.persist(member2);
+
+		// save Artist
+		ArtistType artistType = createArtistType();
+		em.persist(artistType);
+		Artist artist1 = createArtist("artist1", artistType);
+		Artist artist2 = createArtist("artist2", artistType);
+		em.persist(artist1);
+		em.persist(artist2);
+
+		// save EventCategory
+		EventCategory eventCategory1 = createEventCategory("event_category1");
+		EventCategory eventCategory2 = createEventCategory("event_category2");
+		em.persist(eventCategory1);
+		em.persist(eventCategory2);
+
+		//save Event
+		Event event1 = createEvent(null, "event1", now.minusDays(2), now.plusDays(1), "");
+		Event event2 = createEvent(null, "event2", now.minusDays(2), now.plusDays(1), "");
+		Event event3 = createEvent(null, "event3", now.plusDays(1), now.plusDays(1), "");
+		Event event4 = createEvent(null, "event4", now.plusDays(1), now.plusDays(1), "");
+		em.persist(event1);
+		em.persist(event2);
+		em.persist(event3);
+		em.persist(event4);
+
+		// Artist, EventCategory, EventImage -> event
+		EventArtist eventArtist1 = createEventArtist(event1, artist1);
+		EventArtist eventArtist2 = createEventArtist(event2, artist1);
+		EventArtist eventArtist3 = createEventArtist(event2, artist2);
+		EventArtist eventArtist4 = createEventArtist(event3, artist2);
+		EventArtist eventArtist5 = createEventArtist(event4, artist1);
+		em.persist(eventArtist1);
+		em.persist(eventArtist2);
+		em.persist(eventArtist3);
+		em.persist(eventArtist4);
+		em.persist(eventArtist5);
+		EventInfoCategory eventInfoCategory1 = createEventInfoCategory(event1, eventCategory1);
+		EventInfoCategory eventInfoCategory2 = createEventInfoCategory(event2, eventCategory2);
+		EventInfoCategory eventInfoCategory3 = createEventInfoCategory(event3, eventCategory2);
+		EventInfoCategory eventInfoCategory4 = createEventInfoCategory(event4, eventCategory1);
+		em.persist(eventInfoCategory1);
+		em.persist(eventInfoCategory2);
+		em.persist(eventInfoCategory3);
+		em.persist(eventInfoCategory4);
+		EventImage image1 = createEventImage(event1, "image1", false);
+		EventImage image2 = createEventImage(event1, "image2", true);
+		EventImage image3 = createEventImage(event2, "image3", true);
+		EventImage image4 = createEventImage(event2, "image4", false);
+		EventImage image5 = createEventImage(event3, "image5", true);
+		EventImage image6 = createEventImage(event4, "image6", true);
+		em.persist(image1);
+		em.persist(image2);
+		em.persist(image3);
+		em.persist(image4);
+		em.persist(image5);
+		em.persist(image6);
+
+		// save EventLike
+		EventLike eventLike1 = createEventLike(event1, member1);
+		EventLike eventLike2 = createEventLike(event3, member2);
+		EventLike eventLike3 = createEventLike(event4, member1);
+		EventLike eventLike4 = createEventLike(event2, member2);
+		EventLike eventLike5 = createEventLike(event3, member1);
+		em.persist(eventLike1);
+		em.persist(eventLike2);
+		em.persist(eventLike3);
+		em.persist(eventLike4);
+		em.persist(eventLike5);
+
+		em.flush();
+		em.clear();
+
+		Long searchMemberId = member1.getId();
+		Pageable pageable = PageRequest.of(0, 3);
+
+		MyLikeEventsServiceReq request = MyLikeEventsServiceReq.builder()
+			.memberId(searchMemberId)
+			.date(now)
+			.pageable(pageable)
+			.build();
+
+		//when
+		Page<EventsRes> myLikeEventsResList = eventService.getMyLikeEventsRes(request);
+
+		//then
+		assertThat(myLikeEventsResList).hasSize(3)
+			.extracting("storeName", "likeId")
+			.containsExactly(
+				Tuple.tuple("event1", eventLike1.getId()),
+				Tuple.tuple("event3", eventLike5.getId()),
+				Tuple.tuple("event4", eventLike3.getId()));
+	}
+
 	Event createEvent(Member member, String storeName, LocalDate fromDate, LocalDate toDate, String hashtag) {
 		return Event.builder()
 			.member(member)
@@ -355,6 +461,13 @@ class EventServiceTest {
 			.event(event)
 			.image(image)
 			.thumbnail(thumbnail)
+			.build();
+	}
+
+	EventLike createEventLike(Event event, Member member) {
+		return EventLike.builder()
+			.event(event)
+			.member(member)
 			.build();
 	}
 

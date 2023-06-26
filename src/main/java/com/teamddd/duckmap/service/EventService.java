@@ -17,6 +17,7 @@ import com.teamddd.duckmap.dto.event.event.EventRes;
 import com.teamddd.duckmap.dto.event.event.EventSearchServiceReq;
 import com.teamddd.duckmap.dto.event.event.EventsRes;
 import com.teamddd.duckmap.dto.event.event.MyEventsServiceReq;
+import com.teamddd.duckmap.dto.event.event.MyLikeEventsServiceReq;
 import com.teamddd.duckmap.entity.Artist;
 import com.teamddd.duckmap.entity.Event;
 import com.teamddd.duckmap.entity.EventArtist;
@@ -161,5 +162,12 @@ public class EventService {
 			request.getPageable());
 
 		return myEvents.map(eventLikeBookmarkDto -> EventsRes.of(eventLikeBookmarkDto, request.getDate()));
+	}
+
+	public Page<EventsRes> getMyLikeEventsRes(MyLikeEventsServiceReq request) {
+		Page<EventLikeBookmarkDto> myLikeEvents = eventRepository.findMyLikeEvents(request.getMemberId(),
+			request.getPageable());
+
+		return myLikeEvents.map(eventLikeBookmarkDto -> EventsRes.of(eventLikeBookmarkDto, request.getDate()));
 	}
 }
