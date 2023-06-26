@@ -15,7 +15,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderEventDto;
+import com.teamddd.duckmap.dto.event.bookmark.BookmarkEventDto;
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderMemberDto;
 import com.teamddd.duckmap.dto.event.bookmark.QBookmarkFolderEventDto;
 import com.teamddd.duckmap.dto.event.bookmark.QBookmarkFolderMemberDto;
@@ -29,8 +29,8 @@ public class BookmarkFolderRepositoryImpl implements BookmarkFolderRepositoryCus
 	}
 
 	@Override
-	public Page<BookmarkFolderEventDto> findBookmarkedEvents(Long bookmarkFolderId, Pageable pageable) {
-		List<BookmarkFolderEventDto> events = queryFactory.select(
+	public Page<BookmarkEventDto> findBookmarkedEvents(Long bookmarkFolderId, Pageable pageable) {
+		List<BookmarkEventDto> events = queryFactory.select(
 				new QBookmarkFolderEventDto(
 					event,
 					eventBookmark
