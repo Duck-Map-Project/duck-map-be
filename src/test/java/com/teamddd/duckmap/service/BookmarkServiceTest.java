@@ -37,8 +37,6 @@ public class BookmarkServiceTest {
 	@MockBean
 	EventService eventService;
 	@MockBean
-	EventLikeService likeService;
-	@MockBean
 	BookmarkFolderService bookmarkFolderService;
 	@Autowired
 	EntityManager em;
