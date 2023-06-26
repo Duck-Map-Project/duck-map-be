@@ -24,7 +24,7 @@ import com.teamddd.duckmap.entity.Event;
 import com.teamddd.duckmap.entity.EventBookmark;
 import com.teamddd.duckmap.entity.EventBookmarkFolder;
 import com.teamddd.duckmap.entity.Member;
-import com.teamddd.duckmap.exception.AuthenticationRequiredException;
+import com.teamddd.duckmap.exception.NonExistentBookmarkException;
 import com.teamddd.duckmap.repository.BookmarkRepository;
 
 @Transactional
@@ -192,8 +192,8 @@ public class BookmarkServiceTest {
 
 			//when //then
 			assertThatThrownBy(() -> bookmarkService.deleteBookmark(bookmarkId, loginMember.getId()))
-				.isInstanceOf(AuthenticationRequiredException.class)
-				.hasMessage("인증이 필요합니다");
+				.isInstanceOf(NonExistentBookmarkException.class)
+				.hasMessage("잘못된 북마크 정보입니다");
 		}
 	}
 
