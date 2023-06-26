@@ -17,7 +17,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkEventDto;
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderMemberDto;
-import com.teamddd.duckmap.dto.event.bookmark.QBookmarkFolderEventDto;
+import com.teamddd.duckmap.dto.event.bookmark.QBookmarkEventDto;
 import com.teamddd.duckmap.dto.event.bookmark.QBookmarkFolderMemberDto;
 import com.teamddd.duckmap.entity.EventBookmarkFolder;
 
@@ -31,7 +31,7 @@ public class BookmarkFolderRepositoryImpl implements BookmarkFolderRepositoryCus
 	@Override
 	public Page<BookmarkEventDto> findBookmarkedEvents(Long bookmarkFolderId, Pageable pageable) {
 		List<BookmarkEventDto> events = queryFactory.select(
-				new QBookmarkFolderEventDto(
+				new QBookmarkEventDto(
 					event,
 					eventBookmark
 				))
