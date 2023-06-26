@@ -38,7 +38,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
 
 		JPAQuery<Long> countQuery = queryFactory.select(review.count())
 			.from(review)
-			.leftJoin(review.event, event).fetchJoin()
+			.leftJoin(review.event, event)
 			.join(eventArtist).on(event.eq(eventArtist.event))
 			.where(eqArtistId(artistId), betweenDate(date));
 
