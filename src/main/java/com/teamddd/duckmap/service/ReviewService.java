@@ -60,7 +60,7 @@ public class ReviewService {
 		return review.getId();
 	}
 
-	public Page<ReviewRes> getReviewResList(ReviewSearchServiceReq request) {
+	public Page<ReviewsRes> getReviewsResList(ReviewSearchServiceReq request) {
 		if (request.getArtistId() != null) {
 			artistService.getArtist(request.getArtistId());
 		}
@@ -68,7 +68,7 @@ public class ReviewService {
 		Page<Review> reviews = reviewRepository.findByArtistAndDate(request.getArtistId(),
 			searchDate, request.getPageable());
 
-		return reviews.map(ReviewRes::of);
+		return reviews.map(ReviewsRes::of);
 	}
 
 	//Review 단건 조회

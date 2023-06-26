@@ -72,7 +72,7 @@ public class ReviewController {
 
 	@Operation(summary = "리뷰 목록 조회", description = "artist, 날짜 기준 리뷰 목록 조회 기능 구현")
 	@GetMapping
-	public Page<ReviewRes> getReviews(Pageable pageable, @ModelAttribute ReviewSearchParam reviewSearchParam) {
+	public Page<ReviewsRes> getReviews(Pageable pageable, @ModelAttribute ReviewSearchParam reviewSearchParam) {
 		LocalDate today = LocalDate.now();
 
 		ReviewSearchServiceReq request = ReviewSearchServiceReq.builder()
@@ -81,7 +81,7 @@ public class ReviewController {
 			.onlyInProgress(BooleanUtils.isTrue(reviewSearchParam.getOnlyInProgress()))
 			.pageable(pageable)
 			.build();
-		return reviewService.getReviewResList(request);
+		return reviewService.getReviewsResList(request);
 	}
 
 	@Operation(summary = "리뷰 이미지 목록 조회", description = "main 화면에 표시되는 리뷰 이미지 목록 조회")
