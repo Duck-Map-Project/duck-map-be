@@ -9,7 +9,6 @@ import com.teamddd.duckmap.entity.Event;
 import com.teamddd.duckmap.entity.EventBookmark;
 import com.teamddd.duckmap.entity.EventBookmarkFolder;
 import com.teamddd.duckmap.entity.Member;
-import com.teamddd.duckmap.exception.AuthenticationRequiredException;
 import com.teamddd.duckmap.exception.NonExistentBookmarkException;
 import com.teamddd.duckmap.exception.NonExistentEventException;
 import com.teamddd.duckmap.repository.BookmarkRepository;
@@ -60,16 +59,20 @@ public class BookmarkService {
 	}
 
 	@Transactional
-	public void deleteBookmark(Long id, Long loginMemberId) {
-		EventBookmark bookmark = getEventBookmark(id);
-		if (!loginMemberId.equals(bookmark.getMember().getId())) {
-			throw new AuthenticationRequiredException();
-		}
-		bookmarkRepository.deleteById(id);
+	public void deleteBookmark(Long eventId, Long loginMemberId) {
+		EventBookmark bookmark = getEventBookmark(eventId, loginMemberId);
+
+		bookmarkRepository.deleteById(bookmark.getId());
 	}
 
-	public EventBookmark getEventBookmark(Long bookmarkId) throws NonExistentBookmarkException {
-		return bookmarkRepository.findById(bookmarkId)
-			.orElseThrow(NonExistentBookmarkException::new);
+	public EventBookmark getEventBookmark(Long eventId, Long loginMemberId) throws NonExistentBookmarkException {
+		EventLikeBookmarkDto eventLikeBookmarkDto = eventRepository
+			.findByIdWithLikeAndBookmark(eventId, loginMemberId)
+			.orElseThrow(NonExistentEventException::new);
+		EventBookmark bookmark = eventLikeBookmarkDto.getBookmark();
+		if (bookmark == null) {
+			throw new NonExistentBookmarkException();
+		}
+		return bookmark;
 	}
 }
