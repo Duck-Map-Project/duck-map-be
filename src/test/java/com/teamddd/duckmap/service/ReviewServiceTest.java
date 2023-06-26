@@ -207,9 +207,9 @@ public class ReviewServiceTest {
 				Tuple.tuple(review4.getId(), "/images/image5"));
 	}
 
-	@DisplayName("Artist id, date로 ReviewRes 목록 조회")
+	@DisplayName("Artist id, date로 ReviewsRes 목록 조회")
 	@Test
-	void getReviewResList() throws Exception {
+	void getReviewsResList() throws Exception {
 		//given
 		LocalDate now = LocalDate.now();
 
@@ -256,21 +256,27 @@ public class ReviewServiceTest {
 		Review review2 = createReview(member1, event2, "mem1-review2", 3);
 		Review review3 = createReview(member1, event3, "mem1-review3", 4);
 		Review review4 = createReview(member1, event4, "mem1-review4", 5);
-		Review review5 = createReview(member2, event1, "mem2-review1", 5);
-		Review review6 = createReview(member2, event2, "mem2-review2", 4);
-		Review review7 = createReview(member2, event3, "mem2-review3", 5);
-		Review review8 = createReview(member2, event4, "mem2-review4", 5);
 		em.persist(review1);
 		em.persist(review2);
 		em.persist(review3);
 		em.persist(review4);
-		em.persist(review5);
-		em.persist(review6);
-		em.persist(review7);
-		em.persist(review8);
 
-		em.flush();
-		em.clear();
+		ReviewImage image1 = createReviewImage("image1");
+		ReviewImage image2 = createReviewImage("image2");
+		ReviewImage image3 = createReviewImage("image3");
+		ReviewImage image4 = createReviewImage("image4");
+		ReviewImage image5 = createReviewImage("image5");
+		em.persist(image1);
+		em.persist(image2);
+		em.persist(image3);
+		em.persist(image4);
+		em.persist(image5);
+
+		addReviewImage(review1, image1);
+		addReviewImage(review1, image2);
+		addReviewImage(review2, image3);
+		addReviewImage(review3, image4);
+		addReviewImage(review4, image5);
 
 		Pageable pageable = PageRequest.of(0, 4);
 
@@ -284,16 +290,14 @@ public class ReviewServiceTest {
 		when(artistService.getArtist(any())).thenReturn(artist1);
 
 		//when
-		Page<ReviewRes> reviewResList = reviewService.getReviewResList(request);
+		Page<ReviewsRes> reviewsResList = reviewService.getReviewsResList(request);
 
 		//then
-		assertThat(reviewResList).hasSize(4)
-			.extracting("username", "content", "score")
-			.containsExactly(
-				Tuple.tuple("member1", "mem1-review1", 5),
-				Tuple.tuple("member1", "mem1-review3", 4),
-				Tuple.tuple("member2", "mem2-review1", 5),
-				Tuple.tuple("member2", "mem2-review3", 5));
+		assertThat(reviewsResList).hasSize(2)
+			.extracting("id", "image.fileUrl")
+			.containsExactlyInAnyOrder(
+				Tuple.tuple(review1.getId(), "/images/image1"),
+				Tuple.tuple(review3.getId(), "/images/image4"));
 	}
 
 	ArtistType createArtistType() {
