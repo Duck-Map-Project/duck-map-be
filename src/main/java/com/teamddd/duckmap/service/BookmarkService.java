@@ -3,13 +3,13 @@ package com.teamddd.duckmap.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.teamddd.duckmap.dto.event.bookmark.BookmarkEventDto;
 import com.teamddd.duckmap.dto.event.bookmark.UpdateBookmarkReq;
 import com.teamddd.duckmap.entity.Event;
 import com.teamddd.duckmap.entity.EventBookmark;
 import com.teamddd.duckmap.entity.EventBookmarkFolder;
 import com.teamddd.duckmap.entity.Member;
 import com.teamddd.duckmap.exception.NonExistentBookmarkException;
+import com.teamddd.duckmap.exception.NonExistentEventException;
 import com.teamddd.duckmap.repository.BookmarkRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -55,10 +55,13 @@ public class BookmarkService {
 		bookmarkRepository.deleteById(bookmark.getId());
 	}
 
-	public EventBookmark getEventBookmark(Long eventId, Long loginMemberId) throws NonExistentBookmarkException {
-		BookmarkEventDto bookmarkEventDto = bookmarkRepository
-			.findByEventAndMember(eventId, loginMemberId)
+	public EventBookmark getEventBookmark(Long eventId, Long loginMemberId) {
+		EventBookmark bookmark = bookmarkRepository
+			.findByEventIdAndMemberId(eventId, loginMemberId)
 			.orElseThrow(NonExistentBookmarkException::new);
-		return bookmarkEventDto.getEventBookmark();
+		if (bookmark.getEvent() == null) {
+			throw new NonExistentEventException();
+		}
+		return bookmark;
 	}
 }
