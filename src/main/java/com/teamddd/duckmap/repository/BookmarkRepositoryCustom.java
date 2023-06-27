@@ -8,5 +8,5 @@ import com.teamddd.duckmap.dto.event.bookmark.BookmarkEventDto;
 
 public interface BookmarkRepositoryCustom {
 	@EntityGraph(attributePaths = {"event"}, type = EntityGraph.EntityGraphType.LOAD)
-	Optional<BookmarkEventDto> findtByEventAndMember(Long eventId, Long memberId);
+	Optional<BookmarkEventDto> findByEventAndMember(Long eventId, Long memberId);
 }

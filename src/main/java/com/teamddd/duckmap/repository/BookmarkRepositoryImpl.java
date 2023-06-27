@@ -19,7 +19,7 @@ public class BookmarkRepositoryImpl implements BookmarkRepositoryCustom {
 	}
 
 	@Override
-	public Optional<BookmarkEventDto> findtByEventAndMember(Long eventId, Long memberId) {
+	public Optional<BookmarkEventDto> findByEventAndMember(Long eventId, Long memberId) {
 		return Optional.ofNullable(queryFactory.select(
 				new QBookmarkEventDto(
 					event,
