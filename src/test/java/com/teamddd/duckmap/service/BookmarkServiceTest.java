@@ -19,11 +19,12 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.teamddd.duckmap.dto.event.bookmark.CreateBookmarkReq;
+import com.teamddd.duckmap.dto.event.bookmark.UpdateBookmarkReq;
 import com.teamddd.duckmap.entity.Event;
 import com.teamddd.duckmap.entity.EventBookmark;
 import com.teamddd.duckmap.entity.EventBookmarkFolder;
 import com.teamddd.duckmap.entity.Member;
-import com.teamddd.duckmap.exception.AuthenticationRequiredException;
+import com.teamddd.duckmap.exception.NonExistentBookmarkException;
 import com.teamddd.duckmap.repository.BookmarkRepository;
 
 @Transactional
@@ -77,6 +78,51 @@ public class BookmarkServiceTest {
 			.containsOnly("folder1", "store", "member1");
 	}
 
+	@DisplayName("이벤트 북마크 폴더 변경")
+	@Test
+	void updateBookmark() throws Exception {
+		//given
+		Member member = Member.builder()
+			.username("member1")
+			.build();
+		em.persist(member);
+		Event event = Event.builder()
+			.storeName("store")
+			.member(member)
+			.build();
+		em.persist(event);
+		EventBookmarkFolder bookmarkFolder = EventBookmarkFolder.builder()
+			.image("image1")
+			.name("folder1")
+			.build();
+		em.persist(bookmarkFolder);
+		EventBookmarkFolder bookmarkFolder2 = EventBookmarkFolder.builder()
+			.image("image2")
+			.name("folder2")
+			.build();
+		em.persist(bookmarkFolder2);
+
+		when(eventService.getEvent(any())).thenReturn(event);
+		when(bookmarkFolderService.getEventBookmarkFolder(bookmarkFolder.getId())).thenReturn(bookmarkFolder);
+		Long bookmarkId = bookmarkService.createBookmark(event.getId(), bookmarkFolder.getId(), member);
+
+		UpdateBookmarkReq request = new UpdateBookmarkReq();
+		ReflectionTestUtils.setField(request, "bookmarkFolderId", bookmarkFolder2.getId());
+
+		//when
+		when(bookmarkFolderService.getEventBookmarkFolder(bookmarkFolder2.getId())).thenReturn(bookmarkFolder2);
+		bookmarkService.updateBookmark(event.getId(), request, member);
+
+		//then
+		assertThat(bookmarkId).isNotNull();
+
+		Optional<EventBookmark> findBookmark = bookmarkRepository.findById(bookmarkId);
+		assertThat(findBookmark).isNotEmpty();
+		assertThat(findBookmark.get())
+			.extracting("eventBookmarkFolder.id", "eventBookmarkFolder.name", "event.storeName", "member.username")
+			.containsOnly(bookmarkFolder2.getId(), "folder2", "store", "member1");
+	}
+
 	@DisplayName("이벤트 북마크 삭제(취소)")
 	@Nested
 	class DeleteBookmark {
@@ -101,16 +147,18 @@ public class BookmarkServiceTest {
 				.build();
 			em.persist(bookmarkFolder);
 
-			when(eventService.getEvent(any())).thenReturn(event);
-			when(bookmarkFolderService.getEventBookmarkFolder(any())).thenReturn(bookmarkFolder);
-
-			Long bookmarkId = bookmarkService.createBookmark(event.getId(), bookmarkFolder.getId(), member);
+			EventBookmark bookmark = EventBookmark.builder()
+				.event(event)
+				.eventBookmarkFolder(bookmarkFolder)
+				.member(member)
+				.build();
+			em.persist(bookmark);
 
 			//when
-			bookmarkService.deleteBookmark(bookmarkId, member.getId());
+			bookmarkService.deleteBookmark(event.getId(), member.getId());
 
 			//then
-			Optional<EventBookmark> findBookmark = bookmarkRepository.findById(bookmarkId);
+			Optional<EventBookmark> findBookmark = bookmarkRepository.findById(bookmark.getId());
 			assertThat(findBookmark).isEmpty();
 		}
 
@@ -139,15 +187,17 @@ public class BookmarkServiceTest {
 				.build();
 			em.persist(bookmarkFolder);
 
-			when(eventService.getEvent(any())).thenReturn(event);
-			when(bookmarkFolderService.getEventBookmarkFolder(any())).thenReturn(bookmarkFolder);
-
-			Long bookmarkId = bookmarkService.createBookmark(event.getId(), bookmarkFolder.getId(), member);
+			EventBookmark bookmark = EventBookmark.builder()
+				.event(event)
+				.eventBookmarkFolder(bookmarkFolder)
+				.member(member)
+				.build();
+			em.persist(bookmark);
 
 			//when //then
-			assertThatThrownBy(() -> bookmarkService.deleteBookmark(bookmarkId, loginMember.getId()))
-				.isInstanceOf(AuthenticationRequiredException.class)
-				.hasMessage("인증이 필요합니다");
+			assertThatThrownBy(() -> bookmarkService.deleteBookmark(event.getId(), loginMember.getId()))
+				.isInstanceOf(NonExistentBookmarkException.class)
+				.hasMessage("잘못된 북마크 정보입니다");
 		}
 	}
 

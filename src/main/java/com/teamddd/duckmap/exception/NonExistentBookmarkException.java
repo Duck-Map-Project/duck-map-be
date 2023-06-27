@@ -4,7 +4,7 @@ import com.teamddd.duckmap.common.ExceptionCodeMessage;
 
 public class NonExistentBookmarkException extends RuntimeException {
 	public NonExistentBookmarkException() {
-		super(ExceptionCodeMessage.NON_EXISTENT_BOOKMARK_FOLDER_EXCEPTION.message());
+		super(ExceptionCodeMessage.NON_EXISTENT_BOOKMARK_EXCEPTION.message());
 	}
 
 	public NonExistentBookmarkException(String message) {

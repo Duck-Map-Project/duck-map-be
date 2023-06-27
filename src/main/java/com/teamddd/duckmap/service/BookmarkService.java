@@ -3,12 +3,13 @@ package com.teamddd.duckmap.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.teamddd.duckmap.dto.event.bookmark.UpdateBookmarkReq;
 import com.teamddd.duckmap.entity.Event;
 import com.teamddd.duckmap.entity.EventBookmark;
 import com.teamddd.duckmap.entity.EventBookmarkFolder;
 import com.teamddd.duckmap.entity.Member;
-import com.teamddd.duckmap.exception.AuthenticationRequiredException;
 import com.teamddd.duckmap.exception.NonExistentBookmarkException;
+import com.teamddd.duckmap.exception.NonExistentEventException;
 import com.teamddd.duckmap.repository.BookmarkRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -40,16 +41,27 @@ public class BookmarkService {
 	}
 
 	@Transactional
-	public void deleteBookmark(Long id, Long loginMemberId) {
-		EventBookmark bookmark = getEventBookmark(id);
-		if (!loginMemberId.equals(bookmark.getMember().getId())) {
-			throw new AuthenticationRequiredException();
-		}
-		bookmarkRepository.deleteById(id);
+	public void updateBookmark(Long eventId, UpdateBookmarkReq updateBookmarkReq, Member member)
+		throws NonExistentBookmarkException {
+		EventBookmarkFolder bookmarkFolder = bookmarkFolderService
+			.getEventBookmarkFolder(updateBookmarkReq.getBookmarkFolderId());
+		EventBookmark bookmark = getEventBookmark(eventId, member.getId());
+		bookmark.updateEventBookmark(bookmarkFolder);
 	}
 
-	public EventBookmark getEventBookmark(Long bookmarkId) throws NonExistentBookmarkException {
-		return bookmarkRepository.findById(bookmarkId)
+	@Transactional
+	public void deleteBookmark(Long eventId, Long loginMemberId) {
+		EventBookmark bookmark = getEventBookmark(eventId, loginMemberId);
+		bookmarkRepository.deleteById(bookmark.getId());
+	}
+
+	public EventBookmark getEventBookmark(Long eventId, Long loginMemberId) {
+		EventBookmark bookmark = bookmarkRepository
+			.findByEventIdAndMemberId(eventId, loginMemberId)
 			.orElseThrow(NonExistentBookmarkException::new);
+		if (bookmark.getEvent() == null) {
+			throw new NonExistentEventException();
+		}
+		return bookmark;
 	}
 }
