@@ -1,7 +1,5 @@
 package com.teamddd.duckmap.dto.review;
 
-import java.time.LocalDate;
-
 import org.springframework.data.domain.Pageable;
 
 import lombok.Builder;
@@ -11,6 +9,5 @@ import lombok.Getter;
 @Getter
 public class MyReviewServiceReq {
 	private Long memberId;
-	private LocalDate date;
 	private Pageable pageable;
 }

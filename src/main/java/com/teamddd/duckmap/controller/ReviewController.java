@@ -91,12 +91,10 @@ public class ReviewController {
 	@GetMapping("/myreview")
 	public Page<MyReviewsRes> getMyReviews(Pageable pageable) {
 		Member member = MemberUtils.getAuthMember().getUser();
-		LocalDate today = LocalDate.now();
 
 		MyReviewServiceReq request = MyReviewServiceReq.builder()
 			.memberId(member.getId())
 			.pageable(pageable)
-			.date(today)
 			.build();
 
 		return reviewService.getMyReviewsRes(request);

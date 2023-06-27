@@ -183,7 +183,6 @@ public class ReviewServiceTest {
 
 		Pageable pageable = PageRequest.of(0, reviews.size());
 		MyReviewServiceReq request = MyReviewServiceReq.builder()
-			.date(now)
 			.memberId(member1.getId())
 			.pageable(pageable)
 			.build();
