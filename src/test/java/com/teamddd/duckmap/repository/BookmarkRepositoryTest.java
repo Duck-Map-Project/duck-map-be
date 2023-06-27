@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.teamddd.duckmap.dto.event.bookmark.BookmarkEventDto;
 import com.teamddd.duckmap.entity.Event;
 import com.teamddd.duckmap.entity.EventBookmark;
 import com.teamddd.duckmap.entity.EventBookmarkFolder;
@@ -50,13 +49,13 @@ public class BookmarkRepositoryTest {
 		em.persist(eventBookmark2);
 
 		//when
-		Optional<BookmarkEventDto> findBookmark = bookmarkRepository.findByEventAndMember(event.getId(),
+		Optional<EventBookmark> findBookmark = bookmarkRepository.findByEventIdAndMemberId(event.getId(),
 			member.getId());
 
 		//then
 		assertThat(findBookmark).isNotEmpty();
 		assertThat(findBookmark.get())
-			.extracting("event.storeName", "eventBookmark.member.username")
+			.extracting("event.storeName", "member.username")
 			.containsOnly("event1", "member1");
 	}
 
