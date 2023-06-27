@@ -35,4 +35,8 @@ public class EventBookmark extends BaseTimeEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "event_id")
 	private Event event;
+
+	public void updateEventBookmark(EventBookmarkFolder eventBookmarkFolder) {
+		this.eventBookmarkFolder = eventBookmarkFolder;
+	}
 }

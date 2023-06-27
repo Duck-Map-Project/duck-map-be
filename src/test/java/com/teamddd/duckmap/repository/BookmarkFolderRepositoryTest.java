@@ -13,7 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderEventDto;
+import com.teamddd.duckmap.dto.event.bookmark.BookmarkEventDto;
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderMemberDto;
 import com.teamddd.duckmap.entity.Event;
 import com.teamddd.duckmap.entity.EventBookmark;
@@ -115,9 +115,9 @@ public class BookmarkFolderRepositoryTest {
 		PageRequest pageRequest = PageRequest.of(0, 2);
 		PageRequest pageRequest2 = PageRequest.of(0, 2);
 		//when
-		Page<BookmarkFolderEventDto> bookmarkedEvents = bookmarkFolderRepository
+		Page<BookmarkEventDto> bookmarkedEvents = bookmarkFolderRepository
 			.findBookmarkedEvents(eventBookmarkFolder.getId(), pageRequest);
-		Page<BookmarkFolderEventDto> bookmarkedEvents2 = bookmarkFolderRepository
+		Page<BookmarkEventDto> bookmarkedEvents2 = bookmarkFolderRepository
 			.findBookmarkedEvents(eventBookmarkFolder2.getId(), pageRequest2);
 		//then
 		assertThat(bookmarkedEvents).hasSize(2)

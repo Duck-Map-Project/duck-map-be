@@ -62,4 +62,9 @@ public class BookmarkFolderService {
 			.username(bookmarkFolderMemberDto.getUsername())
 			.build();
 	}
+
+	public EventBookmarkFolder getEventBookmarkFolder(Long bookmarkFolderId) throws NonExistentBookmarkFolderException {
+		return bookmarkFolderRepository.findById(bookmarkFolderId)
+			.orElseThrow(NonExistentBookmarkFolderException::new);
+	}
 }
