@@ -57,7 +57,7 @@ public class BookmarkService {
 
 	public EventBookmark getEventBookmark(Long eventId, Long loginMemberId) throws NonExistentBookmarkException {
 		BookmarkEventDto bookmarkEventDto = bookmarkRepository
-			.findByEventIdAndMemberIdWithEvent(eventId, loginMemberId)
+			.findtByEventAndMember(eventId, loginMemberId)
 			.orElseThrow(NonExistentBookmarkException::new);
 		return bookmarkEventDto.getEventBookmark();
 	}
