@@ -25,6 +25,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.teamddd.duckmap.dto.review.CreateReviewReq;
+import com.teamddd.duckmap.dto.review.MyReviewServiceReq;
+import com.teamddd.duckmap.dto.review.MyReviewsRes;
 import com.teamddd.duckmap.dto.review.ReviewRes;
 import com.teamddd.duckmap.dto.review.ReviewSearchServiceReq;
 import com.teamddd.duckmap.dto.review.ReviewsRes;
@@ -36,7 +38,6 @@ import com.teamddd.duckmap.entity.Member;
 import com.teamddd.duckmap.entity.Review;
 import com.teamddd.duckmap.entity.ReviewImage;
 import com.teamddd.duckmap.exception.NonExistentReviewException;
-import com.teamddd.duckmap.repository.EventRepository;
 import com.teamddd.duckmap.repository.ReviewRepository;
 
 @Transactional
@@ -44,8 +45,6 @@ import com.teamddd.duckmap.repository.ReviewRepository;
 public class ReviewServiceTest {
 	@Autowired
 	EntityManager em;
-	@SpyBean
-	EventRepository eventRepository;
 	@MockBean
 	ArtistService artistService;
 	@Autowired
@@ -135,6 +134,71 @@ public class ReviewServiceTest {
 				.isInstanceOf(NonExistentReviewException.class)
 				.hasMessage("잘못된 리뷰 정보입니다");
 		}
+	}
+
+	@DisplayName("회원이 작성한 리뷰를 조회한다")
+	@Test
+	void getMyReviewsRes() throws Exception {
+		//given
+		LocalDate now = LocalDate.now();
+
+		Member member1 = Member.builder()
+			.username("member1")
+			.build();
+		em.persist(member1);
+
+		Event event1 = createEvent(member1, "event1", now.minusDays(2), now.plusDays(1));
+		Event event2 = createEvent(member1, "event2", now.plusDays(1), now.plusDays(1));
+		Event event3 = createEvent(member1, "event3", now.plusDays(1), now.plusDays(1));
+		Event event4 = createEvent(member1, "event4", now.plusDays(1), now.plusDays(3));
+		em.persist(event1);
+		em.persist(event2);
+		em.persist(event3);
+		em.persist(event4);
+
+		Review review1 = createReview(member1, event1, "mem1-review1", 5);
+		Review review2 = createReview(member1, event2, "mem1-review2", 3);
+		Review review3 = createReview(member1, event3, "mem1-review3", 4);
+		Review review4 = createReview(member1, event4, "mem1-review4", 5);
+		em.persist(review1);
+		em.persist(review2);
+		em.persist(review3);
+		em.persist(review4);
+
+		ReviewImage image1 = createReviewImage("image1");
+		ReviewImage image2 = createReviewImage("image2");
+		ReviewImage image3 = createReviewImage("image3");
+		em.persist(image1);
+		em.persist(image2);
+		em.persist(image3);
+
+		addReviewImage(review1, image1);
+		addReviewImage(review1, image2);
+		addReviewImage(review2, image3);
+
+		List<Review> reviews = List.of(review1, review2, review3, review4);
+
+		em.flush();
+		em.clear();
+
+		Pageable pageable = PageRequest.of(0, reviews.size());
+		MyReviewServiceReq request = MyReviewServiceReq.builder()
+			.date(now)
+			.memberId(member1.getId())
+			.pageable(pageable)
+			.build();
+
+		//when
+		Page<MyReviewsRes> myReviewsResPage = reviewService.getMyReviewsRes(request);
+
+		//then
+		assertThat(myReviewsResPage).hasSize(4)
+			.extracting("content", "score", "eventStoreName")
+			.containsExactlyInAnyOrder(
+				Tuple.tuple("mem1-review1", 5, "event1"),
+				Tuple.tuple("mem1-review2", 3, "event2"),
+				Tuple.tuple("mem1-review3", 4, "event3"),
+				Tuple.tuple("mem1-review4", 5, "event4"));
 	}
 
 	@DisplayName("조회한 Page<Review>를 Page<ReviewsRes>로 변환하여 반환한다")
