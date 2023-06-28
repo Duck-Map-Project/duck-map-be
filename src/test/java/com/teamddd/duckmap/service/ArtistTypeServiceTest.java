@@ -1,7 +1,6 @@
 package com.teamddd.duckmap.service;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -88,8 +87,6 @@ class ArtistTypeServiceTest {
 			.id(updateTypeId)
 			.type("new_type")
 			.build();
-
-		when(artistTypeRepository.findById(updateTypeId)).thenReturn(Optional.of(type));
 
 		//when
 		artistTypeService.updateArtistType(request);
