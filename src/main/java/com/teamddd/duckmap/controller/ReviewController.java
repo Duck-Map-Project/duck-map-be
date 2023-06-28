@@ -1,12 +1,9 @@
 package com.teamddd.duckmap.controller;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,9 +16,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.teamddd.duckmap.dto.ImageRes;
 import com.teamddd.duckmap.dto.review.CreateReviewReq;
 import com.teamddd.duckmap.dto.review.CreateReviewRes;
+import com.teamddd.duckmap.dto.review.MyReviewServiceReq;
 import com.teamddd.duckmap.dto.review.MyReviewsRes;
 import com.teamddd.duckmap.dto.review.ReviewRes;
 import com.teamddd.duckmap.dto.review.ReviewSearchParam;
@@ -93,30 +90,14 @@ public class ReviewController {
 	@Operation(summary = "나의 리뷰 목록 조회")
 	@GetMapping("/myreview")
 	public Page<MyReviewsRes> getMyReviews(Pageable pageable) {
-		ImageRes imageRes = ImageRes.builder()
-			.filename("filename.png")
+		Member member = MemberUtils.getAuthMember().getUser();
+
+		MyReviewServiceReq request = MyReviewServiceReq.builder()
+			.memberId(member.getId())
+			.pageable(pageable)
 			.build();
 
-		return new PageImpl<>(List.of(
-			MyReviewsRes.builder()
-				.id(1L)
-				.eventId(1L)
-				.eventStoreName("이벤트 상호명")
-				.createdAt(LocalDateTime.now().minusDays(10))
-				.score(4)
-				.reviewImage(imageRes)
-				.content("리뷰 내용")
-				.build(),
-			MyReviewsRes.builder()
-				.id(2L)
-				.eventId(2L)
-				.eventStoreName("이벤트 상호명2")
-				.createdAt(LocalDateTime.now().minusDays(8))
-				.score(5)
-				.reviewImage(imageRes)
-				.content("리뷰 내용22")
-				.build()
-		));
+		return reviewService.getMyReviewsRes(request);
 	}
 
 }
