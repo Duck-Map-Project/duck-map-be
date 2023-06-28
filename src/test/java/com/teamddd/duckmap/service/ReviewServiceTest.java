@@ -18,13 +18,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.teamddd.duckmap.dto.review.CreateReviewReq;
+import com.teamddd.duckmap.dto.review.EventReviewServiceReq;
+import com.teamddd.duckmap.dto.review.EventReviewsRes;
 import com.teamddd.duckmap.dto.review.MyReviewServiceReq;
 import com.teamddd.duckmap.dto.review.MyReviewsRes;
 import com.teamddd.duckmap.dto.review.ReviewRes;
@@ -178,9 +179,6 @@ public class ReviewServiceTest {
 
 		List<Review> reviews = List.of(review1, review2, review3, review4);
 
-		em.flush();
-		em.clear();
-
 		Pageable pageable = PageRequest.of(0, reviews.size());
 		MyReviewServiceReq request = MyReviewServiceReq.builder()
 			.memberId(member1.getId())
@@ -192,12 +190,12 @@ public class ReviewServiceTest {
 
 		//then
 		assertThat(myReviewsResPage).hasSize(4)
-			.extracting("content", "score", "eventStoreName")
+			.extracting("content", "score", "eventStoreName", "reviewImage.fileUrl")
 			.containsExactlyInAnyOrder(
-				Tuple.tuple("mem1-review1", 5, "event1"),
-				Tuple.tuple("mem1-review2", 3, "event2"),
-				Tuple.tuple("mem1-review3", 4, "event3"),
-				Tuple.tuple("mem1-review4", 5, "event4"));
+				Tuple.tuple("mem1-review1", 5, "event1", "/images/image1"),
+				Tuple.tuple("mem1-review2", 3, "event2", "/images/image3"),
+				Tuple.tuple("mem1-review3", 4, "event3", "/images/null"),
+				Tuple.tuple("mem1-review4", 5, "event4", "/images/null"));
 	}
 
 	@DisplayName("조회한 Page<Review>를 Page<ReviewsRes>로 변환하여 반환한다")
@@ -248,14 +246,7 @@ public class ReviewServiceTest {
 
 		List<Review> reviews = List.of(review1, review2, review3, review4);
 
-		em.flush();
-		em.clear();
-
 		PageRequest pageRequest = PageRequest.of(0, reviews.size());
-
-		when(
-			reviewRepository.findAll(pageRequest))
-			.thenReturn(new PageImpl<>(reviews, pageRequest, reviews.size()));
 
 		//when
 		Page<ReviewsRes> reviewsResPage = reviewService.getReviewsResPage(pageRequest);
@@ -361,6 +352,79 @@ public class ReviewServiceTest {
 			.containsExactlyInAnyOrder(
 				Tuple.tuple(review1.getId(), "/images/image1"),
 				Tuple.tuple(review3.getId(), "/images/image4"));
+	}
+
+	@DisplayName("EventId에 해당하는 EventReviewsRes 목록 조회")
+	@Test
+	void getEventReviewsResList() throws Exception {
+		//given
+		LocalDate now = LocalDate.now();
+
+		Member member1 = Member.builder()
+			.username("member1")
+			.build();
+		Member member2 = Member.builder()
+			.username("member2")
+			.build();
+		Member member3 = Member.builder()
+			.username("member3")
+			.build();
+		Member member4 = Member.builder()
+			.username("member4")
+			.build();
+		em.persist(member1);
+		em.persist(member2);
+		em.persist(member3);
+		em.persist(member4);
+
+		Event event1 = createEvent(member1, "event1", now.minusDays(2), now.plusDays(1));
+		em.persist(event1);
+
+		Review review1 = createReview(member1, event1, "mem1-review1", 5);
+		Review review2 = createReview(member2, event1, "mem2-review2", 3);
+		Review review3 = createReview(member3, event1, "mem3-review3", 4);
+		Review review4 = createReview(member4, event1, "mem4-review4", 5);
+		em.persist(review1);
+		em.persist(review2);
+		em.persist(review3);
+		em.persist(review4);
+
+		ReviewImage image1 = createReviewImage("image1");
+		ReviewImage image2 = createReviewImage("image2");
+		ReviewImage image3 = createReviewImage("image3");
+		ReviewImage image4 = createReviewImage("image4");
+		ReviewImage image5 = createReviewImage("image5");
+		em.persist(image1);
+		em.persist(image2);
+		em.persist(image3);
+		em.persist(image4);
+		em.persist(image5);
+
+		addReviewImage(review1, image1);
+		addReviewImage(review1, image2);
+		addReviewImage(review2, image3);
+		addReviewImage(review3, image4);
+		addReviewImage(review4, image5);
+
+		List<Review> reviews = List.of(review1, review2, review3, review4);
+
+		Pageable pageable = PageRequest.of(0, reviews.size());
+		EventReviewServiceReq request = EventReviewServiceReq.builder()
+			.eventId(event1.getId())
+			.pageable(pageable)
+			.build();
+
+		//when
+		Page<EventReviewsRes> eventReviewsResPage = reviewService.getEventReviewsResList(request);
+
+		//then
+		assertThat(eventReviewsResPage).hasSize(4)
+			.extracting("content", "score", "reviewImage.fileUrl")
+			.containsExactlyInAnyOrder(
+				Tuple.tuple("mem1-review1", 5, "/images/image1"),
+				Tuple.tuple("mem2-review2", 3, "/images/image3"),
+				Tuple.tuple("mem3-review3", 4, "/images/image4"),
+				Tuple.tuple("mem4-review4", 5, "/images/image5"));
 	}
 
 	ArtistType createArtistType() {

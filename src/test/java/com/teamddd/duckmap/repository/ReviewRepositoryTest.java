@@ -145,6 +145,43 @@ class ReviewRepositoryTest {
 		assertThat(reviews2.getTotalPages()).isEqualTo(1);
 	}
 
+	@DisplayName("EventId로 review 목록 조회")
+	@Test
+	void findByEventId() throws Exception {
+		//given
+		Member member1 = Member.builder().username("user1").build();
+		Member member2 = Member.builder().username("user2").build();
+		Member member3 = Member.builder().username("user3").build();
+		em.persist(member1);
+		em.persist(member2);
+		em.persist(member3);
+
+		Event event = createEvent("event1");
+		em.persist(event);
+
+		Review review = createReview(member1, event, "user1 review1", 5);
+		Review review2 = createReview(member2, event, "user2 review1", 5);
+		Review review3 = createReview(member3, event, "user3 review1", 5);
+		em.persist(review);
+		em.persist(review2);
+		em.persist(review3);
+
+		PageRequest pageRequest = PageRequest.of(0, 2);
+
+		//when
+		Page<Review> reviews = reviewRepository.findByEventId(event.getId(), pageRequest);
+
+		//then
+		assertThat(reviews).hasSize(2)
+			.extracting("id", "content", "review")
+			.containsExactlyInAnyOrder(
+				Tuple.tuple(review.getId(), review.getContent(), event.getStoreName()),
+				Tuple.tuple(review2.getId(), review2.getContent(), event.getStoreName()));
+
+		assertThat(reviews.getTotalElements()).isEqualTo(3);
+		assertThat(reviews.getTotalPages()).isEqualTo(2);
+	}
+
 	@DisplayName("MemberId로 my review 목록 조회, Dto 반환")
 	@Test
 	void findWithEventByMemberId() throws Exception {
