@@ -1,6 +1,7 @@
 package com.teamddd.duckmap.service;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,15 +13,19 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.teamddd.duckmap.dto.artist.ArtistTypeRes;
 import com.teamddd.duckmap.dto.artist.CreateArtistTypeReq;
+import com.teamddd.duckmap.entity.Artist;
 import com.teamddd.duckmap.dto.artist.UpdateArtistTypeServiceReq;
 import com.teamddd.duckmap.entity.ArtistType;
 import com.teamddd.duckmap.exception.NonExistentArtistTypeException;
+import com.teamddd.duckmap.exception.UnableToDeleteArtistTypeInUseException;
+import com.teamddd.duckmap.repository.ArtistRepository;
 import com.teamddd.duckmap.repository.ArtistTypeRepository;
 
 @Transactional
@@ -33,6 +38,8 @@ class ArtistTypeServiceTest {
 	ArtistTypeService artistTypeService;
 	@SpyBean
 	ArtistTypeRepository artistTypeRepository;
+	@MockBean
+	ArtistRepository artistRepository;
 
 	@DisplayName("아티스트 타입을 받아 생성한다")
 	@Test
@@ -104,6 +111,13 @@ class ArtistTypeServiceTest {
 			.build();
 	}
 
+	Artist createArtist(ArtistType type, String name) {
+		return Artist.builder()
+			.artistType(type)
+			.name(name)
+			.build();
+	}
+
 	@DisplayName("아티스트 타입을 조회한다")
 	@Nested
 	class GetArtistType {
@@ -137,4 +151,54 @@ class ArtistTypeServiceTest {
 		}
 	}
 
+	@DisplayName("아티스트 구분을 삭제한다")
+	@Nested
+	class DeleteArtistType {
+		@DisplayName("사용중인 아티스트가 없는 경우 정상적으로 삭제된다")
+		@Test
+		void deleteArtistType1() throws Exception {
+			//given
+			ArtistType type = createArtistType("type");
+			em.persist(type);
+
+			em.flush();
+			em.clear();
+
+			Long deleteArtistTypeId = type.getId();
+
+			when(artistRepository.countByArtistType(any())).thenReturn(0L);
+
+			//when
+			artistTypeService.deleteArtistType(deleteArtistTypeId);
+
+			//then
+			Optional<ArtistType> findArtistType = artistTypeRepository.findById(deleteArtistTypeId);
+			assertThat(findArtistType).isEmpty();
+		}
+
+		@DisplayName("사용중인 아티스트가 있는 경우 삭제하지 않고 예외 발생")
+		@Test
+		void deleteArtistType2() throws Exception {
+			//given
+			ArtistType type = createArtistType("type");
+			em.persist(type);
+
+			Artist artist1 = createArtist(type, "artist1");
+			Artist artist2 = createArtist(type, "artist2");
+			em.persist(artist1);
+			em.persist(artist2);
+
+			em.flush();
+			em.clear();
+
+			Long deleteArtistTypeId = type.getId();
+
+			when(artistRepository.countByArtistType(any())).thenReturn(2L);
+
+			//when //then
+			assertThatThrownBy(() -> artistTypeService.deleteArtistType(deleteArtistTypeId))
+				.isInstanceOf(UnableToDeleteArtistTypeInUseException.class)
+				.hasMessage("해당 아티스트 구분을 사용중인 아티스트가 존재하여 삭제할 수 없습니다");
+		}
+	}
 }

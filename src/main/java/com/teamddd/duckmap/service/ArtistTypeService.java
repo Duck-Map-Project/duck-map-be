@@ -11,6 +11,8 @@ import com.teamddd.duckmap.dto.artist.CreateArtistTypeReq;
 import com.teamddd.duckmap.dto.artist.UpdateArtistTypeServiceReq;
 import com.teamddd.duckmap.entity.ArtistType;
 import com.teamddd.duckmap.exception.NonExistentArtistTypeException;
+import com.teamddd.duckmap.exception.UnableToDeleteArtistTypeInUseException;
+import com.teamddd.duckmap.repository.ArtistRepository;
 import com.teamddd.duckmap.repository.ArtistTypeRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ArtistTypeService {
 	private final ArtistTypeRepository artistTypeRepository;
+	private final ArtistRepository artistRepository;
 
 	@Transactional
 	public Long createArtistType(CreateArtistTypeReq createArtistTypeReq) {
@@ -51,5 +54,17 @@ public class ArtistTypeService {
 		ArtistType artistType = getArtistType(request.getId());
 
 		artistType.updateArtistType(request.getType());
+	}
+  
+  @Transactional
+	public void deleteArtistType(Long id) {
+		ArtistType type = getArtistType(id);
+
+		Long artistCount = artistRepository.countByArtistType(type);
+		if (artistCount > 0) {
+			throw new UnableToDeleteArtistTypeInUseException();
+		}
+
+		artistTypeRepository.delete(type);
 	}
 }
