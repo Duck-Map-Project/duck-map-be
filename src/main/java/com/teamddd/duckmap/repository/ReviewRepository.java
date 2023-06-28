@@ -17,6 +17,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRep
 
 	Page<Review> findByEvent(Event event, Pageable pageable);
 
+	Page<Review> findByEventId(Long eventId, Pageable pageable);
+
 	@Query("select ROUND(avg(r.score), 1) from Review r where r.event.id = :eventId")
 	Optional<Double> avgScoreByEvent(@Param("eventId") Long eventId);
 }
