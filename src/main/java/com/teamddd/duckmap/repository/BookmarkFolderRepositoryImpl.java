@@ -32,8 +32,10 @@ public class BookmarkFolderRepositoryImpl implements BookmarkFolderRepositoryCus
 	public Page<BookmarkEventDto> findBookmarkedEvents(Long bookmarkFolderId, Pageable pageable) {
 		List<BookmarkEventDto> events = queryFactory.select(
 				new QBookmarkEventDto(
-					event,
-					eventBookmark
+					event.id,
+					event.storeName,
+					event.eventImages,
+					eventBookmark.id
 				))
 			.from(event)
 			.join(eventBookmark).on(event.eq(eventBookmark.event))
