@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.teamddd.duckmap.dto.artist.ArtistTypeRes;
 import com.teamddd.duckmap.dto.artist.CreateArtistTypeReq;
 import com.teamddd.duckmap.entity.Artist;
+import com.teamddd.duckmap.dto.artist.UpdateArtistTypeServiceReq;
 import com.teamddd.duckmap.entity.ArtistType;
 import com.teamddd.duckmap.exception.NonExistentArtistTypeException;
 import com.teamddd.duckmap.exception.UnableToDeleteArtistTypeInUseException;
@@ -76,6 +77,32 @@ class ArtistTypeServiceTest {
 		assertThat(artistTypes).hasSize(3)
 			.extracting("type")
 			.containsExactlyInAnyOrder("그룹", "아이돌", "배우");
+	}
+
+	@DisplayName("아티스트 타입을 변경한다")
+	@Test
+	void updateArtistType() throws Exception {
+		//given
+		ArtistType type = createArtistType("type");
+		em.persist(type);
+
+		em.flush();
+		em.clear();
+
+		Long updateTypeId = type.getId();
+		UpdateArtistTypeServiceReq request = UpdateArtistTypeServiceReq.builder()
+			.id(updateTypeId)
+			.type("new_type")
+			.build();
+
+		//when
+		artistTypeService.updateArtistType(request);
+		em.flush();
+		em.clear();
+
+		//then
+		ArtistType findArtistType = artistTypeRepository.findById(updateTypeId).get();
+		assertThat(findArtistType).extracting("type").isEqualTo("new_type");
 	}
 
 	ArtistType createArtistType(String type) {

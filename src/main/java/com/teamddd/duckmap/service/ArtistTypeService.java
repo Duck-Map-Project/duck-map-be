@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.teamddd.duckmap.dto.artist.ArtistTypeRes;
 import com.teamddd.duckmap.dto.artist.CreateArtistTypeReq;
+import com.teamddd.duckmap.dto.artist.UpdateArtistTypeServiceReq;
 import com.teamddd.duckmap.entity.ArtistType;
 import com.teamddd.duckmap.exception.NonExistentArtistTypeException;
 import com.teamddd.duckmap.exception.UnableToDeleteArtistTypeInUseException;
@@ -49,6 +50,13 @@ public class ArtistTypeService {
 	}
 
 	@Transactional
+	public void updateArtistType(UpdateArtistTypeServiceReq request) {
+		ArtistType artistType = getArtistType(request.getId());
+
+		artistType.updateArtistType(request.getType());
+	}
+  
+  @Transactional
 	public void deleteArtistType(Long id) {
 		ArtistType type = getArtistType(id);
 
