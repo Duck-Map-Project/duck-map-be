@@ -111,10 +111,10 @@ class ArtistRepositoryTest {
 		return ArtistType.builder().type(type).build();
 	}
 
-	private Artist createArtist(String name, ArtistType type1, Artist group) {
+	private Artist createArtist(String name, ArtistType type, Artist group) {
 		return Artist.builder()
 			.name(name)
-			.artistType(type1)
+			.artistType(type)
 			.group(group)
 			.build();
 	}
