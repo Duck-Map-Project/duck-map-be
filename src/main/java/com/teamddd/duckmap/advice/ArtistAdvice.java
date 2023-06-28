@@ -9,6 +9,7 @@ import com.teamddd.duckmap.common.ExceptionCodeMessage;
 import com.teamddd.duckmap.dto.ErrorResult;
 import com.teamddd.duckmap.exception.NonExistentArtistException;
 import com.teamddd.duckmap.exception.NonExistentArtistTypeException;
+import com.teamddd.duckmap.exception.UnableToDeleteArtistTypeInUseException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,6 +31,15 @@ public class ArtistAdvice {
 	public ErrorResult nonExistentArtistException(NonExistentArtistException ex) {
 		return ErrorResult.builder()
 			.code(ExceptionCodeMessage.NON_EXISTENT_ARTIST_EXCEPTION.code())
+			.message(ex.getMessage())
+			.build();
+	}
+
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler
+	public ErrorResult unableToDeleteArtistTypeInUseException(UnableToDeleteArtistTypeInUseException ex) {
+		return ErrorResult.builder()
+			.code(ExceptionCodeMessage.UNABLE_TO_DELETE_ARTIST_TYPE_IN_USE_EXCEPTION.code())
 			.message(ex.getMessage())
 			.build();
 	}
