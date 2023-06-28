@@ -76,5 +76,6 @@ public class ArtistTypeController {
 	@Operation(summary = "아티스트 구분 삭제")
 	@DeleteMapping("/{id}")
 	public void deleteArtistType(@PathVariable Long id) {
+		artistTypeService.deleteArtistType(id);
 	}
 }
