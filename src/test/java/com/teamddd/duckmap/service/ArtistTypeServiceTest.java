@@ -1,20 +1,25 @@
 package com.teamddd.duckmap.service;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import java.util.List;
 import java.util.Optional;
+
+import javax.persistence.EntityManager;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.teamddd.duckmap.dto.artist.ArtistTypeRes;
 import com.teamddd.duckmap.dto.artist.CreateArtistTypeReq;
+import com.teamddd.duckmap.dto.artist.UpdateArtistTypeServiceReq;
 import com.teamddd.duckmap.entity.ArtistType;
 import com.teamddd.duckmap.exception.NonExistentArtistTypeException;
 import com.teamddd.duckmap.repository.ArtistTypeRepository;
@@ -24,8 +29,10 @@ import com.teamddd.duckmap.repository.ArtistTypeRepository;
 class ArtistTypeServiceTest {
 
 	@Autowired
-	ArtistTypeService artistTypeService;
+	EntityManager em;
 	@Autowired
+	ArtistTypeService artistTypeService;
+	@SpyBean
 	ArtistTypeRepository artistTypeRepository;
 
 	@DisplayName("아티스트 타입을 받아 생성한다")
@@ -64,6 +71,34 @@ class ArtistTypeServiceTest {
 		assertThat(artistTypes).hasSize(3)
 			.extracting("type")
 			.containsExactlyInAnyOrder("그룹", "아이돌", "배우");
+	}
+
+	@DisplayName("아티스트 타입을 변경한다")
+	@Test
+	void updateArtistType() throws Exception {
+		//given
+		ArtistType type = createArtistType("type");
+		em.persist(type);
+
+		em.flush();
+		em.clear();
+
+		Long updateTypeId = type.getId();
+		UpdateArtistTypeServiceReq request = UpdateArtistTypeServiceReq.builder()
+			.id(updateTypeId)
+			.type("new_type")
+			.build();
+
+		when(artistTypeRepository.findById(updateTypeId)).thenReturn(Optional.of(type));
+
+		//when
+		artistTypeService.updateArtistType(request);
+		em.flush();
+		em.clear();
+
+		//then
+		ArtistType findArtistType = artistTypeRepository.findById(updateTypeId).get();
+		assertThat(findArtistType).extracting("type").isEqualTo("new_type");
 	}
 
 	ArtistType createArtistType(String type) {

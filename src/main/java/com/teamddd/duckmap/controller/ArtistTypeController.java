@@ -18,6 +18,7 @@ import com.teamddd.duckmap.dto.artist.ArtistTypeRes;
 import com.teamddd.duckmap.dto.artist.CreateArtistTypeReq;
 import com.teamddd.duckmap.dto.artist.CreateArtistTypeRes;
 import com.teamddd.duckmap.dto.artist.UpdateArtistTypeReq;
+import com.teamddd.duckmap.dto.artist.UpdateArtistTypeServiceReq;
 import com.teamddd.duckmap.service.ArtistTypeService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -64,6 +65,12 @@ public class ArtistTypeController {
 	@PutMapping("/{id}")
 	public void updateArtistType(@PathVariable Long id,
 		@Validated @RequestBody UpdateArtistTypeReq updateArtistTypeReq) {
+		UpdateArtistTypeServiceReq request = UpdateArtistTypeServiceReq.builder()
+			.id(id)
+			.type(updateArtistTypeReq.getType())
+			.build();
+
+		artistTypeService.updateArtistType(request);
 	}
 
 	@Operation(summary = "아티스트 구분 삭제")
