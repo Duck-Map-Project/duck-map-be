@@ -3,6 +3,7 @@ package com.teamddd.duckmap.repository;
 import static com.teamddd.duckmap.entity.QEvent.*;
 import static com.teamddd.duckmap.entity.QEventBookmark.*;
 import static com.teamddd.duckmap.entity.QEventBookmarkFolder.*;
+import static com.teamddd.duckmap.entity.QEventImage.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkEventDto;
@@ -30,16 +32,20 @@ public class BookmarkFolderRepositoryImpl implements BookmarkFolderRepositoryCus
 
 	@Override
 	public Page<BookmarkEventDto> findBookmarkedEvents(Long bookmarkFolderId, Pageable pageable) {
+		BooleanExpression thumbnailCondition = eventImage.thumbnail.eq(true);
+
 		List<BookmarkEventDto> events = queryFactory.select(
 				new QBookmarkEventDto(
 					event.id,
 					event.storeName,
-					event.eventImages,
+					eventImage.image,
 					eventBookmark.id
 				))
 			.from(event)
 			.join(eventBookmark).on(event.eq(eventBookmark.event))
-			.where(eventBookmark.eventBookmarkFolder.id.eq(bookmarkFolderId))
+			.join(eventImage).on(event.eq(eventImage.event))
+			.where(eventBookmark.eventBookmarkFolder.id.eq(bookmarkFolderId)
+				.and(thumbnailCondition))
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetch();
