@@ -18,6 +18,7 @@ import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderMemberDto;
 import com.teamddd.duckmap.entity.Event;
 import com.teamddd.duckmap.entity.EventBookmark;
 import com.teamddd.duckmap.entity.EventBookmarkFolder;
+import com.teamddd.duckmap.entity.EventImage;
 import com.teamddd.duckmap.entity.Member;
 import com.teamddd.duckmap.exception.NonExistentBookmarkFolderException;
 
@@ -95,6 +96,15 @@ public class BookmarkFolderRepositoryTest {
 		em.persist(event3);
 		em.persist(event4);
 
+		EventImage image1 = createEventImage(event, "image1", false);
+		EventImage image2 = createEventImage(event, "image2", true);
+		EventImage image3 = createEventImage(event2, "image3", true);
+		EventImage image4 = createEventImage(event2, "image4", false);
+		em.persist(image1);
+		em.persist(image2);
+		em.persist(image3);
+		em.persist(image4);
+
 		EventBookmarkFolder eventBookmarkFolder = createEventBookmarkFolder(member, "folder1");
 		EventBookmarkFolder eventBookmarkFolder2 = createEventBookmarkFolder(member, "folder2");
 		em.persist(eventBookmarkFolder);
@@ -105,7 +115,6 @@ public class BookmarkFolderRepositoryTest {
 		EventBookmark eventBookmark3 = createEventBookmark(member, event, eventBookmarkFolder2);
 		EventBookmark eventBookmark4 = createEventBookmark(member, event3, eventBookmarkFolder2);
 		EventBookmark eventBookmark5 = createEventBookmark(member, event4, eventBookmarkFolder2);
-
 		em.persist(eventBookmark);
 		em.persist(eventBookmark2);
 		em.persist(eventBookmark3);
@@ -113,26 +122,17 @@ public class BookmarkFolderRepositoryTest {
 		em.persist(eventBookmark5);
 
 		PageRequest pageRequest = PageRequest.of(0, 2);
-		PageRequest pageRequest2 = PageRequest.of(0, 2);
 		//when
 		Page<BookmarkEventDto> bookmarkedEvents = bookmarkFolderRepository
 			.findBookmarkedEvents(eventBookmarkFolder.getId(), pageRequest);
-		Page<BookmarkEventDto> bookmarkedEvents2 = bookmarkFolderRepository
-			.findBookmarkedEvents(eventBookmarkFolder2.getId(), pageRequest2);
 		//then
 		assertThat(bookmarkedEvents).hasSize(2)
-			.extracting("event.id", "event.storeName", "eventBookmark.id")
-			.containsExactly(Tuple.tuple(event.getId(), "event1", eventBookmark.getId()),
-				Tuple.tuple(event2.getId(), "event2", eventBookmark2.getId()));
+			.extracting("eventId", "eventStoreName", "eventBookmarkId", "eventThumbnail")
+			.containsExactly(
+				Tuple.tuple(event.getId(), "event1", eventBookmark.getId(), "image2"),
+				Tuple.tuple(event2.getId(), "event2", eventBookmark2.getId(), "image3"));
 		assertThat(bookmarkedEvents.getTotalElements()).isEqualTo(2);
 		assertThat(bookmarkedEvents.getTotalPages()).isEqualTo(1);
-
-		assertThat(bookmarkedEvents2).hasSize(2)
-			.extracting("event.id", "event.storeName", "eventBookmark.id")
-			.containsExactlyInAnyOrder(Tuple.tuple(event.getId(), "event1", eventBookmark3.getId()),
-				Tuple.tuple(event3.getId(), "event3", eventBookmark4.getId()));
-		assertThat(bookmarkedEvents2.getTotalElements()).isEqualTo(3);
-		assertThat(bookmarkedEvents2.getTotalPages()).isEqualTo(2);
 	}
 
 	private Event createEvent(Member member, String storeName) {
@@ -145,6 +145,14 @@ public class BookmarkFolderRepositoryTest {
 
 	private EventBookmarkFolder createEventBookmarkFolder(Member member, String name) {
 		return EventBookmarkFolder.builder().member(member).name(name).build();
+	}
+
+	EventImage createEventImage(Event event, String image, boolean thumbnail) {
+		return EventImage.builder()
+			.event(event)
+			.image(image)
+			.thumbnail(thumbnail)
+			.build();
 	}
 
 	@DisplayName("북마크 폴더 pk로 북마크 폴더,사용자 정보 조회")

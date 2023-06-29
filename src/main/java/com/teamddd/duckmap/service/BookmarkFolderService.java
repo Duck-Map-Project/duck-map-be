@@ -1,12 +1,18 @@
 package com.teamddd.duckmap.service;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.teamddd.duckmap.dto.ImageRes;
+import com.teamddd.duckmap.dto.event.bookmark.BookmarkEventDto;
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderMemberDto;
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderMemberRes;
+import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderRes;
+import com.teamddd.duckmap.dto.event.bookmark.BookmarkedEventRes;
+import com.teamddd.duckmap.dto.event.bookmark.BookmarkedEventsServiceReq;
 import com.teamddd.duckmap.dto.event.bookmark.CreateBookmarkFolderReq;
+import com.teamddd.duckmap.dto.event.bookmark.MyBookmarkFolderServiceReq;
 import com.teamddd.duckmap.dto.event.bookmark.UpdateBookmarkFolderReq;
 import com.teamddd.duckmap.entity.EventBookmarkFolder;
 import com.teamddd.duckmap.entity.Member;
@@ -66,5 +72,19 @@ public class BookmarkFolderService {
 	public EventBookmarkFolder getEventBookmarkFolder(Long bookmarkFolderId) throws NonExistentBookmarkFolderException {
 		return bookmarkFolderRepository.findById(bookmarkFolderId)
 			.orElseThrow(NonExistentBookmarkFolderException::new);
+	}
+
+	public Page<BookmarkFolderRes> getMyBookmarkFolderResList(MyBookmarkFolderServiceReq request) {
+		Page<EventBookmarkFolder> myBookmarkFolders = bookmarkFolderRepository.findBookmarkFoldersByMemberId(
+			request.getMemberId(),
+			request.getPageable());
+		return myBookmarkFolders.map(BookmarkFolderRes::of);
+	}
+
+	public Page<BookmarkedEventRes> getBookmarkedEventResList(BookmarkedEventsServiceReq request) {
+		Page<BookmarkEventDto> bookmarkedEvents = bookmarkFolderRepository.findBookmarkedEvents(
+			request.getBookmarkFolderId(),
+			request.getPageable());
+		return bookmarkedEvents.map(BookmarkedEventRes::of);
 	}
 }
