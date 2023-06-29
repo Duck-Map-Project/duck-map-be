@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.teamddd.duckmap.dto.review.CreateReviewReq;
 import com.teamddd.duckmap.dto.review.CreateReviewRes;
+import com.teamddd.duckmap.dto.review.EventReviewServiceReq;
+import com.teamddd.duckmap.dto.review.EventReviewsRes;
 import com.teamddd.duckmap.dto.review.MyReviewServiceReq;
 import com.teamddd.duckmap.dto.review.MyReviewsRes;
 import com.teamddd.duckmap.dto.review.ReviewRes;
@@ -98,6 +100,17 @@ public class ReviewController {
 			.build();
 
 		return reviewService.getMyReviewsRes(request);
+	}
+
+	@Operation(summary = "이벤트의 리뷰 목록 조회")
+	@GetMapping("/{eventId}")
+	public Page<EventReviewsRes> getEventReviews(@PathVariable Long eventId, Pageable pageable) {
+		EventReviewServiceReq request = EventReviewServiceReq.builder()
+			.eventId(eventId)
+			.pageable(pageable)
+			.build();
+
+		return reviewService.getEventReviewsResList(request);
 	}
 
 }

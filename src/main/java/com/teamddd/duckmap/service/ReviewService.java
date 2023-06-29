@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.teamddd.duckmap.dto.review.CreateReviewReq;
+import com.teamddd.duckmap.dto.review.EventReviewServiceReq;
+import com.teamddd.duckmap.dto.review.EventReviewsRes;
 import com.teamddd.duckmap.dto.review.MyReviewServiceReq;
 import com.teamddd.duckmap.dto.review.MyReviewsRes;
 import com.teamddd.duckmap.dto.review.ReviewEventDto;
@@ -96,4 +98,9 @@ public class ReviewService {
 		return myEvents.map(MyReviewsRes::of);
 	}
 
+	public Page<EventReviewsRes> getEventReviewsResList(EventReviewServiceReq request) {
+		Page<Review> eventReviews = reviewRepository.findByEventId(request.getEventId(),
+			request.getPageable());
+		return eventReviews.map(EventReviewsRes::of);
+	}
 }
