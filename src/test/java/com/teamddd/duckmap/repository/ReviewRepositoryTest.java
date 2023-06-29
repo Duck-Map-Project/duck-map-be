@@ -173,10 +173,10 @@ class ReviewRepositoryTest {
 
 		//then
 		assertThat(reviews).hasSize(2)
-			.extracting("id", "content", "review")
+			.extracting("id", "content", "event")
 			.containsExactlyInAnyOrder(
-				Tuple.tuple(review.getId(), review.getContent(), event.getStoreName()),
-				Tuple.tuple(review2.getId(), review2.getContent(), event.getStoreName()));
+				Tuple.tuple(review.getId(), review.getContent(), event),
+				Tuple.tuple(review2.getId(), review2.getContent(), event));
 
 		assertThat(reviews.getTotalElements()).isEqualTo(3);
 		assertThat(reviews.getTotalPages()).isEqualTo(2);
