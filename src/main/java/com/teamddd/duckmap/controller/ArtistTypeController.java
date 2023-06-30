@@ -52,15 +52,6 @@ public class ArtistTypeController {
 		return artistTypeService.getArtistTypeResList();
 	}
 
-	@Operation(summary = "아티스트 구분 pk로 조회")
-	@GetMapping("/{id}")
-	public ArtistTypeRes getArtistType(@PathVariable Long id) {
-		return ArtistTypeRes.builder()
-			.id(id)
-			.type("아이돌")
-			.build();
-	}
-
 	@PreAuthorize(SecurityRule.HAS_ROLE_ADMIN)
 	@Operation(summary = "아티스트 구분 수정")
 	@PutMapping("/{id}")
