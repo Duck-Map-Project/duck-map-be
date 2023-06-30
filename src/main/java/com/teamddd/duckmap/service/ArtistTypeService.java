@@ -55,8 +55,8 @@ public class ArtistTypeService {
 
 		artistType.updateArtistType(request.getType());
 	}
-  
-  @Transactional
+
+	@Transactional
 	public void deleteArtistType(Long id) {
 		ArtistType type = getArtistType(id);
 

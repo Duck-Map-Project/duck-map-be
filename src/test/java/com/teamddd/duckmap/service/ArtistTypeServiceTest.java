@@ -20,8 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.teamddd.duckmap.dto.artist.ArtistTypeRes;
 import com.teamddd.duckmap.dto.artist.CreateArtistTypeReq;
-import com.teamddd.duckmap.entity.Artist;
 import com.teamddd.duckmap.dto.artist.UpdateArtistTypeServiceReq;
+import com.teamddd.duckmap.entity.Artist;
 import com.teamddd.duckmap.entity.ArtistType;
 import com.teamddd.duckmap.exception.NonExistentArtistTypeException;
 import com.teamddd.duckmap.exception.UnableToDeleteArtistTypeInUseException;
