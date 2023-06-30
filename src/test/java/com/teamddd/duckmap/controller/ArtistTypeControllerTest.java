@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teamddd.duckmap.dto.artist.ArtistTypeRes;
 import com.teamddd.duckmap.dto.artist.CreateArtistTypeReq;
+import com.teamddd.duckmap.dto.artist.UpdateArtistTypeReq;
 import com.teamddd.duckmap.service.ArtistTypeService;
 
 @SpringBootTest
@@ -85,6 +86,85 @@ class ArtistTypeControllerTest {
 					post("/artists/types")
 						.content(objectMapper.writeValueAsString(request))
 						.contentType(MediaType.APPLICATION_JSON)
+				)
+				.andDo(print())
+				.andExpect(status().isForbidden())
+				.andExpect(jsonPath("$.code").value("A004"))
+				.andExpect(jsonPath("$.message").value("권한이 없는 사용자입니다"));
+		}
+	}
+
+	@Nested
+	@DisplayName("아티스트 구분을 수정한다")
+	class UpdateArtistType {
+		@DisplayName("관리자 계정은 아티스트 구분을 수정할 수 있다")
+		@Test
+		@WithMockUser(roles = "ADMIN")
+		void updateArtistType1() throws Exception {
+			//given
+			UpdateArtistTypeReq request = new UpdateArtistTypeReq();
+			ReflectionTestUtils.setField(request, "type", "type1");
+
+			doNothing().when(artistTypeService).updateArtistType(any());
+
+			//when //then
+			mockMvc.perform(
+					put("/artists/types/1")
+						.content(objectMapper.writeValueAsString(request))
+						.contentType(MediaType.APPLICATION_JSON)
+				)
+				.andDo(print())
+				.andExpect(status().isOk());
+		}
+
+		@DisplayName("사용자 계정은 아티스트 구분을 수정할 수 없다")
+		@Test
+		@WithMockUser(roles = "USER")
+		void updateArtistType2() throws Exception {
+			//given
+			UpdateArtistTypeReq request = new UpdateArtistTypeReq();
+			ReflectionTestUtils.setField(request, "type", "type1");
+
+			//when //then
+			mockMvc.perform(
+					put("/artists/types/1")
+						.content(objectMapper.writeValueAsString(request))
+						.contentType(MediaType.APPLICATION_JSON)
+				)
+				.andDo(print())
+				.andExpect(status().isForbidden())
+				.andExpect(jsonPath("$.code").value("A004"))
+				.andExpect(jsonPath("$.message").value("권한이 없는 사용자입니다"));
+		}
+	}
+
+	@Nested
+	@DisplayName("아티스트 구분을 삭제한다")
+	class DeleteArtistType {
+		@DisplayName("관리자 계정은 아티스트 구분을 삭제할 수 있다")
+		@Test
+		@WithMockUser(roles = "ADMIN")
+		void deleteArtistType1() throws Exception {
+			//given
+			doNothing().when(artistTypeService).deleteArtistType(any());
+
+			//when //then
+			mockMvc.perform(
+					delete("/artists/types/1")
+				)
+				.andDo(print())
+				.andExpect(status().isOk());
+		}
+
+		@DisplayName("사용자 계정은 아티스트 구분을 삭제할 수 없다")
+		@Test
+		@WithMockUser(roles = "USER")
+		void deleteArtistType2() throws Exception {
+			//given
+
+			//when //then
+			mockMvc.perform(
+					delete("/artists/types/1")
 				)
 				.andDo(print())
 				.andExpect(status().isForbidden())

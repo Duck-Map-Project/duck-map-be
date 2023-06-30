@@ -61,10 +61,12 @@ public class ArtistTypeController {
 			.build();
 	}
 
+	@PreAuthorize(SecurityRule.HAS_ROLE_ADMIN)
 	@Operation(summary = "아티스트 구분 수정")
 	@PutMapping("/{id}")
 	public void updateArtistType(@PathVariable Long id,
 		@Validated @RequestBody UpdateArtistTypeReq updateArtistTypeReq) {
+
 		UpdateArtistTypeServiceReq request = UpdateArtistTypeServiceReq.builder()
 			.id(id)
 			.type(updateArtistTypeReq.getType())
@@ -73,6 +75,7 @@ public class ArtistTypeController {
 		artistTypeService.updateArtistType(request);
 	}
 
+	@PreAuthorize(SecurityRule.HAS_ROLE_ADMIN)
 	@Operation(summary = "아티스트 구분 삭제")
 	@DeleteMapping("/{id}")
 	public void deleteArtistType(@PathVariable Long id) {
