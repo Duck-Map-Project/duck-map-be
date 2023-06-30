@@ -23,4 +23,7 @@ public class ArtistType extends BaseTimeEntity {
 
 	private String type;
 
+	public void updateArtistType(String type) {
+		this.type = type;
+	}
 }

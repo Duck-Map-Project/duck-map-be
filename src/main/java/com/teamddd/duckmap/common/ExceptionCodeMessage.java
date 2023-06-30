@@ -39,6 +39,7 @@ public enum ExceptionCodeMessage {
 
 	/* ArtistType */
 	NON_EXISTENT_ARTIST_TYPE_EXCEPTION("AT001", "잘못된 아티스트 구분 정보입니다"),
+	UNABLE_TO_DELETE_ARTIST_TYPE_IN_USE_EXCEPTION("AT002", "해당 아티스트 구분을 사용중인 아티스트가 존재하여 삭제할 수 없습니다"),
 
 	/* Artist */
 	NON_EXISTENT_ARTIST_EXCEPTION("A001", "잘못된 아티스트 정보입니다"),

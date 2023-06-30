@@ -86,14 +86,35 @@ class ArtistRepositoryTest {
 			.containsExactlyInAnyOrder("artist2", "artist4");
 	}
 
+	@DisplayName("아티스트 구분으로 아티스트 수 조회")
+	@Test
+	void countByArtistType() throws Exception {
+		//given
+		ArtistType type = createArtistType("type");
+		em.persist(type);
+
+		Artist artist1 = createArtist("artist1", type, null);
+		Artist artist2 = createArtist("artist2", type, null);
+		Artist artist3 = createArtist("artist3", type, null);
+		em.persist(artist1);
+		em.persist(artist2);
+		em.persist(artist3);
+
+		//when
+		Long artistCount = artistRepository.countByArtistType(type);
+
+		//then
+		assertThat(artistCount).isEqualTo(3L);
+	}
+
 	private ArtistType createArtistType(String type) {
 		return ArtistType.builder().type(type).build();
 	}
 
-	private Artist createArtist(String name, ArtistType type1, Artist group) {
+	private Artist createArtist(String name, ArtistType type, Artist group) {
 		return Artist.builder()
 			.name(name)
-			.artistType(type1)
+			.artistType(type)
 			.group(group)
 			.build();
 	}
