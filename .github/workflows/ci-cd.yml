@@ -66,8 +66,8 @@ jobs:
       with:
         host: ${{ secrets.AWS_HOST }}
         username: ${{ secrets.AWS_USERNAME }}
-#         key: ${{ secrets.AWS_PRIVATE_KEY }}
-        password: ${{ secrets.AWS_PASSWORD }}
+        key: ${{ secrets.AWS_PRIVATE_KEY }}
+#         password: ${{ secrets.AWS_PASSWORD }}
         port: ${{ secrets.AWS_PORT }}
         script: |
             sudo docker rm -f $(sudo docker ps -qa)
