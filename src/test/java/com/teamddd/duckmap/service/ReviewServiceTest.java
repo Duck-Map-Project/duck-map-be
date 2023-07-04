@@ -469,10 +469,8 @@ public class ReviewServiceTest {
 			.pageable(pageable)
 			.build();
 
-		//when
 		Page<MyReviewsRes> myReviewsResPage = reviewService.getMyReviewsRes(request);
 
-		//then
 		assertThat(myReviewsResPage).hasSize(1)
 			.extracting("content", "score", "eventStoreName", "reviewImage.fileUrl")
 			.containsExactly(
