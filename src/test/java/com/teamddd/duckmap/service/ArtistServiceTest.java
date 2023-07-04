@@ -31,6 +31,7 @@ import com.teamddd.duckmap.entity.Artist;
 import com.teamddd.duckmap.entity.ArtistType;
 import com.teamddd.duckmap.exception.NonExistentArtistException;
 import com.teamddd.duckmap.repository.ArtistRepository;
+import com.teamddd.duckmap.repository.LastSearchArtistRepository;
 
 @Transactional
 @SpringBootTest
@@ -42,6 +43,8 @@ class ArtistServiceTest {
 	ArtistRepository artistRepository;
 	@MockBean
 	ArtistTypeService artistTypeService;
+	@MockBean
+	LastSearchArtistRepository lastSearchArtistRepository;
 	@Autowired
 	Props props;
 	@Autowired
@@ -132,6 +135,27 @@ class ArtistServiceTest {
 			.extracting("artistType.type", "name", "groupName")
 			.containsExactlyInAnyOrder(Tuple.tuple("type2", "artist2", "group1"),
 				Tuple.tuple("type2", "artist3", "group1"), Tuple.tuple("type2", "artist4", "group1"));
+	}
+
+	@DisplayName("아티스트를 삭제한다")
+	@Test
+	void deleteArtist() throws Exception {
+		//given
+		Artist artist1 = createArtist(null, "artist1", null);
+		em.persist(artist1);
+
+		when(artistRepository.bulkGroupToNull(anyLong())).thenReturn(0);
+		when(lastSearchArtistRepository.deleteByArtistId(anyLong())).thenReturn(0);
+
+		Long deleteArtistId = artist1.getId();
+		//when
+		artistService.deleteArtist(deleteArtistId);
+		em.flush();
+		em.clear();
+
+		//then
+		Optional<Artist> findArtist = artistRepository.findById(deleteArtistId);
+		assertThat(findArtist).isEmpty();
 	}
 
 	ArtistType createArtistType(String type) {

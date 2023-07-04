@@ -107,6 +107,26 @@ class ArtistRepositoryTest {
 		assertThat(artistCount).isEqualTo(3L);
 	}
 
+	@DisplayName("Artist group을 null로 변경한다")
+	@Test
+	void bulkGroupToNull() throws Exception {
+		//given
+		Artist group = createArtist("group", null, null);
+		Artist artist1 = createArtist("artist1", null, group);
+		Artist artist2 = createArtist("artist2", null, group);
+		em.persist(group);
+		em.persist(artist1);
+		em.persist(artist2);
+
+		//when
+		int bulkCount = artistRepository.bulkGroupToNull(group.getId());
+
+		//then
+		assertThat(bulkCount).isEqualTo(2);
+		Artist findArtist1 = artistRepository.findById(artist1.getId()).get();
+		assertThat(findArtist1).extracting("group").isNull();
+	}
+
 	private ArtistType createArtistType(String type) {
 		return ArtistType.builder().type(type).build();
 	}
