@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import com.teamddd.duckmap.common.Props;
 import com.teamddd.duckmap.dto.artist.ArtistRes;
@@ -107,7 +108,7 @@ public class ArtistService {
 
 		artist.updateArtist(group, request.getName(), request.getImage(), artistType);
 
-		if (!oldImage.equals(request.getImage())) {
+		if (StringUtils.hasText(oldImage) && !oldImage.equals(request.getImage())) {
 			FileUtils.deleteFile(props.getImageDir(), oldImage);
 		}
 	}
