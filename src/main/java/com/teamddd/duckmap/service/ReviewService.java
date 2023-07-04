@@ -63,6 +63,12 @@ public class ReviewService {
 		return review.getId();
 	}
 
+	@Transactional
+	public void deleteReview(Long id) {
+		//서버에서 리뷰 이미지 삭제 로직 추가해야 함
+		reviewRepository.deleteById(id);
+	}
+
 	public Page<ReviewsRes> getReviewsResList(ReviewSearchServiceReq request) {
 		if (request.getArtistId() != null) {
 			artistService.getArtist(request.getArtistId());
