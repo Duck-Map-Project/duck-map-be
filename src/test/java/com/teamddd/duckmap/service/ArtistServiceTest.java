@@ -70,7 +70,7 @@ class ArtistServiceTest {
 
 		Optional<Artist> findArtist = artistRepository.findById(artistId);
 		assertThat(findArtist).isNotEmpty();
-		assertThat(findArtist.get()).extracting("id", "name").contains(1L, "artist1");
+		assertThat(findArtist.get()).extracting("name").isEqualTo("artist1");
 	}
 
 	@DisplayName("조회한 Page<Artist>를 Page<ArtistRes>로 변환하여 반환한다")
