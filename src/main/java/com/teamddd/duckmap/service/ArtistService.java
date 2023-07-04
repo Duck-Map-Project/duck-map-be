@@ -10,14 +10,18 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import com.teamddd.duckmap.common.Props;
 import com.teamddd.duckmap.dto.artist.ArtistRes;
 import com.teamddd.duckmap.dto.artist.ArtistSearchParam;
 import com.teamddd.duckmap.dto.artist.CreateArtistReq;
+import com.teamddd.duckmap.dto.artist.UpdateArtistServiceReq;
 import com.teamddd.duckmap.entity.Artist;
 import com.teamddd.duckmap.entity.ArtistType;
 import com.teamddd.duckmap.exception.NonExistentArtistException;
 import com.teamddd.duckmap.repository.ArtistRepository;
+import com.teamddd.duckmap.util.FileUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ArtistService {
 
+	private final Props props;
 	private final ArtistRepository artistRepository;
 	private final ArtistTypeService artistTypeService;
 
@@ -87,5 +92,24 @@ public class ArtistService {
 		return artists.stream()
 			.map(ArtistRes::of)
 			.collect(Collectors.toList());
+	}
+
+	@Transactional
+	public void updateArtist(UpdateArtistServiceReq request) {
+		Artist artist = getArtist(request.getId());
+
+		Artist group = null;
+		if (request.getGroupId() != null) {
+			group = getArtist(request.getGroupId());
+		}
+		ArtistType artistType = artistTypeService.getArtistType(request.getArtistTypeId());
+
+		String oldImage = artist.getImage();
+
+		artist.updateArtist(group, request.getName(), request.getImage(), artistType);
+
+		if (StringUtils.hasText(oldImage) && !oldImage.equals(request.getImage())) {
+			FileUtils.deleteFile(props.getImageDir(), oldImage);
+		}
 	}
 }

@@ -3,6 +3,9 @@ package com.teamddd.duckmap.util;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
 import java.util.UUID;
 
 import org.springframework.core.io.Resource;
@@ -60,6 +63,20 @@ public class FileUtils {
 			throw new ServiceException("유효하지 않은 URL입니다: " + url, e);
 		}
 		return resource;
+	}
+
+	public static void deleteFile(String dir, String filename) {
+		String fullPath = getFullPath(dir, filename);
+
+		try {
+			Files.delete(Path.of(fullPath));
+		} catch (NoSuchFileException e) {
+			log.error("존재하지 않는 파일 제거 시도: e = ", e);
+		} catch (IOException e) {
+			log.error("파일 제거 중 IOException 발생: e = ", e);
+		} catch (SecurityException e) {
+			log.error("파일 제거 권한이 없습니다: e = ", e);
+		}
 	}
 
 	//서버 내부에서 관리하는 별도의 파일명(실제 저장될 파일명)

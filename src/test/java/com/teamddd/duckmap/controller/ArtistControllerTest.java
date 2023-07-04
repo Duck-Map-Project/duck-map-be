@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teamddd.duckmap.dto.artist.ArtistRes;
 import com.teamddd.duckmap.dto.artist.CreateArtistReq;
+import com.teamddd.duckmap.dto.artist.UpdateArtistReq;
 import com.teamddd.duckmap.service.ArtistService;
 
 @SpringBootTest
@@ -117,6 +118,57 @@ class ArtistControllerTest {
 			//when //then
 			mockMvc.perform(
 					post("/artists")
+						.content(objectMapper.writeValueAsString(request))
+						.contentType(MediaType.APPLICATION_JSON)
+				)
+				.andDo(print())
+				.andExpect(status().isForbidden())
+				.andExpect(jsonPath("$.code").value("A004"))
+				.andExpect(jsonPath("$.message").value("권한이 없는 사용자입니다"));
+		}
+	}
+
+	@DisplayName("아티스트정보를 변경한다")
+	@Nested
+	class UpdateArtist {
+
+		@DisplayName("관리자 계정은 아티스트 정보를 변경할 수 있다")
+		@Test
+		@WithMockUser(roles = "ADMIN")
+		void updateArtist1() throws Exception {
+			//given
+			UpdateArtistReq request = new UpdateArtistReq();
+			ReflectionTestUtils.setField(request, "groupId", 1L);
+			ReflectionTestUtils.setField(request, "name", "new_name");
+			ReflectionTestUtils.setField(request, "image", "new_image");
+			ReflectionTestUtils.setField(request, "artistTypeId", 1L);
+
+			doNothing().when(artistService).updateArtist(any());
+
+			//when //then
+			mockMvc.perform(
+					put("/artists/1")
+						.content(objectMapper.writeValueAsString(request))
+						.contentType(MediaType.APPLICATION_JSON)
+				)
+				.andDo(print())
+				.andExpect(status().isOk());
+		}
+
+		@DisplayName("사용자 계정은 아티스트 정보를 변경할 수 없다")
+		@Test
+		@WithMockUser(roles = "USER")
+		void updateArtist2() throws Exception {
+			//given
+			UpdateArtistReq request = new UpdateArtistReq();
+			ReflectionTestUtils.setField(request, "groupId", 1L);
+			ReflectionTestUtils.setField(request, "name", "new_name");
+			ReflectionTestUtils.setField(request, "image", "new_image");
+			ReflectionTestUtils.setField(request, "artistTypeId", 1L);
+
+			//when //then
+			mockMvc.perform(
+					put("/artists/1")
 						.content(objectMapper.writeValueAsString(request))
 						.contentType(MediaType.APPLICATION_JSON)
 				)
