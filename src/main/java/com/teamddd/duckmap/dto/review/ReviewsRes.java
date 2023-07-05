@@ -2,7 +2,7 @@ package com.teamddd.duckmap.dto.review;
 
 import java.time.LocalDate;
 
-import com.teamddd.duckmap.dto.ImageRes;
+import com.teamddd.duckmap.common.ApiUrl;
 import com.teamddd.duckmap.entity.Review;
 import com.teamddd.duckmap.entity.ReviewImage;
 
@@ -14,19 +14,17 @@ import lombok.Getter;
 public class ReviewsRes {
 	private Long id;
 	private boolean inProgress;
-	private ImageRes image;
+	private String image;
 
 	public static ReviewsRes of(Review review, LocalDate date) {
 		return ReviewsRes.builder()
 			.id(review.getId())
 			.image(
-				ImageRes.builder()
-					.filename(
-						review.getReviewImages().stream()
-							.map(ReviewImage::getImage)
-							.findFirst()
-							.orElse(null)
-					).build()
+				review.getReviewImages().stream()
+					.map(ReviewImage::getImage)
+					.findFirst()
+					.map(image -> ApiUrl.IMAGE + image)
+					.orElse(null)
 			)
 			.inProgress(review.getEvent().isInProgress(date))
 			.build();

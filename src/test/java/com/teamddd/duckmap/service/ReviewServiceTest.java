@@ -111,7 +111,7 @@ public class ReviewServiceTest {
 			.member(member)
 			.build();
 		em.persist(event);
-		
+
 		Review review = createReview(member, event, "mem1-review1", 4);
 		em.persist(review);
 
@@ -138,52 +138,6 @@ public class ReviewServiceTest {
 		assertThat(findReview.get().getReviewImages()).hasSize(2)
 			.extracting("image").containsExactlyInAnyOrder("filename1", "filename2");
 
-	}
-
-	@DisplayName("리뷰를 조회한다")
-	@Nested
-	class GetReview {
-		@DisplayName("유효한 값으로 리뷰를 조회한다")
-		@Test
-		void getReview1() throws Exception {
-			//given
-			CreateReviewReq request = new CreateReviewReq();
-			ReflectionTestUtils.setField(request, "content", "content");
-			ReflectionTestUtils.setField(request, "score", 5);
-			ReflectionTestUtils.setField(request, "imageFilenames", List.of("filename"));
-			ReflectionTestUtils.setField(request, "eventId", 1L);
-
-			Member member = Member.builder()
-				.username("member1")
-				.build();
-
-			Event event = Event.builder()
-				.storeName("store")
-				.member(member)
-				.build();
-
-			when(eventService.getEvent(any())).thenReturn(event);
-			Long reviewId = reviewService.createReview(request, member);
-
-			//when
-			ReviewRes reviewRes = reviewService.getReviewRes(reviewId);
-
-			//then
-			assertThat(reviewRes).extracting("content", "score")
-				.contains("content", 5);
-		}
-
-		@DisplayName("잘못된 값으로 리뷰를 조회할 수 없다")
-		@Test
-		void getReview2() throws Exception {
-			//given
-			Long reviewId = 1L;
-
-			//when //then
-			assertThatThrownBy(() -> reviewService.getReviewRes(reviewId))
-				.isInstanceOf(NonExistentReviewException.class)
-				.hasMessage("잘못된 리뷰 정보입니다");
-		}
 	}
 
 	@DisplayName("회원이 작성한 리뷰를 조회한다")
@@ -239,12 +193,12 @@ public class ReviewServiceTest {
 
 		//then
 		assertThat(myReviewsResPage).hasSize(4)
-			.extracting("content", "score", "eventStoreName", "reviewImage.fileUrl")
+			.extracting("content", "score", "eventStoreName", "reviewImage")
 			.containsExactlyInAnyOrder(
 				Tuple.tuple("mem1-review1", 5, "event1", "/images/image1"),
 				Tuple.tuple("mem1-review2", 3, "event2", "/images/image3"),
-				Tuple.tuple("mem1-review3", 4, "event3", "/images/null"),
-				Tuple.tuple("mem1-review4", 5, "event4", "/images/null"));
+				Tuple.tuple("mem1-review3", 4, "event3", null),
+				Tuple.tuple("mem1-review4", 5, "event4", null));
 	}
 
 	@DisplayName("조회한 Page<Review>를 Page<ReviewsRes>로 변환하여 반환한다")
@@ -302,7 +256,7 @@ public class ReviewServiceTest {
 
 		//then
 		assertThat(reviewsResPage).hasSize(4)
-			.extracting("id", "image.fileUrl")
+			.extracting("id", "image")
 			.containsExactlyInAnyOrder(
 				Tuple.tuple(review1.getId(), "/images/image1"),
 				Tuple.tuple(review2.getId(), "/images/image3"),
@@ -397,7 +351,7 @@ public class ReviewServiceTest {
 
 		//then
 		assertThat(reviewsResList).hasSize(2)
-			.extracting("id", "image.fileUrl")
+			.extracting("id", "image")
 			.containsExactlyInAnyOrder(
 				Tuple.tuple(review1.getId(), "/images/image1"),
 				Tuple.tuple(review3.getId(), "/images/image4"));
@@ -468,7 +422,7 @@ public class ReviewServiceTest {
 
 		//then
 		assertThat(eventReviewsResPage).hasSize(4)
-			.extracting("content", "score", "reviewImage.fileUrl")
+			.extracting("content", "score", "reviewImage")
 			.containsExactlyInAnyOrder(
 				Tuple.tuple("mem1-review1", 5, "/images/image1"),
 				Tuple.tuple("mem2-review2", 3, "/images/image3"),
@@ -521,7 +475,7 @@ public class ReviewServiceTest {
 		Page<MyReviewsRes> myReviewsResPage = reviewService.getMyReviewsRes(request);
 
 		assertThat(myReviewsResPage).hasSize(1)
-			.extracting("content", "score", "eventStoreName", "reviewImage.fileUrl")
+			.extracting("content", "score", "eventStoreName", "reviewImage")
 			.containsExactly(
 				Tuple.tuple("mem1-review2", 3, "event2", "/images/image3"));
 	}
@@ -565,5 +519,51 @@ public class ReviewServiceTest {
 
 	private void addReviewImage(Review review, ReviewImage reviewImage) {
 		review.getReviewImages().add(reviewImage);
+	}
+
+	@DisplayName("리뷰를 조회한다")
+	@Nested
+	class GetReview {
+		@DisplayName("유효한 값으로 리뷰를 조회한다")
+		@Test
+		void getReview1() throws Exception {
+			//given
+			CreateReviewReq request = new CreateReviewReq();
+			ReflectionTestUtils.setField(request, "content", "content");
+			ReflectionTestUtils.setField(request, "score", 5);
+			ReflectionTestUtils.setField(request, "imageFilenames", List.of("filename"));
+			ReflectionTestUtils.setField(request, "eventId", 1L);
+
+			Member member = Member.builder()
+				.username("member1")
+				.build();
+
+			Event event = Event.builder()
+				.storeName("store")
+				.member(member)
+				.build();
+
+			when(eventService.getEvent(any())).thenReturn(event);
+			Long reviewId = reviewService.createReview(request, member);
+
+			//when
+			ReviewRes reviewRes = reviewService.getReviewRes(reviewId);
+
+			//then
+			assertThat(reviewRes).extracting("content", "score")
+				.contains("content", 5);
+		}
+
+		@DisplayName("잘못된 값으로 리뷰를 조회할 수 없다")
+		@Test
+		void getReview2() throws Exception {
+			//given
+			Long reviewId = 1L;
+
+			//when //then
+			assertThatThrownBy(() -> reviewService.getReviewRes(reviewId))
+				.isInstanceOf(NonExistentReviewException.class)
+				.hasMessage("잘못된 리뷰 정보입니다");
+		}
 	}
 }
