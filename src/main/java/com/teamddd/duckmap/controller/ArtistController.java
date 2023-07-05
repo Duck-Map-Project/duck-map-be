@@ -61,28 +61,6 @@ public class ArtistController {
 		return artistService.getArtistsByGroup(id);
 	}
 
-	// @Operation(summary = "아티스트 pk로 조회")
-	// @GetMapping("/{id}")
-	// public ArtistRes getArtist(@PathVariable Long id) {
-	// 	return ArtistRes.builder()
-	// 		.id(id)
-	// 		.groupId(null)
-	// 		.groupName("")
-	// 		.name("세븐틴")
-	// 		.image(
-	// 			ImageRes.builder()
-	// 				.filename("artist_img_svt.jpg")
-	// 				.build()
-	// 		)
-	// 		.artistType(
-	// 			ArtistTypeRes.builder()
-	// 				.id(1L)
-	// 				.type("아이돌")
-	// 				.build()
-	// 		)
-	// 		.build();
-	// }
-
 	@PreAuthorize(SecurityRule.HAS_ROLE_ADMIN)
 	@Operation(summary = "아티스트 수정")
 	@PutMapping("/{id}")
