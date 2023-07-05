@@ -3,8 +3,12 @@ package com.teamddd.duckmap.service;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import com.teamddd.duckmap.common.Props;
+import com.teamddd.duckmap.dto.ImageRes;
 import com.teamddd.duckmap.common.ApiUrl;
+
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkEventDto;
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderMemberDto;
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderMemberRes;
@@ -18,6 +22,8 @@ import com.teamddd.duckmap.entity.EventBookmarkFolder;
 import com.teamddd.duckmap.entity.Member;
 import com.teamddd.duckmap.exception.NonExistentBookmarkFolderException;
 import com.teamddd.duckmap.repository.BookmarkFolderRepository;
+import com.teamddd.duckmap.repository.BookmarkRepository;
+import com.teamddd.duckmap.util.FileUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +33,9 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class BookmarkFolderService {
+	private final Props props;
 	private final BookmarkFolderRepository bookmarkFolderRepository;
+	private final BookmarkRepository bookmarkRepository;
 
 	@Transactional
 	public Long createBookmarkFolder(CreateBookmarkFolderReq createBookmarkFolderReq, Member member) {
@@ -48,7 +56,21 @@ public class BookmarkFolderService {
 		EventBookmarkFolder bookmarkFolder = bookmarkFolderRepository.findById(bookmarkFolderId)
 			.orElseThrow(NonExistentBookmarkFolderException::new);
 		bookmarkFolder.updateEventBookmarkFolder(updateBookmarkFolderReq.getName(), updateBookmarkFolderReq.getImage());
+	}
 
+	@Transactional
+	public void deleteBookmarkFolder(Long bookmarkFolderId) {
+		EventBookmarkFolder bookmarkFolder = bookmarkFolderRepository.findById(bookmarkFolderId)
+			.orElseThrow(NonExistentBookmarkFolderException::new);
+
+		//관련 북마크 삭제
+		bookmarkRepository.deleteByBookmarkFolderId(bookmarkFolderId);
+
+		//서버에서 북마크폴더 이미지 삭제
+		if (StringUtils.hasText(bookmarkFolder.getImage())) {
+			FileUtils.deleteFile(props.getImageDir(), bookmarkFolder.getImage());
+		}
+		bookmarkFolderRepository.deleteById(bookmarkFolderId);
 	}
 
 	public BookmarkFolderMemberRes getBookmarkFolderMemberRes(Long bookmarkFolderId) {
