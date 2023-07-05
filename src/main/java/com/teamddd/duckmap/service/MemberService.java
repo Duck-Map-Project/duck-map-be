@@ -3,7 +3,9 @@ package com.teamddd.duckmap.service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import com.teamddd.duckmap.common.Props;
 import com.teamddd.duckmap.dto.user.CreateMemberReq;
 import com.teamddd.duckmap.dto.user.MemberRes;
 import com.teamddd.duckmap.entity.Member;
@@ -14,6 +16,7 @@ import com.teamddd.duckmap.exception.InvalidMemberException;
 import com.teamddd.duckmap.exception.InvalidPasswordException;
 import com.teamddd.duckmap.exception.InvalidUuidException;
 import com.teamddd.duckmap.repository.MemberRepository;
+import com.teamddd.duckmap.util.FileUtils;
 import com.teamddd.duckmap.util.MemberUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -22,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MemberService {
+	private final Props props;
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final RedisService redisService;
@@ -66,8 +70,16 @@ public class MemberService {
 	public void updateMemberInfo(String username, String image) {
 		Member member = memberRepository.findByEmail(MemberUtils.getAuthMember().getUsername())
 			.orElseThrow(InvalidMemberException::new);
+
+		//기존 프로필 image
+		String oldImage = member.getImage();
+
 		member.updateMemberInfo(username, image);
 
+		//프로필 image가 변경되었다면 서버에서 기존 프로필 image 삭제
+		if (StringUtils.hasText(oldImage) && !oldImage.equals(image)) {
+			FileUtils.deleteFile(props.getImageDir(), oldImage);
+		}
 	}
 
 	@Transactional
@@ -78,6 +90,14 @@ public class MemberService {
 
 	@Transactional
 	public void deleteMember(Long id) {
+		Member member = memberRepository.findById(id)
+			.orElseThrow(InvalidMemberException::new);
+
+		//서버에서 프로필 이미지 삭제
+		if (StringUtils.hasText(member.getImage())) {
+			FileUtils.deleteFile(props.getImageDir(), member.getImage());
+		}
+
 		memberRepository.deleteById(id);
 	}
 
