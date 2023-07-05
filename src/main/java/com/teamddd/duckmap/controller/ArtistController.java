@@ -23,6 +23,7 @@ import com.teamddd.duckmap.dto.artist.ArtistTypeRes;
 import com.teamddd.duckmap.dto.artist.CreateArtistReq;
 import com.teamddd.duckmap.dto.artist.CreateArtistRes;
 import com.teamddd.duckmap.dto.artist.UpdateArtistReq;
+import com.teamddd.duckmap.dto.artist.UpdateArtistServiceReq;
 import com.teamddd.duckmap.service.ArtistService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -84,13 +85,25 @@ public class ArtistController {
 			.build();
 	}
 
+	@PreAuthorize(SecurityRule.HAS_ROLE_ADMIN)
 	@Operation(summary = "아티스트 수정")
 	@PutMapping("/{id}")
 	public void updateArtist(@PathVariable Long id, @Validated @RequestBody UpdateArtistReq updateArtistReq) {
+		UpdateArtistServiceReq request = UpdateArtistServiceReq.builder()
+			.id(id)
+			.groupId(updateArtistReq.getGroupId())
+			.name(updateArtistReq.getName())
+			.image(updateArtistReq.getImage())
+			.artistTypeId(updateArtistReq.getArtistTypeId())
+			.build();
+
+		artistService.updateArtist(request);
 	}
 
+	@PreAuthorize(SecurityRule.HAS_ROLE_ADMIN)
 	@Operation(summary = "아티스트 삭제")
 	@DeleteMapping("/{id}")
 	public void deleteArtist(@PathVariable Long id) {
+		artistService.deleteArtist(id);
 	}
 }

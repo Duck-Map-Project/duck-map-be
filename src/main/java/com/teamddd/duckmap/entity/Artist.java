@@ -35,4 +35,10 @@ public class Artist extends BaseByEntity {
 	@JoinColumn(name = "artist_type_id")
 	private ArtistType artistType;
 
+	public void updateArtist(Artist group, String name, String image, ArtistType artistType) {
+		this.group = group;
+		this.name = name;
+		this.image = image;
+		this.artistType = artistType;
+	}
 }
