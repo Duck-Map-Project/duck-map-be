@@ -100,8 +100,10 @@ public class ArtistController {
 		artistService.updateArtist(request);
 	}
 
+	@PreAuthorize(SecurityRule.HAS_ROLE_ADMIN)
 	@Operation(summary = "아티스트 삭제")
 	@DeleteMapping("/{id}")
 	public void deleteArtist(@PathVariable Long id) {
+		artistService.deleteArtist(id);
 	}
 }

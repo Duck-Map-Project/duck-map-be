@@ -21,6 +21,7 @@ import com.teamddd.duckmap.entity.Artist;
 import com.teamddd.duckmap.entity.ArtistType;
 import com.teamddd.duckmap.exception.NonExistentArtistException;
 import com.teamddd.duckmap.repository.ArtistRepository;
+import com.teamddd.duckmap.repository.LastSearchArtistRepository;
 import com.teamddd.duckmap.util.FileUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,7 @@ public class ArtistService {
 	private final Props props;
 	private final ArtistRepository artistRepository;
 	private final ArtistTypeService artistTypeService;
+	private final LastSearchArtistRepository lastSearchArtistRepository;
 
 	@Transactional
 	public Long createArtist(CreateArtistReq createArtistReq) {
@@ -111,5 +113,21 @@ public class ArtistService {
 		if (StringUtils.hasText(oldImage) && !oldImage.equals(request.getImage())) {
 			FileUtils.deleteFile(props.getImageDir(), oldImage);
 		}
+	}
+
+	@Transactional
+	public void deleteArtist(Long id) {
+		Artist artist = getArtist(id);
+
+		// update group fk to null
+		artistRepository.bulkGroupToNull(artist.getId());
+		// delete artist fk
+		lastSearchArtistRepository.deleteByArtistId(artist.getId());
+		// delete image
+		if (StringUtils.hasText(artist.getImage())) {
+			FileUtils.deleteFile(props.getImageDir(), artist.getImage());
+		}
+
+		artistRepository.delete(artist);
 	}
 }

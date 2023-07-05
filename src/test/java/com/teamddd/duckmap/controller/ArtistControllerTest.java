@@ -179,4 +179,38 @@ class ArtistControllerTest {
 		}
 	}
 
+	@DisplayName("아티스트를 삭제한다")
+	@Nested
+	class DeleteArtist {
+
+		@DisplayName("관리자 계정은 아티스트를 삭제할 수 있다")
+		@Test
+		@WithMockUser(roles = "ADMIN")
+		void deleteArtist1() throws Exception {
+			//given
+			doNothing().when(artistService).deleteArtist(any());
+
+			//when //then
+			mockMvc.perform(
+					delete("/artists/1")
+				)
+				.andDo(print())
+				.andExpect(status().isOk());
+		}
+
+		@DisplayName("사용자 계정은 아티스트를 삭제할 수 없다")
+		@Test
+		@WithMockUser(roles = "USER")
+		void deleteArtist2() throws Exception {
+			//given
+			//when //then
+			mockMvc.perform(
+					delete("/artists/1")
+				)
+				.andDo(print())
+				.andExpect(status().isForbidden())
+				.andExpect(jsonPath("$.code").value("A004"))
+				.andExpect(jsonPath("$.message").value("권한이 없는 사용자입니다"));
+		}
+	}
 }
