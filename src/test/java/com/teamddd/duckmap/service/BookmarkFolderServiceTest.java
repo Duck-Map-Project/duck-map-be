@@ -189,7 +189,7 @@ public class BookmarkFolderServiceTest {
 		@Test
 		void getBookmarkFolder2() throws Exception {
 			//given
-			Long bookmarkFolderId = (Long)1L;
+			Long bookmarkFolderId = 1L;
 
 			//when //then
 			assertThatThrownBy(() -> bookmarkFolderService.getBookmarkFolderMemberRes(bookmarkFolderId))
