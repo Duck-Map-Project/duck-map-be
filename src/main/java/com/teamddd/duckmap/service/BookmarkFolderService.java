@@ -53,7 +53,16 @@ public class BookmarkFolderService {
 	public void updateBookmarkFolder(Long bookmarkFolderId, UpdateBookmarkFolderReq updateBookmarkFolderReq) {
 		EventBookmarkFolder bookmarkFolder = bookmarkFolderRepository.findById(bookmarkFolderId)
 			.orElseThrow(NonExistentBookmarkFolderException::new);
+
+		//기존 북마크 폴더 image
+		String oldImage = bookmarkFolder.getImage();
+
 		bookmarkFolder.updateEventBookmarkFolder(updateBookmarkFolderReq.getName(), updateBookmarkFolderReq.getImage());
+
+		//북마크 폴더 image가 변경되었다면 서버에서 기존 북마크 폴더 image 삭제
+		if (StringUtils.hasText(oldImage) && !oldImage.equals(updateBookmarkFolderReq.getImage())) {
+			FileUtils.deleteFile(props.getImageDir(), oldImage);
+		}
 	}
 
 	@Transactional
