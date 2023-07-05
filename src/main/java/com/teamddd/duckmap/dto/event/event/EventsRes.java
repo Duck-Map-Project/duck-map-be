@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.teamddd.duckmap.dto.ImageRes;
+import com.teamddd.duckmap.common.ApiUrl;
 import com.teamddd.duckmap.dto.artist.ArtistRes;
 import com.teamddd.duckmap.dto.event.category.EventCategoryRes;
 import com.teamddd.duckmap.entity.Event;
@@ -24,7 +24,7 @@ public class EventsRes {
 	private String address;
 	private List<ArtistRes> artists;
 	private List<EventCategoryRes> categories;
-	private ImageRes image;
+	private String image;
 	private Long likeId;
 	private Long bookmarkId;
 
@@ -51,15 +51,12 @@ public class EventsRes {
 					.collect(Collectors.toList())
 			)
 			.image(
-				ImageRes.builder()
-					.filename(
-						event.getEventImages().stream()
-							.filter(EventImage::isThumbnail)
-							.map(EventImage::getImage)
-							.findFirst()
-							.orElse(null)
-					)
-					.build()
+				event.getEventImages().stream()
+					.filter(EventImage::isThumbnail)
+					.map(EventImage::getImage)
+					.map(image -> ApiUrl.IMAGE + image)
+					.findFirst()
+					.orElse(null)
 			)
 			.likeId(likeId)
 			.bookmarkId(bookmarkId)

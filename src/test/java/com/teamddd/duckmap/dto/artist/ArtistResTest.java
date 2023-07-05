@@ -44,7 +44,7 @@ class ArtistResTest {
 			ArtistRes artistRes = ArtistRes.of(artist1);
 
 			//then
-			assertThat(artistRes).extracting("artistType.type", "name", "groupName", "image.fileUrl")
+			assertThat(artistRes).extracting("artistType.type", "name", "groupName", "image")
 				.contains("type1", "artist1", null, "/images/image1");
 		}
 
@@ -62,7 +62,7 @@ class ArtistResTest {
 			ArtistRes artistRes = ArtistRes.of(artist2);
 
 			//then
-			assertThat(artistRes).extracting("artistType.type", "name", "groupName", "image.fileUrl")
+			assertThat(artistRes).extracting("artistType.type", "name", "groupName", "image")
 				.contains("type2", "artist2", "artist1", "/images/image2");
 		}
 	}
