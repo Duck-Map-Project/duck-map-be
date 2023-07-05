@@ -67,7 +67,7 @@ public class ReviewController {
 	@Operation(summary = "리뷰 삭제")
 	@DeleteMapping("/{id}")
 	public void deleteReview(@PathVariable Long id) {
-
+		reviewService.deleteReview(id);
 	}
 
 	@Operation(summary = "리뷰 목록 조회", description = "artist, 날짜 기준 리뷰 목록 조회 기능 구현")

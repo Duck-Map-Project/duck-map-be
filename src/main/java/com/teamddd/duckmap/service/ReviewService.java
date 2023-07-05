@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import com.teamddd.duckmap.common.Props;
 import com.teamddd.duckmap.dto.review.CreateReviewReq;
@@ -88,6 +89,17 @@ public class ReviewService {
 				}
 			}
 		}
+}
+	public void deleteReview(Long id) {
+		Review review = getReview(id);
+		List<ReviewImage> reviewImageList = review.getReviewImages();
+
+		for (ReviewImage reviewImage : reviewImageList) {
+			if (StringUtils.hasText(reviewImage.getImage())) {
+				FileUtils.deleteFile(props.getImageDir(), reviewImage.getImage());
+			}
+		}
+		reviewRepository.deleteById(id);
 	}
 
 	public Page<ReviewsRes> getReviewsResList(ReviewSearchServiceReq request) {
