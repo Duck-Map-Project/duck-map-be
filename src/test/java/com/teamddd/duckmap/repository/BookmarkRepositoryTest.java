@@ -25,6 +25,39 @@ public class BookmarkRepositoryTest {
 	@Autowired
 	BookmarkRepository bookmarkRepository;
 
+	@DisplayName("BookmarkFolderId로 북마크 삭제")
+	@Test
+	public void deleteByBookmarkFolderId() throws Exception {
+		//given
+		Member member = Member.builder().username("member1").build();
+		em.persist(member);
+
+		Event event = createEvent(member, "event1");
+		Event event2 = createEvent(member, "event2");
+		em.persist(event);
+		em.persist(event2);
+
+		EventBookmarkFolder eventBookmarkFolder = createEventBookmarkFolder(member, "folder1");
+		EventBookmarkFolder eventBookmarkFolder2 = createEventBookmarkFolder(member, "folder2");
+		em.persist(eventBookmarkFolder);
+		em.persist(eventBookmarkFolder2);
+
+		EventBookmark eventBookmark = createEventBookmark(member, event, eventBookmarkFolder);
+		EventBookmark eventBookmark2 = createEventBookmark(member, event2, eventBookmarkFolder2);
+
+		em.persist(eventBookmark);
+		em.persist(eventBookmark2);
+
+		//when
+		bookmarkRepository.deleteByBookmarkFolderId(eventBookmarkFolder.getId());
+
+		//then
+		Optional<EventBookmark> findBookmark = bookmarkRepository.findByEventIdAndMemberId(event.getId(),
+			member.getId());
+		assertThat(findBookmark).isEmpty();
+
+	}
+
 	@DisplayName("eventId와 memberId로 북마크 조회")
 	@Test
 	public void findByEventAndMember() throws Exception {
