@@ -16,10 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.teamddd.duckmap.config.security.SecurityRule;
-import com.teamddd.duckmap.dto.ImageRes;
 import com.teamddd.duckmap.dto.artist.ArtistRes;
 import com.teamddd.duckmap.dto.artist.ArtistSearchParam;
-import com.teamddd.duckmap.dto.artist.ArtistTypeRes;
 import com.teamddd.duckmap.dto.artist.CreateArtistReq;
 import com.teamddd.duckmap.dto.artist.CreateArtistRes;
 import com.teamddd.duckmap.dto.artist.UpdateArtistReq;
@@ -61,28 +59,6 @@ public class ArtistController {
 	@GetMapping("/{id}/artists")
 	public List<ArtistRes> getArtistsByGroup(@PathVariable Long id) {
 		return artistService.getArtistsByGroup(id);
-	}
-
-	@Operation(summary = "아티스트 pk로 조회")
-	@GetMapping("/{id}")
-	public ArtistRes getArtist(@PathVariable Long id) {
-		return ArtistRes.builder()
-			.id(id)
-			.groupId(null)
-			.groupName("")
-			.name("세븐틴")
-			.image(
-				ImageRes.builder()
-					.filename("artist_img_svt.jpg")
-					.build()
-			)
-			.artistType(
-				ArtistTypeRes.builder()
-					.id(1L)
-					.type("아이돌")
-					.build()
-			)
-			.build();
 	}
 
 	@PreAuthorize(SecurityRule.HAS_ROLE_ADMIN)

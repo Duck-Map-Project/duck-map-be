@@ -8,7 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.teamddd.duckmap.dto.ImageRes;
+import com.teamddd.duckmap.common.ApiUrl;
 import com.teamddd.duckmap.dto.artist.ArtistRes;
 import com.teamddd.duckmap.dto.event.category.EventCategoryRes;
 import com.teamddd.duckmap.dto.event.event.CreateEventReq;
@@ -131,9 +131,8 @@ public class EventService {
 			)
 			.images(
 				event.getEventImages().stream()
-					.map(eventImage -> ImageRes.builder()
-						.filename(eventImage.getImage())
-						.build())
+					.map(EventImage::getImage)
+					.map(image -> ApiUrl.IMAGE + image)
 					.collect(Collectors.toList())
 			)
 			.score(score)

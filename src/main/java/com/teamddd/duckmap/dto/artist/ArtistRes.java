@@ -1,6 +1,6 @@
 package com.teamddd.duckmap.dto.artist;
 
-import com.teamddd.duckmap.dto.ImageRes;
+import com.teamddd.duckmap.common.ApiUrl;
 import com.teamddd.duckmap.entity.Artist;
 
 import lombok.Builder;
@@ -13,18 +13,14 @@ public class ArtistRes {
 	private Long groupId;
 	private String groupName;
 	private String name;
-	private ImageRes image;
+	private String image;
 	private ArtistTypeRes artistType;
 
 	public static ArtistRes of(Artist artist) {
 		ArtistResBuilder artistResBuilder = ArtistRes.builder()
 			.id(artist.getId())
 			.name(artist.getName())
-			.image(
-				ImageRes.builder()
-					.filename(artist.getImage())
-					.build()
-			)
+			.image(ApiUrl.IMAGE + artist.getImage())
 			.artistType(
 				ArtistTypeRes.of(artist.getArtistType())
 			);
