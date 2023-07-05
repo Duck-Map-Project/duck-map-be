@@ -89,7 +89,8 @@ public class ReviewService {
 				}
 			}
 		}
-}
+	}
+
 	public void deleteReview(Long id) {
 		Review review = getReview(id);
 		List<ReviewImage> reviewImageList = review.getReviewImages();
