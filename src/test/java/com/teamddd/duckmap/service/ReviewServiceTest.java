@@ -31,6 +31,7 @@ import com.teamddd.duckmap.dto.review.MyReviewsRes;
 import com.teamddd.duckmap.dto.review.ReviewRes;
 import com.teamddd.duckmap.dto.review.ReviewSearchServiceReq;
 import com.teamddd.duckmap.dto.review.ReviewsRes;
+import com.teamddd.duckmap.dto.review.UpdateReviewReq;
 import com.teamddd.duckmap.entity.Artist;
 import com.teamddd.duckmap.entity.ArtistType;
 import com.teamddd.duckmap.entity.Event;
@@ -82,6 +83,54 @@ public class ReviewServiceTest {
 		assertThat(reviewId).isNotNull();
 
 		Optional<Review> findReview = reviewRepository.findById(reviewId);
+		assertThat(findReview).isNotEmpty();
+		assertThat(findReview.get())
+			.extracting("content", "score", "event.storeName", "member.username")
+			.containsOnly("content", 5, "store", "member1");
+		assertThat(findReview.get().getReviewImages()).hasSize(2)
+			.extracting("image").containsExactlyInAnyOrder("filename1", "filename2");
+
+	}
+
+	@DisplayName("리뷰를 수정한다")
+	@Test
+	void updateReview() throws Exception {
+		//given
+		UpdateReviewReq request = new UpdateReviewReq();
+		ReflectionTestUtils.setField(request, "content", "content");
+		ReflectionTestUtils.setField(request, "score", 5);
+		ReflectionTestUtils.setField(request, "imageFilenames", List.of("filename1", "filename2"));
+
+		Member member = Member.builder()
+			.username("member1")
+			.build();
+		em.persist(member);
+
+		Event event = Event.builder()
+			.storeName("store")
+			.member(member)
+			.build();
+		em.persist(event);
+		
+		Review review = createReview(member, event, "mem1-review1", 4);
+		em.persist(review);
+
+		ReviewImage image1 = createReviewImage("image1");
+		ReviewImage image2 = createReviewImage("image2");
+		ReviewImage image3 = createReviewImage("image3");
+		em.persist(image1);
+		em.persist(image2);
+		em.persist(image3);
+
+		addReviewImage(review, image1);
+		addReviewImage(review, image2);
+		addReviewImage(review, image3);
+
+		//when
+		reviewService.updateReview(review.getId(), request);
+
+		//then
+		Optional<Review> findReview = reviewRepository.findById(review.getId());
 		assertThat(findReview).isNotEmpty();
 		assertThat(findReview.get())
 			.extracting("content", "score", "event.storeName", "member.username")
