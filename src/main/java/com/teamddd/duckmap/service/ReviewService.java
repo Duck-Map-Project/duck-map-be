@@ -7,7 +7,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import com.teamddd.duckmap.common.Props;
 import com.teamddd.duckmap.dto.review.CreateReviewReq;
 import com.teamddd.duckmap.dto.review.EventReviewServiceReq;
 import com.teamddd.duckmap.dto.review.EventReviewsRes;
@@ -23,6 +25,7 @@ import com.teamddd.duckmap.entity.Review;
 import com.teamddd.duckmap.entity.ReviewImage;
 import com.teamddd.duckmap.exception.NonExistentReviewException;
 import com.teamddd.duckmap.repository.ReviewRepository;
+import com.teamddd.duckmap.util.FileUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ReviewService {
 
+	private final Props props;
 	private final EventService eventService;
 	private final ArtistService artistService;
 	private final ReviewRepository reviewRepository;
@@ -61,6 +65,19 @@ public class ReviewService {
 		reviewRepository.save(review);
 
 		return review.getId();
+	}
+
+	@Transactional
+	public void deleteReview(Long id) {
+		Review review = getReview(id);
+		List<ReviewImage> reviewImageList = review.getReviewImages();
+
+		for (ReviewImage reviewImage : reviewImageList) {
+			if (StringUtils.hasText(reviewImage.getImage())) {
+				FileUtils.deleteFile(props.getImageDir(), reviewImage.getImage());
+			}
+		}
+		reviewRepository.deleteById(id);
 	}
 
 	public Page<ReviewsRes> getReviewsResList(ReviewSearchServiceReq request) {

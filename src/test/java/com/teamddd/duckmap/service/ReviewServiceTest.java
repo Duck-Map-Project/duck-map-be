@@ -427,6 +427,56 @@ public class ReviewServiceTest {
 				Tuple.tuple("mem4-review4", 5, "/images/image5"));
 	}
 
+	@DisplayName("리뷰를 삭제한다")
+	@Test
+	void deleteReview() throws Exception {
+		//given
+		LocalDate now = LocalDate.now();
+
+		Member member1 = Member.builder()
+			.username("member1")
+			.build();
+		em.persist(member1);
+
+		Event event1 = createEvent(member1, "event1", now.minusDays(2), now.plusDays(1));
+		Event event2 = createEvent(member1, "event2", now.plusDays(1), now.plusDays(1));
+		em.persist(event1);
+		em.persist(event2);
+
+		Review review1 = createReview(member1, event1, "mem1-review1", 5);
+		Review review2 = createReview(member1, event2, "mem1-review2", 3);
+		em.persist(review1);
+		em.persist(review2);
+
+		ReviewImage image1 = createReviewImage("image1");
+		ReviewImage image2 = createReviewImage("image2");
+		ReviewImage image3 = createReviewImage("image3");
+		em.persist(image1);
+		em.persist(image2);
+		em.persist(image3);
+
+		addReviewImage(review1, image1);
+		addReviewImage(review1, image2);
+		addReviewImage(review2, image3);
+
+		//when
+		reviewService.deleteReview(review1.getId());
+
+		//then
+		Pageable pageable = PageRequest.of(0, 2);
+		MyReviewServiceReq request = MyReviewServiceReq.builder()
+			.memberId(member1.getId())
+			.pageable(pageable)
+			.build();
+
+		Page<MyReviewsRes> myReviewsResPage = reviewService.getMyReviewsRes(request);
+
+		assertThat(myReviewsResPage).hasSize(1)
+			.extracting("content", "score", "eventStoreName", "reviewImage.fileUrl")
+			.containsExactly(
+				Tuple.tuple("mem1-review2", 3, "event2", "/images/image3"));
+	}
+
 	ArtistType createArtistType() {
 		return ArtistType.builder().type("artist_type").build();
 	}
