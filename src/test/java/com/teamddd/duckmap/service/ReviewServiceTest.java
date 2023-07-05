@@ -31,6 +31,7 @@ import com.teamddd.duckmap.dto.review.MyReviewsRes;
 import com.teamddd.duckmap.dto.review.ReviewRes;
 import com.teamddd.duckmap.dto.review.ReviewSearchServiceReq;
 import com.teamddd.duckmap.dto.review.ReviewsRes;
+import com.teamddd.duckmap.dto.review.UpdateReviewReq;
 import com.teamddd.duckmap.entity.Artist;
 import com.teamddd.duckmap.entity.ArtistType;
 import com.teamddd.duckmap.entity.Event;
@@ -89,6 +90,100 @@ public class ReviewServiceTest {
 		assertThat(findReview.get().getReviewImages()).hasSize(2)
 			.extracting("image").containsExactlyInAnyOrder("filename1", "filename2");
 
+	}
+
+	@DisplayName("리뷰를 수정한다")
+	@Test
+	void updateReview() throws Exception {
+		//given
+		UpdateReviewReq request = new UpdateReviewReq();
+		ReflectionTestUtils.setField(request, "content", "content");
+		ReflectionTestUtils.setField(request, "score", 5);
+		ReflectionTestUtils.setField(request, "imageFilenames", List.of("filename1", "filename2"));
+
+		Member member = Member.builder()
+			.username("member1")
+			.build();
+		em.persist(member);
+
+		Event event = Event.builder()
+			.storeName("store")
+			.member(member)
+			.build();
+		em.persist(event);
+		
+		Review review = createReview(member, event, "mem1-review1", 4);
+		em.persist(review);
+
+		ReviewImage image1 = createReviewImage("image1");
+		ReviewImage image2 = createReviewImage("image2");
+		ReviewImage image3 = createReviewImage("image3");
+		em.persist(image1);
+		em.persist(image2);
+		em.persist(image3);
+
+		addReviewImage(review, image1);
+		addReviewImage(review, image2);
+		addReviewImage(review, image3);
+
+		//when
+		reviewService.updateReview(review.getId(), request);
+
+		//then
+		Optional<Review> findReview = reviewRepository.findById(review.getId());
+		assertThat(findReview).isNotEmpty();
+		assertThat(findReview.get())
+			.extracting("content", "score", "event.storeName", "member.username")
+			.containsOnly("content", 5, "store", "member1");
+		assertThat(findReview.get().getReviewImages()).hasSize(2)
+			.extracting("image").containsExactlyInAnyOrder("filename1", "filename2");
+
+	}
+
+	@DisplayName("리뷰를 조회한다")
+	@Nested
+	class GetReview {
+		@DisplayName("유효한 값으로 리뷰를 조회한다")
+		@Test
+		void getReview1() throws Exception {
+			//given
+			CreateReviewReq request = new CreateReviewReq();
+			ReflectionTestUtils.setField(request, "content", "content");
+			ReflectionTestUtils.setField(request, "score", 5);
+			ReflectionTestUtils.setField(request, "imageFilenames", List.of("filename"));
+			ReflectionTestUtils.setField(request, "eventId", 1L);
+
+			Member member = Member.builder()
+				.username("member1")
+				.build();
+
+			Event event = Event.builder()
+				.storeName("store")
+				.member(member)
+				.build();
+
+			when(eventService.getEvent(any())).thenReturn(event);
+			Long reviewId = reviewService.createReview(request, member);
+
+			//when
+			ReviewRes reviewRes = reviewService.getReviewRes(reviewId);
+
+			//then
+			assertThat(reviewRes).extracting("content", "score")
+				.contains("content", 5);
+		}
+
+		@DisplayName("잘못된 값으로 리뷰를 조회할 수 없다")
+		@Test
+		void getReview2() throws Exception {
+			//given
+			Long reviewId = 1L;
+
+			//when //then
+			assertThatThrownBy(() -> reviewService.getReviewRes(reviewId))
+				.isInstanceOf(NonExistentReviewException.class)
+				.hasMessage("잘못된 리뷰 정보입니다");
+		}
 	}
 
 	@DisplayName("회원이 작성한 리뷰를 조회한다")
