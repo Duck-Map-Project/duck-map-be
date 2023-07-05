@@ -61,6 +61,7 @@ public class ReviewController {
 	@Operation(summary = "리뷰 수정")
 	@PutMapping("/{id}")
 	public void updateReview(@PathVariable Long id, @Validated @RequestBody UpdateReviewReq updateReviewReq) {
+		reviewService.updateReview(id, updateReviewReq);
 	}
 
 	@Operation(summary = "리뷰 삭제")

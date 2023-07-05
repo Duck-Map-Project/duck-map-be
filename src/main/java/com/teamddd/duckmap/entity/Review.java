@@ -44,4 +44,20 @@ public class Review extends BaseTimeEntity {
 	@Builder.Default
 	@OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ReviewImage> reviewImages = new ArrayList<>();
+
+	public void updateReview(int score, String content, List<String> reviewImages) {
+		this.score = score;
+		this.content = content;
+
+		this.reviewImages.clear();
+
+		for (String imageFilename : reviewImages) {
+			this.reviewImages.add(
+				ReviewImage.builder()
+					.review(this)
+					.image(imageFilename)
+					.build()
+			);
+		}
+	}
 }
