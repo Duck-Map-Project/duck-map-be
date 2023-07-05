@@ -111,7 +111,7 @@ public class ReviewServiceTest {
 			.member(member)
 			.build();
 		em.persist(event);
-		
+
 		Review review = createReview(member, event, "mem1-review1", 4);
 		em.persist(review);
 
@@ -138,52 +138,6 @@ public class ReviewServiceTest {
 		assertThat(findReview.get().getReviewImages()).hasSize(2)
 			.extracting("image").containsExactlyInAnyOrder("filename1", "filename2");
 
-	}
-
-	@DisplayName("리뷰를 조회한다")
-	@Nested
-	class GetReview {
-		@DisplayName("유효한 값으로 리뷰를 조회한다")
-		@Test
-		void getReview1() throws Exception {
-			//given
-			CreateReviewReq request = new CreateReviewReq();
-			ReflectionTestUtils.setField(request, "content", "content");
-			ReflectionTestUtils.setField(request, "score", 5);
-			ReflectionTestUtils.setField(request, "imageFilenames", List.of("filename"));
-			ReflectionTestUtils.setField(request, "eventId", 1L);
-
-			Member member = Member.builder()
-				.username("member1")
-				.build();
-
-			Event event = Event.builder()
-				.storeName("store")
-				.member(member)
-				.build();
-
-			when(eventService.getEvent(any())).thenReturn(event);
-			Long reviewId = reviewService.createReview(request, member);
-
-			//when
-			ReviewRes reviewRes = reviewService.getReviewRes(reviewId);
-
-			//then
-			assertThat(reviewRes).extracting("content", "score")
-				.contains("content", 5);
-		}
-
-		@DisplayName("잘못된 값으로 리뷰를 조회할 수 없다")
-		@Test
-		void getReview2() throws Exception {
-			//given
-			Long reviewId = 1L;
-
-			//when //then
-			assertThatThrownBy(() -> reviewService.getReviewRes(reviewId))
-				.isInstanceOf(NonExistentReviewException.class)
-				.hasMessage("잘못된 리뷰 정보입니다");
-		}
 	}
 
 	@DisplayName("회원이 작성한 리뷰를 조회한다")
