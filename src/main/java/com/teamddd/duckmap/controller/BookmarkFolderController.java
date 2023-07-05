@@ -84,6 +84,6 @@ public class BookmarkFolderController {
 	@Operation(summary = "북마크 폴더 삭제")
 	@DeleteMapping("/{id}")
 	public void deleteBookmarkFolder(@PathVariable Long id) {
-
+		bookmarkFolderService.deleteBookmarkFolder(id);
 	}
 }

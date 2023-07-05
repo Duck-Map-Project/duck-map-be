@@ -31,6 +31,7 @@ import com.teamddd.duckmap.entity.EventBookmark;
 import com.teamddd.duckmap.entity.EventBookmarkFolder;
 import com.teamddd.duckmap.entity.EventImage;
 import com.teamddd.duckmap.entity.Member;
+import com.teamddd.duckmap.exception.NonExistentBookmarkException;
 import com.teamddd.duckmap.exception.NonExistentBookmarkFolderException;
 import com.teamddd.duckmap.repository.BookmarkFolderRepository;
 
@@ -39,6 +40,8 @@ import com.teamddd.duckmap.repository.BookmarkFolderRepository;
 public class BookmarkFolderServiceTest {
 	@Autowired
 	BookmarkFolderService bookmarkFolderService;
+	@Autowired
+	BookmarkService bookmarkService;
 	@SpyBean
 	BookmarkFolderRepository bookmarkFolderRepository;
 	@Autowired
@@ -99,6 +102,61 @@ public class BookmarkFolderServiceTest {
 		assertThat(findBookmarkFolder.get())
 			.extracting("name", "image", "member.username")
 			.containsOnly("bookmarkFolder2", "image2", "member1");
+	}
+
+	@DisplayName("북마크 폴더를 삭제한다")
+	@Test
+	void deleteBookmarkFolder() throws Exception {
+		//given
+		Member member = Member.builder()
+			.username("member1")
+			.build();
+		em.persist(member);
+
+		Event event = createEvent(member, "event1");
+		Event event2 = createEvent(member, "event2");
+		Event event3 = createEvent(member, "event3");
+		em.persist(event);
+		em.persist(event2);
+		em.persist(event3);
+
+		EventBookmarkFolder eventBookmarkFolder = createEventBookmarkFolder(member, "folder1");
+		EventBookmarkFolder eventBookmarkFolder2 = createEventBookmarkFolder(member, "folder2");
+		em.persist(eventBookmarkFolder);
+		em.persist(eventBookmarkFolder2);
+
+		EventBookmark eventBookmark = createEventBookmark(member, event, eventBookmarkFolder);
+		EventBookmark eventBookmark2 = createEventBookmark(member, event2, eventBookmarkFolder);
+		EventBookmark eventBookmark3 = createEventBookmark(member, event3, eventBookmarkFolder2);
+		em.persist(eventBookmark);
+		em.persist(eventBookmark2);
+		em.persist(eventBookmark3);
+
+		Pageable pageable = PageRequest.of(0, 4);
+
+		MyBookmarkFolderServiceReq request = MyBookmarkFolderServiceReq.builder()
+			.memberId(member.getId())
+			.pageable(pageable)
+			.build();
+
+		//when
+		bookmarkFolderService.deleteBookmarkFolder(eventBookmarkFolder.getId());
+
+		//then
+		Page<BookmarkFolderRes> myBookmarkFolders = bookmarkFolderService
+			.getMyBookmarkFolderResList(request);
+		assertThat(myBookmarkFolders).hasSize(1)
+			.extracting("id", "name")
+			.containsExactlyInAnyOrder(
+				Tuple.tuple(eventBookmarkFolder2.getId(), "folder2"));
+
+		//폴더 내 북마크 지워졌는지 확인
+		assertThatThrownBy(() -> bookmarkService.getEventBookmark(event.getId(), member.getId()))
+			.isInstanceOf(NonExistentBookmarkException.class)
+			.hasMessage("잘못된 북마크 정보입니다");
+		assertThatThrownBy(() -> bookmarkService.getEventBookmark(event2.getId(), member.getId()))
+			.isInstanceOf(NonExistentBookmarkException.class)
+			.hasMessage("잘못된 북마크 정보입니다");
 	}
 
 	@DisplayName("북마크 폴더 pk로 북마크 폴더 조회한다")
