@@ -1,6 +1,6 @@
 package com.teamddd.duckmap.dto.event.bookmark;
 
-import com.teamddd.duckmap.dto.ImageRes;
+import com.teamddd.duckmap.common.ApiUrl;
 import com.teamddd.duckmap.entity.EventBookmarkFolder;
 
 import lombok.Builder;
@@ -11,17 +11,13 @@ import lombok.Getter;
 public class BookmarkFolderRes {
 	private Long id;
 	private String name;
-	private ImageRes image;
+	private String image;
 
 	public static BookmarkFolderRes of(EventBookmarkFolder eventBookmarkFolder) {
 		return BookmarkFolderRes.builder()
 			.id(eventBookmarkFolder.getId())
 			.name(eventBookmarkFolder.getName())
-			.image(
-				ImageRes.builder()
-					.filename(eventBookmarkFolder.getImage())
-					.build()
-			)
+			.image(ApiUrl.IMAGE + eventBookmarkFolder.getImage())
 			.build();
 	}
 }

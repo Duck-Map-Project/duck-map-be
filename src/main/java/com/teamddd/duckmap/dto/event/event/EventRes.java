@@ -3,7 +3,6 @@ package com.teamddd.duckmap.dto.event.event;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.teamddd.duckmap.dto.ImageRes;
 import com.teamddd.duckmap.dto.artist.ArtistRes;
 import com.teamddd.duckmap.dto.event.category.EventCategoryRes;
 
@@ -24,7 +23,7 @@ public class EventRes {
 	private String twitterUrl;
 	private List<ArtistRes> artists;
 	private List<EventCategoryRes> categories;
-	private List<ImageRes> images;
+	private List<String> images;
 
 	private double score;
 	private Long likeId;

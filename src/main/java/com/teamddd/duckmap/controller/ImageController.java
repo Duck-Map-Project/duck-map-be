@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.teamddd.duckmap.common.Props;
-import com.teamddd.duckmap.dto.ImageRes;
+import com.teamddd.duckmap.dto.SaveImageRes;
 import com.teamddd.duckmap.exception.NotContentTypeImageException;
 import com.teamddd.duckmap.util.FileUtils;
 
@@ -29,7 +29,7 @@ public class ImageController {
 
 	@Operation(summary = "이미지 저장", description = "content type은 image로 시작해야 합니다")
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ImageRes saveImage(@RequestParam MultipartFile file) {
+	public SaveImageRes saveImage(@RequestParam MultipartFile file) {
 		if (file.isEmpty() || file.getContentType() == null || !file.getContentType().startsWith("image")) {
 			throw new NotContentTypeImageException();
 		}
@@ -37,7 +37,7 @@ public class ImageController {
 		String imageDir = props.getImageDir();
 		String filename = FileUtils.storeFile(file, imageDir);
 
-		return ImageRes.builder()
+		return SaveImageRes.builder()
 			.filename(filename)
 			.build();
 	}
