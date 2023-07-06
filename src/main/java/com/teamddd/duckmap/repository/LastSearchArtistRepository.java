@@ -15,4 +15,9 @@ public interface LastSearchArtistRepository extends JpaRepository<LastSearchArti
 	@Modifying(clearAutomatically = true)
 	@Query("delete from LastSearchArtist lsa where lsa.artist.id = :artistId")
 	int deleteByArtistId(@Param("artistId") Long artistId);
+
+	@Modifying(clearAutomatically = true)
+	@Query("delete from LastSearchArtist lsa where lsa.member.id = :memberId")
+	int deleteByMemberId(@Param("memberId") Long memberId);
+
 }

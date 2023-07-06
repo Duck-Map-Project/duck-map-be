@@ -15,6 +15,8 @@ import com.teamddd.duckmap.exception.DuplicateUsernameException;
 import com.teamddd.duckmap.exception.InvalidMemberException;
 import com.teamddd.duckmap.exception.InvalidPasswordException;
 import com.teamddd.duckmap.exception.InvalidUuidException;
+import com.teamddd.duckmap.repository.EventLikeRepository;
+import com.teamddd.duckmap.repository.LastSearchArtistRepository;
 import com.teamddd.duckmap.repository.MemberRepository;
 import com.teamddd.duckmap.util.FileUtils;
 import com.teamddd.duckmap.util.MemberUtils;
@@ -27,6 +29,8 @@ import lombok.RequiredArgsConstructor;
 public class MemberService {
 	private final Props props;
 	private final MemberRepository memberRepository;
+	private final EventLikeRepository eventLikeRepository;
+	private final LastSearchArtistRepository lastSearchArtistRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final RedisService redisService;
 
@@ -97,6 +101,11 @@ public class MemberService {
 		if (StringUtils.hasText(member.getImage())) {
 			FileUtils.deleteFile(props.getImageDir(), member.getImage());
 		}
+
+		//마지막 검색 아티스트 삭제
+		lastSearchArtistRepository.deleteByMemberId(id);
+		//좋아요 삭제
+		eventLikeRepository.deleteByMemberId(id);
 
 		memberRepository.deleteById(id);
 	}

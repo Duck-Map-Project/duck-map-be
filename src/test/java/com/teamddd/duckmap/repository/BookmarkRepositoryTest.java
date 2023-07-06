@@ -2,6 +2,7 @@ package com.teamddd.duckmap.repository;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
@@ -44,18 +45,19 @@ public class BookmarkRepositoryTest {
 
 		EventBookmark eventBookmark = createEventBookmark(member, event, eventBookmarkFolder);
 		EventBookmark eventBookmark2 = createEventBookmark(member, event2, eventBookmarkFolder2);
-
+		EventBookmark eventBookmark3 = createEventBookmark(member, event2, eventBookmarkFolder);
 		em.persist(eventBookmark);
 		em.persist(eventBookmark2);
+		em.persist(eventBookmark3);
 
 		//when
-		bookmarkRepository.deleteByBookmarkFolderId(eventBookmarkFolder.getId());
+		int deleteCount = bookmarkRepository.deleteByBookmarkFolderId(eventBookmarkFolder.getId());
 
 		//then
-		Optional<EventBookmark> findBookmark = bookmarkRepository.findByEventIdAndMemberId(event.getId(),
-			member.getId());
-		assertThat(findBookmark).isEmpty();
+		assertThat(deleteCount).isEqualTo(2);
 
+		List<EventBookmark> findBookmark = bookmarkRepository.findAll();
+		assertThat(findBookmark).hasSize(1);
 	}
 
 	@DisplayName("eventId와 memberId로 북마크 조회")

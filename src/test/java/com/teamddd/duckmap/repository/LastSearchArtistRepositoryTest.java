@@ -52,6 +52,37 @@ class LastSearchArtistRepositoryTest {
 		assertThat(findLastSearchArtists).hasSize(0);
 	}
 
+	@DisplayName("Member Id로 LastSearchArtist 목록 삭제")
+	@Test
+	void deleteByMemberId() throws Exception {
+		//given
+		Member member1 = createMember("member1");
+		em.persist(member1);
+
+		Artist artist1 = createArtist("artist1");
+		Artist artist2 = createArtist("artist2");
+		Artist artist3 = createArtist("artist3");
+		em.persist(artist1);
+		em.persist(artist2);
+		em.persist(artist3);
+
+		LastSearchArtist lastSearchArtist1 = createLastSearchArtist(member1, artist1);
+		LastSearchArtist lastSearchArtist2 = createLastSearchArtist(member1, artist2);
+		LastSearchArtist lastSearchArtist3 = createLastSearchArtist(member1, artist3);
+		em.persist(lastSearchArtist1);
+		em.persist(lastSearchArtist2);
+		em.persist(lastSearchArtist3);
+
+		//when
+		int deleteCount = lastSearchArtistRepository.deleteByMemberId(member1.getId());
+
+		//then
+		assertThat(deleteCount).isEqualTo(3);
+
+		List<LastSearchArtist> findLastSearchArtists = lastSearchArtistRepository.findAll();
+		assertThat(findLastSearchArtists).hasSize(0);
+	}
+
 	Member createMember(String email) {
 		return Member.builder()
 			.email(email)

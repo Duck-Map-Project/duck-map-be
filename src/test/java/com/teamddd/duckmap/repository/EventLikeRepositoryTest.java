@@ -2,8 +2,11 @@ package com.teamddd.duckmap.repository;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -59,6 +62,46 @@ public class EventLikeRepositoryTest {
 		assertThat(likeCount2).isEqualTo(1);
 		assertThat(likeCount3).isEqualTo(1);
 
+	}
+
+	@DisplayName("Member Id로 EventLike 삭제")
+	@Test
+	void deleteByMemberId() throws Exception {
+		//given
+		Member member1 = Member.builder().build();
+		Member member2 = Member.builder().build();
+		Member member3 = Member.builder().build();
+		em.persist(member1);
+		em.persist(member2);
+		em.persist(member3);
+
+		Event event1 = createEvent(member1, "event1");
+		Event event2 = createEvent(member1, "event2");
+		Event event3 = createEvent(member1, "event3");
+		em.persist(event1);
+		em.persist(event2);
+		em.persist(event3);
+
+		EventLike eventLike1 = createEventLike(member1, event1);
+		EventLike eventLike2 = createEventLike(member1, event2);
+		EventLike eventLike3 = createEventLike(member2, event1);
+		EventLike eventLike4 = createEventLike(member2, event3);
+		EventLike eventLike5 = createEventLike(member3, event1);
+
+		em.persist(eventLike1);
+		em.persist(eventLike2);
+		em.persist(eventLike3);
+		em.persist(eventLike4);
+		em.persist(eventLike5);
+
+		//when
+		int deleteCount = eventLikeRepository.deleteByMemberId(member1.getId());
+
+		//then
+		assertThat(deleteCount).isEqualTo(2);
+
+		List<EventLike> findEventLike = eventLikeRepository.findAll();
+		assertThat(findEventLike).hasSize(3);
 	}
 
 	private Event createEvent(Member member, String storeName) {
