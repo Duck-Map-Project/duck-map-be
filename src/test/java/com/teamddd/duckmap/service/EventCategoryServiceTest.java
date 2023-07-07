@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityManager;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -16,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.teamddd.duckmap.dto.event.category.CreateEventCategoryReq;
 import com.teamddd.duckmap.dto.event.category.EventCategoryRes;
+import com.teamddd.duckmap.dto.event.category.UpdateEventCategoryServiceReq;
 import com.teamddd.duckmap.entity.EventCategory;
 import com.teamddd.duckmap.exception.NonExistentEventCategoryException;
 import com.teamddd.duckmap.repository.EventCategoryRepository;
@@ -27,6 +30,8 @@ class EventCategoryServiceTest {
 	EventCategoryService eventCategoryService;
 	@SpyBean
 	EventCategoryRepository eventCategoryRepository;
+	@Autowired
+	EntityManager em;
 
 	@DisplayName("이벤트 카테고리를 생성한다")
 	@Test
@@ -48,6 +53,22 @@ class EventCategoryServiceTest {
 			.isEqualTo("category1");
 	}
 
+	@DisplayName("이벤트 카테고리를 Id로 조회한다")
+	@Test
+	void getEventCategory() throws Exception {
+		//given
+		EventCategory category1 = createEventCategory("category1");
+		eventCategoryRepository.save(category1);
+
+		Long searchCategoryId = category1.getId();
+		//when
+		EventCategory eventCategory = eventCategoryService.getEventCategory(searchCategoryId);
+
+		//then
+		assertThat(eventCategory).extracting("category")
+			.isEqualTo("category1");
+	}
+
 	@DisplayName("이벤트 카테고리 전체 목록을 조회한다")
 	@Test
 	void getEventCategoryResList() throws Exception {
@@ -64,6 +85,33 @@ class EventCategoryServiceTest {
 		assertThat(eventCategoryResList).hasSize(3)
 			.extracting("category")
 			.containsExactlyInAnyOrder("category1", "category2", "category3");
+	}
+
+	@DisplayName("이벤트 카테고리를 수정한다")
+	@Test
+	void updateEventCategory() throws Exception {
+		//given
+		EventCategory category = createEventCategory("category");
+		em.persist(category);
+
+		Long updateCategoryId = category.getId();
+
+		em.flush();
+		em.clear();
+
+		UpdateEventCategoryServiceReq reqeust = UpdateEventCategoryServiceReq.builder()
+			.id(updateCategoryId)
+			.category("new_category")
+			.build();
+		//when
+		eventCategoryService.updateEventCategory(reqeust);
+		em.flush();
+		em.clear();
+
+		//then
+		EventCategory findCategory = eventCategoryRepository.findById(updateCategoryId).get();
+		assertThat(findCategory).extracting("category")
+			.isEqualTo("new_category");
 	}
 
 	EventCategory createEventCategory(String category) {

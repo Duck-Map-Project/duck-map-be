@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teamddd.duckmap.dto.event.category.CreateEventCategoryReq;
 import com.teamddd.duckmap.dto.event.category.EventCategoryRes;
+import com.teamddd.duckmap.dto.event.category.UpdateEventCategoryReq;
 import com.teamddd.duckmap.service.EventCategoryService;
 
 @SpringBootTest
@@ -87,6 +88,51 @@ class EventCategoryControllerTest {
 			//when //then
 			mockMvc.perform(
 					post("/events/categories")
+						.content(objectMapper.writeValueAsString(request))
+						.contentType(MediaType.APPLICATION_JSON)
+				)
+				.andDo(print())
+				.andExpect(status().isForbidden())
+				.andExpect(jsonPath("$.code").value("A004"))
+				.andExpect(jsonPath("$.message").value("권한이 없는 사용자입니다"));
+		}
+	}
+
+	@DisplayName("이벤트 카테고리를 수정한다")
+	@Nested
+	class UpdateEventCategory {
+
+		@DisplayName("관리자 계정은 이벤트 카테고리를 수정할 수 있다")
+		@Test
+		@WithMockUser(roles = "ADMIN")
+		void updateEventCategory1() throws Exception {
+			//given
+			UpdateEventCategoryReq request = new UpdateEventCategoryReq();
+			ReflectionTestUtils.setField(request, "category", "category1");
+
+			doNothing().when(eventCategoryService).updateEventCategory(any());
+
+			//when //then
+			mockMvc.perform(
+					put("/events/categories/1")
+						.content(objectMapper.writeValueAsString(request))
+						.contentType(MediaType.APPLICATION_JSON)
+				)
+				.andDo(print())
+				.andExpect(status().isOk());
+		}
+
+		@DisplayName("사용자 계정은 이벤트 카테고리를 수정할 수 없다")
+		@Test
+		@WithMockUser(roles = "USER")
+		void updateEventCategory2() throws Exception {
+			//given
+			UpdateEventCategoryReq request = new UpdateEventCategoryReq();
+			ReflectionTestUtils.setField(request, "category", "category1");
+
+			//when //then
+			mockMvc.perform(
+					put("/events/categories/1")
 						.content(objectMapper.writeValueAsString(request))
 						.contentType(MediaType.APPLICATION_JSON)
 				)

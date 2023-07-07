@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.teamddd.duckmap.dto.event.category.CreateEventCategoryReq;
 import com.teamddd.duckmap.dto.event.category.EventCategoryRes;
+import com.teamddd.duckmap.dto.event.category.UpdateEventCategoryServiceReq;
 import com.teamddd.duckmap.entity.EventCategory;
 import com.teamddd.duckmap.exception.NonExistentEventCategoryException;
 import com.teamddd.duckmap.repository.EventCategoryRepository;
@@ -35,6 +36,11 @@ public class EventCategoryService {
 		return eventCategory.getId();
 	}
 
+	public EventCategory getEventCategory(Long id) {
+		return eventCategoryRepository.findById(id)
+			.orElseThrow(NonExistentEventCategoryException::new);
+	}
+
 	public List<EventCategory> getEventCategoriesByIds(List<Long> ids) {
 		List<EventCategory> categories = eventCategoryRepository.findByIdIn(ids);
 
@@ -50,5 +56,12 @@ public class EventCategoryService {
 		return categories.stream()
 			.map(EventCategoryRes::of)
 			.collect(Collectors.toList());
+	}
+
+	@Transactional
+	public void updateEventCategory(UpdateEventCategoryServiceReq request) {
+		EventCategory eventCategory = getEventCategory(request.getId());
+
+		eventCategory.updateEventCategory(request.getCategory());
 	}
 }
