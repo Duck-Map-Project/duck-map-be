@@ -63,8 +63,10 @@ public class EventCategoryController {
 		eventCategoryService.updateEventCategory(request);
 	}
 
+	@PreAuthorize(SecurityRule.HAS_ROLE_ADMIN)
 	@Operation(summary = "이벤트 카테고리 삭제")
 	@DeleteMapping("/{id}")
 	public void deleteEventCategory(@PathVariable Long id) {
+		eventCategoryService.deleteEventCategory(id);
 	}
 }

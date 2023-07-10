@@ -10,8 +10,10 @@ import javax.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +23,9 @@ import com.teamddd.duckmap.dto.event.category.EventCategoryRes;
 import com.teamddd.duckmap.dto.event.category.UpdateEventCategoryServiceReq;
 import com.teamddd.duckmap.entity.EventCategory;
 import com.teamddd.duckmap.exception.NonExistentEventCategoryException;
+import com.teamddd.duckmap.exception.UnableToDeleteEventCategoryInUseException;
 import com.teamddd.duckmap.repository.EventCategoryRepository;
+import com.teamddd.duckmap.repository.EventInfoCategoryRepository;
 
 @Transactional
 @SpringBootTest
@@ -30,6 +34,8 @@ class EventCategoryServiceTest {
 	EventCategoryService eventCategoryService;
 	@SpyBean
 	EventCategoryRepository eventCategoryRepository;
+	@MockBean
+	EventInfoCategoryRepository eventInfoCategoryRepository;
 	@Autowired
 	EntityManager em;
 
@@ -118,6 +124,52 @@ class EventCategoryServiceTest {
 		return EventCategory.builder()
 			.category(category)
 			.build();
+	}
+
+	@DisplayName("이벤트 카테고리를 삭제한다")
+	@Nested
+	class DeleteEventCategory {
+		@DisplayName("사용중인 이벤트가 없는 경우 정상적으로 삭제된다")
+		@Test
+		void deleteEventCategory1() throws Exception {
+			//given
+			EventCategory category1 = createEventCategory("category1");
+			em.persist(category1);
+
+			em.flush();
+			em.clear();
+
+			Mockito.when(eventInfoCategoryRepository.countByEventCategory(Mockito.any())).thenReturn(0L);
+
+			Long deleteCategoryId = category1.getId();
+			//when
+			eventCategoryService.deleteEventCategory(deleteCategoryId);
+
+			em.flush();
+			em.clear();
+
+			//then
+			Optional<EventCategory> findCategory = eventCategoryRepository.findById(deleteCategoryId);
+			assertThat(findCategory).isEmpty();
+		}
+
+		@DisplayName("사용중인 이벤트가 있는 경우 삭제하지 않고 예외 발생")
+		@Test
+		void deleteEventCategory2() throws Exception {
+			//given
+			EventCategory category1 = createEventCategory("category1");
+			em.persist(category1);
+
+			em.flush();
+			em.clear();
+
+			Mockito.when(eventInfoCategoryRepository.countByEventCategory(Mockito.any())).thenReturn(1L);
+
+			Long deleteCategoryId = category1.getId();
+			//when //then
+			assertThatThrownBy(() -> eventCategoryService.deleteEventCategory(deleteCategoryId))
+				.isInstanceOf(UnableToDeleteEventCategoryInUseException.class);
+		}
 	}
 
 	@DisplayName("이벤트 카테고리 id 목록으로 카테고리 목록을 조회한다")

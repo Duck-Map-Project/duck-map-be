@@ -45,7 +45,8 @@ public enum ExceptionCodeMessage {
 	NON_EXISTENT_ARTIST_EXCEPTION("A001", "잘못된 아티스트 정보입니다"),
 
 	/* EventCategory */
-	NON_EXISTENT_EVENT_CATEGORY_EXCEPTION("EC001", "잘못된 이벤트 카테고리 정보입니다");
+	NON_EXISTENT_EVENT_CATEGORY_EXCEPTION("EC001", "잘못된 이벤트 카테고리 정보입니다"),
+	UNABLE_TO_DELETE_EVENT_CATEGORY_IN_USE_EXCEPTION("EC002", "해당 카테고리를 사용중인 이벤트가 존재하여 삭제할 수 없습니다");
 
 	private final String code;
 	private final String message;
