@@ -143,4 +143,40 @@ class EventCategoryControllerTest {
 		}
 	}
 
+	@DisplayName("이벤트 카테고리를 삭제한다")
+	@Nested
+	class DeleteEventCategory {
+
+		@DisplayName("관리자 계정은 이벤트 카테고리를 삭제할 수 있다")
+		@Test
+		@WithMockUser(roles = "ADMIN")
+		void deleteEventCategory1() throws Exception {
+			//given
+			doNothing().when(eventCategoryService).deleteEventCategory(any());
+
+			//when //then
+			mockMvc.perform(
+					delete("/events/categories/1")
+				)
+				.andDo(print())
+				.andExpect(status().isOk());
+		}
+
+		@DisplayName("사용자 계정은 이벤트 카테고리를 삭제할 수 없다")
+		@Test
+		@WithMockUser(roles = "USER")
+		void deleteEventCategory2() throws Exception {
+			//given
+
+			//when //then
+			mockMvc.perform(
+					delete("/events/categories/1")
+				)
+				.andDo(print())
+				.andExpect(status().isForbidden())
+				.andExpect(jsonPath("$.code").value("A004"))
+				.andExpect(jsonPath("$.message").value("권한이 없는 사용자입니다"));
+		}
+	}
+
 }
