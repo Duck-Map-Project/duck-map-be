@@ -12,6 +12,7 @@ import com.teamddd.duckmap.exception.NonExistentBookmarkFolderException;
 import com.teamddd.duckmap.exception.NonExistentEventCategoryException;
 import com.teamddd.duckmap.exception.NonExistentEventException;
 import com.teamddd.duckmap.exception.NonExistentEventLikeException;
+import com.teamddd.duckmap.exception.UnableToDeleteEventCategoryInUseException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,6 +25,15 @@ public class EventAdvice {
 	public ErrorResult nonExistentEventCategoryException(NonExistentEventCategoryException ex) {
 		return ErrorResult.builder()
 			.code(ExceptionCodeMessage.NON_EXISTENT_EVENT_CATEGORY_EXCEPTION.code())
+			.message(ex.getMessage())
+			.build();
+	}
+
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler
+	public ErrorResult unableToDeleteEventCategoryInUseException(UnableToDeleteEventCategoryInUseException ex) {
+		return ErrorResult.builder()
+			.code(ExceptionCodeMessage.UNABLE_TO_DELETE_EVENT_CATEGORY_IN_USE_EXCEPTION.code())
 			.message(ex.getMessage())
 			.build();
 	}

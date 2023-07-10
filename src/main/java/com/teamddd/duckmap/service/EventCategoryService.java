@@ -10,9 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.teamddd.duckmap.dto.event.category.CreateEventCategoryReq;
 import com.teamddd.duckmap.dto.event.category.EventCategoryRes;
+import com.teamddd.duckmap.dto.event.category.UpdateEventCategoryServiceReq;
 import com.teamddd.duckmap.entity.EventCategory;
 import com.teamddd.duckmap.exception.NonExistentEventCategoryException;
+import com.teamddd.duckmap.exception.UnableToDeleteEventCategoryInUseException;
 import com.teamddd.duckmap.repository.EventCategoryRepository;
+import com.teamddd.duckmap.repository.EventInfoCategoryRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class EventCategoryService {
 	private final EventCategoryRepository eventCategoryRepository;
+	private final EventInfoCategoryRepository eventInfoCategoryRepository;
 
 	@Transactional
 	public Long createEventCategory(CreateEventCategoryReq createEventCategoryReq) {
@@ -33,6 +37,11 @@ public class EventCategoryService {
 		eventCategoryRepository.save(eventCategory);
 
 		return eventCategory.getId();
+	}
+
+	public EventCategory getEventCategory(Long id) {
+		return eventCategoryRepository.findById(id)
+			.orElseThrow(NonExistentEventCategoryException::new);
 	}
 
 	public List<EventCategory> getEventCategoriesByIds(List<Long> ids) {
@@ -50,5 +59,24 @@ public class EventCategoryService {
 		return categories.stream()
 			.map(EventCategoryRes::of)
 			.collect(Collectors.toList());
+	}
+
+	@Transactional
+	public void updateEventCategory(UpdateEventCategoryServiceReq request) {
+		EventCategory eventCategory = getEventCategory(request.getId());
+
+		eventCategory.updateEventCategory(request.getCategory());
+	}
+
+	@Transactional
+	public void deleteEventCategory(Long id) {
+		EventCategory eventCategory = getEventCategory(id);
+
+		Long eventCount = eventInfoCategoryRepository.countByEventCategory(eventCategory);
+		if (eventCount > 0) {
+			throw new UnableToDeleteEventCategoryInUseException();
+		}
+
+		eventCategoryRepository.delete(eventCategory);
 	}
 }

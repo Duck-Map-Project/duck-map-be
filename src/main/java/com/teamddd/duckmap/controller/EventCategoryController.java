@@ -18,6 +18,7 @@ import com.teamddd.duckmap.dto.event.category.CreateEventCategoryReq;
 import com.teamddd.duckmap.dto.event.category.CreateEventCategoryRes;
 import com.teamddd.duckmap.dto.event.category.EventCategoryRes;
 import com.teamddd.duckmap.dto.event.category.UpdateEventCategoryReq;
+import com.teamddd.duckmap.dto.event.category.UpdateEventCategoryServiceReq;
 import com.teamddd.duckmap.service.EventCategoryService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -49,14 +50,23 @@ public class EventCategoryController {
 		return eventCategoryService.getEventCategoryResList();
 	}
 
+	@PreAuthorize(SecurityRule.HAS_ROLE_ADMIN)
 	@Operation(summary = "이벤트 카테고리 수정")
 	@PutMapping("/{id}")
 	public void updateEventCategory(@PathVariable Long id,
 		@Validated @RequestBody UpdateEventCategoryReq updateEventCategoryReq) {
+		UpdateEventCategoryServiceReq request = UpdateEventCategoryServiceReq.builder()
+			.id(id)
+			.category(updateEventCategoryReq.getCategory())
+			.build();
+
+		eventCategoryService.updateEventCategory(request);
 	}
 
+	@PreAuthorize(SecurityRule.HAS_ROLE_ADMIN)
 	@Operation(summary = "이벤트 카테고리 삭제")
 	@DeleteMapping("/{id}")
 	public void deleteEventCategory(@PathVariable Long id) {
+		eventCategoryService.deleteEventCategory(id);
 	}
 }

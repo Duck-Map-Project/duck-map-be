@@ -23,4 +23,7 @@ public class EventCategory extends BaseByEntity {
 	private Long id;
 	private String category;
 
+	public void updateEventCategory(String category) {
+		this.category = category;
+	}
 }
