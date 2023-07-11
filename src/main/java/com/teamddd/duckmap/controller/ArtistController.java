@@ -3,6 +3,7 @@ package com.teamddd.duckmap.controller;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.teamddd.duckmap.config.security.SecurityRule;
+import com.teamddd.duckmap.dto.PageReq;
 import com.teamddd.duckmap.dto.artist.ArtistRes;
 import com.teamddd.duckmap.dto.artist.ArtistSearchParam;
 import com.teamddd.duckmap.dto.artist.CreateArtistReq;
@@ -51,7 +53,8 @@ public class ArtistController {
 
 	@Operation(summary = "아티스트 목록 조회")
 	@GetMapping
-	public Page<ArtistRes> getArtists(ArtistSearchParam searchParam, Pageable pageable) {
+	public Page<ArtistRes> getArtists(ArtistSearchParam searchParam, PageReq pageReq) {
+		Pageable pageable = PageRequest.of(pageReq.getPageNumber(), pageReq.getPageSize());
 		return artistService.getArtistResPageByTypeAndName(searchParam, pageable);
 	}
 
