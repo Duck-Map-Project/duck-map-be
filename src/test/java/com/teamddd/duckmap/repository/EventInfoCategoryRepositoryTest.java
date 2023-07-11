@@ -2,6 +2,8 @@ package com.teamddd.duckmap.repository;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 
 import org.junit.jupiter.api.DisplayName;
@@ -54,6 +56,32 @@ class EventInfoCategoryRepositoryTest {
 
 		//then
 		assertThat(count).isEqualTo(2);
+	}
+
+	@DisplayName("Event FK로 EventArtist 목록을 제거한다")
+	@Test
+	void deleteByEventId() throws Exception {
+		//given
+		Event event1 = createEvent("event1");
+		em.persist(event1);
+
+		EventInfoCategory eventInfoCategory1 = createEventInfoCategory(event1, null);
+		EventInfoCategory eventInfoCategory2 = createEventInfoCategory(event1, null);
+		em.persist(eventInfoCategory1);
+		em.persist(eventInfoCategory2);
+
+		em.flush();
+		em.clear();
+
+		//when
+		int count = eventInfoCategoryRepository.deleteByEventId(event1.getId());
+
+		//then
+		assertThat(count).isEqualTo(2);
+
+		List<EventInfoCategory> findEventInfoCategories = eventInfoCategoryRepository.findAllById(
+			List.of(eventInfoCategory1.getId(), eventInfoCategory2.getId()));
+		assertThat(findEventInfoCategories).isEmpty();
 	}
 
 	Event createEvent(String storeName) {

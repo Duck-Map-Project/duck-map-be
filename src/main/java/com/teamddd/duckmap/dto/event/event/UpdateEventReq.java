@@ -31,4 +31,20 @@ public class UpdateEventReq {
 	@NotNull
 	@Size(min = 1)
 	private List<String> imageFilenames;
+
+	public UpdateEventServiceReq toServiceRequest(Long id) {
+		return UpdateEventServiceReq.builder()
+			.id(id)
+			.storeName(storeName)
+			.fromDate(fromDate)
+			.toDate(toDate)
+			.address(address)
+			.businessHour(businessHour)
+			.hashtag(hashtag)
+			.twitterUrl(twitterUrl)
+			.artistIds(artistIds)
+			.categoryIds(categoryIds)
+			.imageFilenames(imageFilenames)
+			.build();
+	}
 }
