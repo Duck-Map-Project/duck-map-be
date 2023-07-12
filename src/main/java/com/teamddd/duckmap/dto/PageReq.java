@@ -10,5 +10,4 @@ public class PageReq {
 	private int pageNumber = 0;
 	@Builder.Default
 	private int pageSize = 20;
-
 }
