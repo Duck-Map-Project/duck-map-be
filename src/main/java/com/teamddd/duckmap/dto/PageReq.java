@@ -6,6 +6,9 @@ import lombok.Getter;
 @Builder
 @Getter
 public class PageReq {
-	private int pageNumber;
-	private int pageSize;
+	@Builder.Default
+	private int pageNumber = 0;
+	@Builder.Default
+	private int pageSize = 20;
+
 }
