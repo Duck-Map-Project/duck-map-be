@@ -1,5 +1,6 @@
 package com.teamddd.duckmap.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -7,7 +8,10 @@ import lombok.Getter;
 @Getter
 public class PageReq {
 	@Builder.Default
+	@Schema(defaultValue = "0")
 	private int pageNumber = 0;
 	@Builder.Default
+	@Schema(defaultValue = "20")
 	private int pageSize = 20;
+
 }
