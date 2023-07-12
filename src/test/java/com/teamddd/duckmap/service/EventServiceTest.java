@@ -28,6 +28,7 @@ import com.teamddd.duckmap.dto.event.event.EventSearchServiceReq;
 import com.teamddd.duckmap.dto.event.event.EventsRes;
 import com.teamddd.duckmap.dto.event.event.MyEventsServiceReq;
 import com.teamddd.duckmap.dto.event.event.MyLikeEventsServiceReq;
+import com.teamddd.duckmap.dto.event.event.UpdateEventServiceReq;
 import com.teamddd.duckmap.entity.Artist;
 import com.teamddd.duckmap.entity.ArtistType;
 import com.teamddd.duckmap.entity.Event;
@@ -423,6 +424,89 @@ class EventServiceTest {
 				Tuple.tuple("event1", eventLike1.getId()),
 				Tuple.tuple("event3", eventLike5.getId()),
 				Tuple.tuple("event4", eventLike3.getId()));
+	}
+
+	@DisplayName("이벤트를 수정한다")
+	@Test
+	void updateEvent() throws Exception {
+		//given
+		Member member1 = createMember("member1");
+		em.persist(member1);
+
+		Event event1 = createEvent(member1, "event1", null, null, null);
+		em.persist(event1);
+
+		Artist artist1 = createArtist("artist1", null);
+		Artist artist2 = createArtist("artist2", null);
+		Artist artist3 = createArtist("artist3", null);
+		em.persist(artist1);
+		em.persist(artist2);
+		em.persist(artist3);
+
+		EventArtist eventArtist1 = createEventArtist(event1, artist1);
+		EventArtist eventArtist2 = createEventArtist(event1, artist2);
+		em.persist(eventArtist1);
+		em.persist(eventArtist2);
+
+		EventCategory category1 = createEventCategory("category1");
+		EventCategory category2 = createEventCategory("category2");
+		EventCategory category3 = createEventCategory("category3");
+		EventCategory category4 = createEventCategory("category4");
+		em.persist(category1);
+		em.persist(category2);
+		em.persist(category3);
+		em.persist(category4);
+
+		EventInfoCategory eventInfoCategory1 = createEventInfoCategory(event1, category1);
+		EventInfoCategory eventInfoCategory2 = createEventInfoCategory(event1, category3);
+		em.persist(eventInfoCategory1);
+		em.persist(eventInfoCategory2);
+
+		em.flush();
+		em.clear();
+
+		Long updateEventId = event1.getId();
+		LocalDate now = LocalDate.now();
+
+		UpdateEventServiceReq request = UpdateEventServiceReq.builder()
+			.id(updateEventId)
+			.storeName("new_storeName")
+			.fromDate(now)
+			.toDate(now.plusDays(1))
+			.address("new_address")
+			.businessHour("new_businessHour")
+			.hashtag("new_hashtag")
+			.twitterUrl("new_twitterUrl")
+			.artistIds(List.of(artist2.getId(), artist3.getId()))
+			.categoryIds(List.of(category2.getId(), category4.getId(), category1.getId()))
+			.imageFilenames(List.of("new_filename1", "new_filename2"))
+			.build();
+
+		when(artistService.getArtistsByIds(any())).thenReturn(List.of(artist2, artist3));
+		when(eventCategoryService.getEventCategoriesByIds(any())).thenReturn(List.of(category2, category4, category1));
+
+		//when
+		eventService.updateEvent(member1.getId(), request);
+
+		em.flush();
+		em.clear();
+
+		//then
+		Event findEvent = eventRepository.findById(updateEventId).get();
+		assertThat(findEvent).extracting("storeName", "fromDate", "toDate", "address", "hashtag")
+			.containsOnly("new_storeName", now, now.plusDays(1), "new_address", "new_hashtag");
+
+		assertThat(findEvent.getEventArtists()).hasSize(2)
+			.extracting("artist.id")
+			.containsExactlyInAnyOrder(artist2.getId(), artist3.getId());
+
+		assertThat(findEvent.getEventInfoCategories()).hasSize(3)
+			.extracting("eventCategory.id")
+			.containsExactlyInAnyOrder(category2.getId(), category4.getId(), category1.getId());
+
+		assertThat(findEvent.getEventImages()).hasSize(2)
+			.extracting("image", "thumbnail")
+			.containsExactlyInAnyOrder(Tuple.tuple("new_filename1", true), Tuple.tuple("new_filename2", false));
 	}
 
 	Event createEvent(Member member, String storeName, LocalDate fromDate, LocalDate toDate, String hashtag) {

@@ -59,4 +59,15 @@ public class Event extends BaseTimeEntity {
 		return (date.isEqual(fromDate) || date.isAfter(fromDate))
 			&& (date.isEqual(toDate) || date.isBefore(toDate));
 	}
+
+	public void updateEvent(String storeName, LocalDate fromDate, LocalDate toDate, String address, String businessHour,
+		String hashtag, String twitterUrl) {
+		this.storeName = storeName;
+		this.fromDate = fromDate;
+		this.toDate = toDate;
+		this.address = address;
+		this.businessHour = businessHour;
+		this.hashtag = hashtag;
+		this.twitterUrl = twitterUrl;
+	}
 }
