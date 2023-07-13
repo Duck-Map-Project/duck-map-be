@@ -44,19 +44,30 @@ public class Event extends BaseTimeEntity {
 	private Member member;
 
 	@Builder.Default
-	@OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "event", cascade = CascadeType.PERSIST)
 	private List<EventArtist> eventArtists = new ArrayList<>();
 
 	@Builder.Default
-	@OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "event", cascade = CascadeType.PERSIST)
 	private List<EventInfoCategory> eventInfoCategories = new ArrayList<>();
 
 	@Builder.Default
-	@OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "event", cascade = CascadeType.PERSIST)
 	private List<EventImage> eventImages = new ArrayList<>();
 
 	public boolean isInProgress(LocalDate date) {
 		return (date.isEqual(fromDate) || date.isAfter(fromDate))
 			&& (date.isEqual(toDate) || date.isBefore(toDate));
+	}
+
+	public void updateEvent(String storeName, LocalDate fromDate, LocalDate toDate, String address, String businessHour,
+		String hashtag, String twitterUrl) {
+		this.storeName = storeName;
+		this.fromDate = fromDate;
+		this.toDate = toDate;
+		this.address = address;
+		this.businessHour = businessHour;
+		this.hashtag = hashtag;
+		this.twitterUrl = twitterUrl;
 	}
 }

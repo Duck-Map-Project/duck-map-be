@@ -29,6 +29,7 @@ import com.teamddd.duckmap.dto.event.event.HashtagRes;
 import com.teamddd.duckmap.dto.event.event.MyEventsServiceReq;
 import com.teamddd.duckmap.dto.event.event.MyLikeEventsServiceReq;
 import com.teamddd.duckmap.dto.event.event.UpdateEventReq;
+import com.teamddd.duckmap.dto.event.event.UpdateEventServiceReq;
 import com.teamddd.duckmap.entity.Member;
 import com.teamddd.duckmap.service.EventService;
 import com.teamddd.duckmap.util.MemberUtils;
@@ -72,11 +73,18 @@ public class EventController {
 	@Operation(summary = "이벤트 수정")
 	@PutMapping("/{id}")
 	public void updateEvent(@PathVariable Long id, @Validated @RequestBody UpdateEventReq updateEventReq) {
+		Member member = MemberUtils.getAuthMember().getUser();
+
+		UpdateEventServiceReq request = updateEventReq.toServiceRequest(id);
+		eventService.updateEvent(member.getId(), request);
 	}
 
 	@Operation(summary = "이벤트 삭제")
 	@DeleteMapping("/{id}")
 	public void deleteEvent(@PathVariable Long id) {
+		Member member = MemberUtils.getAuthMember().getUser();
+
+		eventService.deleteEvent(member.getId(), id);
 	}
 
 	@Operation(summary = "이벤트 목록 조회")

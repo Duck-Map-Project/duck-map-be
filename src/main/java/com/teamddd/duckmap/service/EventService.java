@@ -1,14 +1,17 @@
 package com.teamddd.duckmap.service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import com.teamddd.duckmap.common.ApiUrl;
+import com.teamddd.duckmap.common.Props;
 import com.teamddd.duckmap.dto.artist.ArtistRes;
 import com.teamddd.duckmap.dto.event.category.EventCategoryRes;
 import com.teamddd.duckmap.dto.event.event.CreateEventReq;
@@ -18,6 +21,7 @@ import com.teamddd.duckmap.dto.event.event.EventSearchServiceReq;
 import com.teamddd.duckmap.dto.event.event.EventsRes;
 import com.teamddd.duckmap.dto.event.event.MyEventsServiceReq;
 import com.teamddd.duckmap.dto.event.event.MyLikeEventsServiceReq;
+import com.teamddd.duckmap.dto.event.event.UpdateEventServiceReq;
 import com.teamddd.duckmap.entity.Artist;
 import com.teamddd.duckmap.entity.Event;
 import com.teamddd.duckmap.entity.EventArtist;
@@ -26,9 +30,14 @@ import com.teamddd.duckmap.entity.EventImage;
 import com.teamddd.duckmap.entity.EventInfoCategory;
 import com.teamddd.duckmap.entity.Member;
 import com.teamddd.duckmap.exception.NonExistentEventException;
+import com.teamddd.duckmap.repository.EventArtistRepository;
+import com.teamddd.duckmap.repository.EventBookmarkRepository;
+import com.teamddd.duckmap.repository.EventImageRepository;
+import com.teamddd.duckmap.repository.EventInfoCategoryRepository;
 import com.teamddd.duckmap.repository.EventLikeRepository;
 import com.teamddd.duckmap.repository.EventRepository;
 import com.teamddd.duckmap.repository.ReviewRepository;
+import com.teamddd.duckmap.util.FileUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,11 +47,16 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class EventService {
+	private final Props props;
 	private final EventRepository eventRepository;
 	private final ArtistService artistService;
 	private final EventCategoryService eventCategoryService;
 	private final ReviewRepository reviewRepository;
 	private final EventLikeRepository eventLikeRepository;
+	private final EventBookmarkRepository eventBookmarkRepository;
+	private final EventArtistRepository eventArtistRepository;
+	private final EventInfoCategoryRepository eventInfoCategoryRepository;
+	private final EventImageRepository eventImageRepository;
 
 	public Event getEvent(Long eventId) throws NonExistentEventException {
 		return eventRepository.findById(eventId)
@@ -168,5 +182,95 @@ public class EventService {
 			request.getPageable());
 
 		return myLikeEvents.map(eventLikeBookmarkDto -> EventsRes.of(eventLikeBookmarkDto, request.getDate()));
+	}
+
+	@Transactional
+	public void updateEvent(Long memberId, UpdateEventServiceReq request) {
+		Event event = getEvent(request.getId());
+		if (!memberId.equals(event.getMember().getId())) {
+			throw new NonExistentEventException();
+		}
+
+		// Artist pk, EventCategory pk 유효한 값인지 조회
+		List<Artist> newArtists = artistService.getArtistsByIds(request.getArtistIds());
+		List<EventCategory> newCategories = eventCategoryService.getEventCategoriesByIds(
+			request.getCategoryIds());
+
+		List<String> oldImages = event.getEventImages().stream()
+			.map(EventImage::getImage)
+			.collect(Collectors.toList());
+
+		// EventArtist를 덮어쓴다
+		eventArtistRepository.deleteByEventId(event.getId());
+		eventArtistRepository.saveAll(
+			newArtists.stream()
+				.map(artist ->
+					EventArtist.builder()
+						.event(event)
+						.artist(artist)
+						.build())
+				.collect(Collectors.toList())
+		);
+
+		// EventInfoCategory를 덮어쓴다
+		eventInfoCategoryRepository.deleteByEventId(event.getId());
+		eventInfoCategoryRepository.saveAll(
+			newCategories.stream()
+				.map(category -> EventInfoCategory.builder()
+					.event(event)
+					.eventCategory(category)
+					.build())
+				.collect(Collectors.toList())
+		);
+
+		// EventImage를 덮어쓴다
+		eventImageRepository.deleteByEventId(event.getId());
+		List<EventImage> newEventImages = new ArrayList<>();
+		List<String> imageFilenames = request.getImageFilenames();
+		for (int i = 0; i < imageFilenames.size(); i++) {
+			newEventImages.add(EventImage.builder()
+				.event(event)
+				.thumbnail(i == 0)
+				.image(imageFilenames.get(i))
+				.build());
+		}
+		eventImageRepository.saveAll(newEventImages);
+
+		event.updateEvent(request.getStoreName(), request.getFromDate(), request.getToDate(), request.getAddress(),
+			request.getBusinessHour(), request.getHashtag(), request.getTwitterUrl());
+
+		// 사용되지 않는 기존 이미지 제거
+		for (String oldImage : oldImages) {
+			if (!imageFilenames.contains(oldImage)) {
+				FileUtils.deleteFile(props.getImageDir(), oldImage);
+			}
+		}
+	}
+
+	@Transactional
+	public void deleteEvent(Long memberId, Long id) {
+		Event event = getEvent(id);
+		if (!memberId.equals(event.getMember().getId())) {
+			throw new NonExistentEventException();
+		}
+
+		List<String> filenames = event.getEventImages().stream()
+			.map(EventImage::getImage)
+			.collect(Collectors.toList());
+
+		eventArtistRepository.deleteByEventId(id);
+		eventInfoCategoryRepository.deleteByEventId(id);
+		eventImageRepository.deleteByEventId(id);
+
+		eventLikeRepository.deleteByEventId(id);
+		eventBookmarkRepository.deleteByEventId(id);
+
+		eventRepository.deleteById(id);
+
+		for (String filename : filenames) {
+			if (StringUtils.hasText(filename)) {
+				FileUtils.deleteFile(props.getImageDir(), filename);
+			}
+		}
 	}
 }

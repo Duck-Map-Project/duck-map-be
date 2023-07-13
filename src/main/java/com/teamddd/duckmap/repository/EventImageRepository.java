@@ -5,12 +5,10 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.teamddd.duckmap.entity.EventLike;
+import com.teamddd.duckmap.entity.EventImage;
 
-public interface EventLikeRepository extends JpaRepository<EventLike, Long> {
-	Long countByEventId(Long eventId);
-
+public interface EventImageRepository extends JpaRepository<EventImage, Long> {
 	@Modifying
-	@Query("delete from EventLike el where el.event.id = :eventId")
+	@Query("delete from EventImage ei where ei.event.id = :eventId")
 	int deleteByEventId(@Param("eventId") Long eventId);
 }

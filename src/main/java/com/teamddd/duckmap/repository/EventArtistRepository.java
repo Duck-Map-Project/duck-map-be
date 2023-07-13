@@ -4,13 +4,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.teamddd.duckmap.entity.EventLike;
+import com.teamddd.duckmap.entity.EventArtist;
 
-public interface EventLikeRepository extends JpaRepository<EventLike, Long> {
-	Long countByEventId(Long eventId);
+@Transactional
+public interface EventArtistRepository extends JpaRepository<EventArtist, Long> {
 
 	@Modifying
-	@Query("delete from EventLike el where el.event.id = :eventId")
+	@Query("delete from EventArtist ea where ea.event.id = :eventId")
 	int deleteByEventId(@Param("eventId") Long eventId);
 }
