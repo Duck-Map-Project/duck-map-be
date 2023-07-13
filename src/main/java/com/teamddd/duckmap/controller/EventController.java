@@ -80,6 +80,9 @@ public class EventController {
 	@Operation(summary = "이벤트 삭제")
 	@DeleteMapping("/{id}")
 	public void deleteEvent(@PathVariable Long id) {
+		Member member = MemberUtils.getAuthMember().getUser();
+
+		eventService.deleteEvent(member.getId(), id);
 	}
 
 	@Operation(summary = "이벤트 목록 조회")
