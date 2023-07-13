@@ -33,12 +33,14 @@ import com.teamddd.duckmap.entity.Artist;
 import com.teamddd.duckmap.entity.ArtistType;
 import com.teamddd.duckmap.entity.Event;
 import com.teamddd.duckmap.entity.EventArtist;
+import com.teamddd.duckmap.entity.EventBookmark;
 import com.teamddd.duckmap.entity.EventCategory;
 import com.teamddd.duckmap.entity.EventImage;
 import com.teamddd.duckmap.entity.EventInfoCategory;
 import com.teamddd.duckmap.entity.EventLike;
 import com.teamddd.duckmap.entity.Member;
 import com.teamddd.duckmap.entity.Role;
+import com.teamddd.duckmap.repository.EventInfoCategoryRepository;
 import com.teamddd.duckmap.repository.EventLikeRepository;
 import com.teamddd.duckmap.repository.EventRepository;
 import com.teamddd.duckmap.repository.ReviewRepository;
@@ -58,8 +60,10 @@ class EventServiceTest {
 	EventCategoryService eventCategoryService;
 	@MockBean
 	ReviewRepository reviewRepository;
-	@MockBean
+	@SpyBean
 	EventLikeRepository eventLikeRepository;
+	@Autowired
+	private EventInfoCategoryRepository eventInfoCategoryRepository;
 
 	@DisplayName("이벤트를 생성한다")
 	@Test
@@ -462,6 +466,11 @@ class EventServiceTest {
 		em.persist(eventInfoCategory1);
 		em.persist(eventInfoCategory2);
 
+		EventImage image1 = createEventImage(event1, "image1", false);
+		em.persist(image1);
+
+		Long memberId = member1.getId();
+
 		em.flush();
 		em.clear();
 
@@ -486,7 +495,7 @@ class EventServiceTest {
 		when(eventCategoryService.getEventCategoriesByIds(any())).thenReturn(List.of(category2, category4, category1));
 
 		//when
-		eventService.updateEvent(member1.getId(), request);
+		eventService.updateEvent(memberId, request);
 
 		em.flush();
 		em.clear();
@@ -507,6 +516,83 @@ class EventServiceTest {
 		assertThat(findEvent.getEventImages()).hasSize(2)
 			.extracting("image", "thumbnail")
 			.containsExactlyInAnyOrder(Tuple.tuple("new_filename1", true), Tuple.tuple("new_filename2", false));
+	}
+
+	@DisplayName("이벤트를 삭제한다")
+	@Test
+	void deleteEvent() throws Exception {
+		//given
+		Member member1 = createMember("member1");
+		em.persist(member1);
+
+		Event event1 = createEvent(member1, "event1", null, null, null);
+		em.persist(event1);
+
+		Artist artist1 = createArtist("artist1", null);
+		Artist artist2 = createArtist("artist2", null);
+		Artist artist3 = createArtist("artist3", null);
+		em.persist(artist1);
+		em.persist(artist2);
+		em.persist(artist3);
+
+		EventArtist eventArtist1 = createEventArtist(event1, artist1);
+		EventArtist eventArtist2 = createEventArtist(event1, artist2);
+		em.persist(eventArtist1);
+		em.persist(eventArtist2);
+
+		EventCategory category1 = createEventCategory("category1");
+		EventCategory category2 = createEventCategory("category2");
+		EventCategory category3 = createEventCategory("category3");
+		EventCategory category4 = createEventCategory("category4");
+		em.persist(category1);
+		em.persist(category2);
+		em.persist(category3);
+		em.persist(category4);
+
+		EventInfoCategory eventInfoCategory1 = createEventInfoCategory(event1, category1);
+		EventInfoCategory eventInfoCategory2 = createEventInfoCategory(event1, category3);
+		em.persist(eventInfoCategory1);
+		em.persist(eventInfoCategory2);
+
+		EventImage eventImage1 = createEventImage(event1, null, false);
+		EventImage eventImage2 = createEventImage(event1, null, false);
+		em.persist(eventImage1);
+		em.persist(eventImage2);
+
+		EventBookmark eventBookmark1 = createEventBookmark(event1, null);
+		EventBookmark eventBookmark2 = createEventBookmark(event1, null);
+		em.persist(eventBookmark1);
+		em.persist(eventBookmark2);
+
+		EventLike eventLike1 = createEventLike(event1, null);
+		EventLike eventLike2 = createEventLike(event1, null);
+		EventLike eventLike3 = createEventLike(event1, null);
+		em.persist(eventLike1);
+		em.persist(eventLike2);
+		em.persist(eventLike3);
+
+		em.flush();
+		em.clear();
+
+		Long deleteEventId = event1.getId();
+
+		//when
+		eventService.deleteEvent(member1.getId(), deleteEventId);
+
+		em.flush();
+		em.clear();
+
+		//then
+		Optional<Event> findEvent = eventRepository.findById(deleteEventId);
+		assertThat(findEvent).isEmpty();
+
+		List<EventInfoCategory> findEventInfoCategories = eventInfoCategoryRepository.findAllById(List.of(
+			eventInfoCategory1.getId(), eventInfoCategory2.getId()
+		));
+		assertThat(findEventInfoCategories).isEmpty();
+		List<EventLike> findEventLikes = eventLikeRepository.findAllById(
+			List.of(eventLike1.getId(), eventLike2.getId(), eventLike3.getId()));
+		assertThat(findEventLikes).isEmpty();
 	}
 
 	Event createEvent(Member member, String storeName, LocalDate fromDate, LocalDate toDate, String hashtag) {
@@ -550,6 +636,13 @@ class EventServiceTest {
 
 	EventLike createEventLike(Event event, Member member) {
 		return EventLike.builder()
+			.event(event)
+			.member(member)
+			.build();
+	}
+
+	EventBookmark createEventBookmark(Event event, Member member) {
+		return EventBookmark.builder()
 			.event(event)
 			.member(member)
 			.build();

@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import com.teamddd.duckmap.common.ApiUrl;
 import com.teamddd.duckmap.common.Props;
@@ -30,6 +31,7 @@ import com.teamddd.duckmap.entity.EventInfoCategory;
 import com.teamddd.duckmap.entity.Member;
 import com.teamddd.duckmap.exception.NonExistentEventException;
 import com.teamddd.duckmap.repository.EventArtistRepository;
+import com.teamddd.duckmap.repository.EventBookmarkRepository;
 import com.teamddd.duckmap.repository.EventImageRepository;
 import com.teamddd.duckmap.repository.EventInfoCategoryRepository;
 import com.teamddd.duckmap.repository.EventLikeRepository;
@@ -51,6 +53,7 @@ public class EventService {
 	private final EventCategoryService eventCategoryService;
 	private final ReviewRepository reviewRepository;
 	private final EventLikeRepository eventLikeRepository;
+	private final EventBookmarkRepository eventBookmarkRepository;
 	private final EventArtistRepository eventArtistRepository;
 	private final EventInfoCategoryRepository eventInfoCategoryRepository;
 	private final EventImageRepository eventImageRepository;
@@ -240,6 +243,33 @@ public class EventService {
 		for (String oldImage : oldImages) {
 			if (!imageFilenames.contains(oldImage)) {
 				FileUtils.deleteFile(props.getImageDir(), oldImage);
+			}
+		}
+	}
+
+	@Transactional
+	public void deleteEvent(Long memberId, Long id) {
+		Event event = getEvent(id);
+		if (!memberId.equals(event.getMember().getId())) {
+			throw new NonExistentEventException();
+		}
+
+		List<String> filenames = event.getEventImages().stream()
+			.map(EventImage::getImage)
+			.collect(Collectors.toList());
+
+		eventArtistRepository.deleteByEventId(id);
+		eventInfoCategoryRepository.deleteByEventId(id);
+		eventImageRepository.deleteByEventId(id);
+
+		eventLikeRepository.deleteByEventId(id);
+		eventBookmarkRepository.deleteByEventId(id);
+
+		eventRepository.deleteById(id);
+
+		for (String filename : filenames) {
+			if (StringUtils.hasText(filename)) {
+				FileUtils.deleteFile(props.getImageDir(), filename);
 			}
 		}
 	}
