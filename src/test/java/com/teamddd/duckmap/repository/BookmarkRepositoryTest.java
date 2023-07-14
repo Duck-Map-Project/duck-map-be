@@ -2,6 +2,7 @@ package com.teamddd.duckmap.repository;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
@@ -90,6 +91,38 @@ public class BookmarkRepositoryTest {
 		assertThat(findBookmark.get())
 			.extracting("event.storeName", "member.username")
 			.containsOnly("event1", "member1");
+	}
+
+	@DisplayName("Event fk로 EventBookmark 목록을 삭제한다")
+	@Test
+	void deleteById() throws Exception {
+		//given
+		Event event1 = createEvent(null, "event1");
+		em.persist(event1);
+
+		EventBookmark eventBookmark1 = createEventBookmark(null, null, null);
+		EventBookmark eventBookmark2 = createEventBookmark(null, event1, null);
+		EventBookmark eventBookmark3 = createEventBookmark(null, event1, null);
+		em.persist(eventBookmark1);
+		em.persist(eventBookmark2);
+		em.persist(eventBookmark3);
+
+		em.flush();
+		em.clear();
+
+		//when
+		int count = bookmarkRepository.deleteByEventId(event1.getId());
+
+		em.flush();
+		em.clear();
+
+		//then
+		assertThat(count).isEqualTo(2);
+
+		List<EventBookmark> findEventBookmarks = bookmarkRepository.findAll();
+		assertThat(findEventBookmarks).hasSize(1)
+			.extracting("id")
+			.containsExactly(eventBookmark1.getId());
 	}
 
 	private Event createEvent(Member member, String storeName) {

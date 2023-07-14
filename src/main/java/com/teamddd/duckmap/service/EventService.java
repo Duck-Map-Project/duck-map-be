@@ -30,8 +30,8 @@ import com.teamddd.duckmap.entity.EventImage;
 import com.teamddd.duckmap.entity.EventInfoCategory;
 import com.teamddd.duckmap.entity.Member;
 import com.teamddd.duckmap.exception.NonExistentEventException;
+import com.teamddd.duckmap.repository.BookmarkRepository;
 import com.teamddd.duckmap.repository.EventArtistRepository;
-import com.teamddd.duckmap.repository.EventBookmarkRepository;
 import com.teamddd.duckmap.repository.EventImageRepository;
 import com.teamddd.duckmap.repository.EventInfoCategoryRepository;
 import com.teamddd.duckmap.repository.EventLikeRepository;
@@ -53,7 +53,7 @@ public class EventService {
 	private final EventCategoryService eventCategoryService;
 	private final ReviewRepository reviewRepository;
 	private final EventLikeRepository eventLikeRepository;
-	private final EventBookmarkRepository eventBookmarkRepository;
+	private final BookmarkRepository eventBookmarkRepository;
 	private final EventArtistRepository eventArtistRepository;
 	private final EventInfoCategoryRepository eventInfoCategoryRepository;
 	private final EventImageRepository eventImageRepository;
