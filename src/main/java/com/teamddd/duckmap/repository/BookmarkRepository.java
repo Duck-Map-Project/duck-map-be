@@ -17,4 +17,8 @@ public interface BookmarkRepository extends JpaRepository<EventBookmark, Long> {
 	@Modifying(clearAutomatically = true)
 	@Query("delete from EventBookmark eb where eb.eventBookmarkFolder.id = :bookmarkFolderId")
 	int deleteByBookmarkFolderId(@Param("bookmarkFolderId") Long bookmarkFolderId);
+
+	@Modifying
+	@Query("delete from EventBookmark eb where eb.event.id = :eventId")
+	int deleteByEventId(@Param("eventId") Long eventId);
 }
