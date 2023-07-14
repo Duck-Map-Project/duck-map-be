@@ -63,7 +63,7 @@ class EventServiceTest {
 	@SpyBean
 	EventLikeRepository eventLikeRepository;
 	@Autowired
-	private EventInfoCategoryRepository eventInfoCategoryRepository;
+	EventInfoCategoryRepository eventInfoCategoryRepository;
 
 	@DisplayName("이벤트를 생성한다")
 	@Test

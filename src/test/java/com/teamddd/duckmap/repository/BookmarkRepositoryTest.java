@@ -20,7 +20,7 @@ import com.teamddd.duckmap.entity.Member;
 
 @SpringBootTest
 @Transactional
-public class BookmarkRepositoryTest {
+class BookmarkRepositoryTest {
 	@Autowired
 	EntityManager em;
 	@Autowired
@@ -28,7 +28,7 @@ public class BookmarkRepositoryTest {
 
 	@DisplayName("BookmarkFolderId로 북마크 삭제")
 	@Test
-	public void deleteByBookmarkFolderId() throws Exception {
+	void deleteByBookmarkFolderId() throws Exception {
 		//given
 		Member member = Member.builder().username("member1").build();
 		em.persist(member);
@@ -61,7 +61,7 @@ public class BookmarkRepositoryTest {
 
 	@DisplayName("eventId와 memberId로 북마크 조회")
 	@Test
-	public void findByEventAndMember() throws Exception {
+	void findByEventAndMember() throws Exception {
 		//given
 		Member member = Member.builder().username("member1").build();
 		em.persist(member);
