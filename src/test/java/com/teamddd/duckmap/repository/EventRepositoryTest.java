@@ -15,15 +15,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.teamddd.duckmap.dto.event.event.EventLikeBookmarkDto;
+import com.teamddd.duckmap.dto.event.event.EventLikeReviewCountDto;
 import com.teamddd.duckmap.entity.Artist;
 import com.teamddd.duckmap.entity.Event;
 import com.teamddd.duckmap.entity.EventArtist;
 import com.teamddd.duckmap.entity.EventBookmark;
 import com.teamddd.duckmap.entity.EventLike;
 import com.teamddd.duckmap.entity.Member;
+import com.teamddd.duckmap.entity.Review;
 
 @Transactional
 @SpringBootTest
@@ -120,8 +124,7 @@ class EventRepositoryTest {
 		List<String> hashtags = eventRepository.findHashtagsByFromDateAndToDate(date);
 
 		//then
-		assertThat(hashtags).hasSize(2)
-			.containsExactly("#hashtag2", "#hashtag3");
+		assertThat(hashtags).hasSize(2).containsExactly("#hashtag2", "#hashtag3");
 	}
 
 	@DisplayName("member fk가 좋아요한 event 목록 조회")
@@ -168,8 +171,7 @@ class EventRepositoryTest {
 		//then
 		assertThat(events).hasSize(3)
 			.extracting("event.storeName", "likeId", "bookmarkId")
-			.containsExactly(
-				Tuple.tuple("event1", eventLike1.getId(), null),
+			.containsExactly(Tuple.tuple("event1", eventLike1.getId(), null),
 				Tuple.tuple("event2", eventLike2.getId(), eventBookmark2.getId()),
 				Tuple.tuple("event5", eventLike5.getId(), null));
 
@@ -196,10 +198,94 @@ class EventRepositoryTest {
 	}
 
 	private EventArtist createEventArtist(Event event1, Artist artist1) {
-		return EventArtist.builder()
-			.event(event1)
-			.artist(artist1)
-			.build();
+		return EventArtist.builder().event(event1).artist(artist1).build();
+	}
+
+	private Artist createArtist(String name) {
+		return Artist.builder().name(name).build();
+	}
+
+	private Review createReview(Event event) {
+		return Review.builder().member(null).event(event).build();
+	}
+
+	@DisplayName("Event를 EventLike, Reivew 수로 정렬하여 목록 조회")
+	@Test
+	void findForMap() throws Exception {
+		//given
+		LocalDate now = LocalDate.now();
+
+		Event event1 = createEvent(null, "event1", now.minusDays(2), now.minusDays(1), null);
+		Event event2 = createEvent(null, "event2", now.minusDays(2), now, null);
+		Event event3 = createEvent(null, "event3", now.minusDays(1), now, null);
+		Event event4 = createEvent(null, "event4", now.minusDays(1), now.plusDays(1), null);
+		Event event5 = createEvent(null, "event5", now.minusDays(1), now.plusDays(2), null);
+		Event event6 = createEvent(null, "event6", now, now.plusDays(2), null);
+		eventRepository.saveAll(List.of(event1, event2, event3, event4, event5, event6));
+
+		Artist artist1 = createArtist("artist1");
+		em.persist(artist1);
+
+		EventArtist eventArtist1 = createEventArtist(event1, artist1);
+		EventArtist eventArtist2 = createEventArtist(event2, artist1);
+		EventArtist eventArtist3 = createEventArtist(event3, artist1);
+		EventArtist eventArtist4 = createEventArtist(event4, artist1);
+		EventArtist eventArtist5 = createEventArtist(event5, artist1);
+		EventArtist eventArtist6 = createEventArtist(event6, Artist.builder().id(100L).build());
+		em.persist(eventArtist1);
+		em.persist(eventArtist2);
+		em.persist(eventArtist3);
+		em.persist(eventArtist4);
+		em.persist(eventArtist5);
+		em.persist(eventArtist6);
+
+		for (int i = 0; i < 2; i++) {
+			em.persist(createEventLike(null, event1));
+		}
+		for (int i = 0; i < 8; i++) {
+			em.persist(createEventLike(null, event2));
+		}
+		for (int i = 0; i < 4; i++) {
+			em.persist(createEventLike(null, event3));
+		}
+		for (int i = 0; i < 10; i++) {
+			em.persist(createEventLike(null, event4));
+		}
+		for (int i = 0; i < 6; i++) {
+			em.persist(createEventLike(null, event5));
+		}
+		for (int i = 0; i < 12; i++) {
+			em.persist(createEventLike(null, event6));
+		}
+
+		for (int i = 0; i < 11; i++) {
+			em.persist(createReview(event1));
+		}
+		for (int i = 0; i < 5; i++) {
+			em.persist(createReview(event2));
+		}
+		for (int i = 0; i < 9; i++) {
+			em.persist(createReview(event3));
+		}
+		for (int i = 0; i < 3; i++) {
+			em.persist(createReview(event4));
+		}
+		for (int i = 0; i < 7; i++) {
+			em.persist(createReview(event5));
+		}
+		em.persist(createReview(event6));
+
+		em.flush();
+		em.clear();
+
+		Pageable pageable = PageRequest.of(1, 2, Sort.Direction.DESC, "reviewCount");
+		//when
+		Page<EventLikeReviewCountDto> events = eventRepository.findForMap(now, pageable);
+
+		//then
+		assertThat(events).hasSize(2)
+			.extracting("event.storeName", "likeCount", "reviewCount")
+			.containsExactly(Tuple.tuple("event2", 8L, 5L), Tuple.tuple("event4", 10L, 3L));
 	}
 
 	@Nested
@@ -225,8 +311,7 @@ class EventRepositoryTest {
 			EventLikeBookmarkDto findEvent = eventRepository.findByIdWithLikeAndBookmark(event.getId(), null).get();
 
 			//then
-			assertThat(findEvent).extracting("event.storeName", "likeId", "bookmarkId")
-				.contains("event1", null, null);
+			assertThat(findEvent).extracting("event.storeName", "likeId", "bookmarkId").contains("event1", null, null);
 		}
 
 		@DisplayName("member fk가 주어진 경우")
@@ -313,8 +398,7 @@ class EventRepositoryTest {
 			//then
 			assertThat(events).hasSize(2)
 				.extracting("event.storeName", "likeId", "bookmarkId")
-				.containsExactly(Tuple.tuple("event1", null, null),
-					Tuple.tuple("event2", null, null));
+				.containsExactly(Tuple.tuple("event1", null, null), Tuple.tuple("event2", null, null));
 
 			assertThat(events.getTotalElements()).isEqualTo(3);
 			assertThat(events.getTotalPages()).isEqualTo(2);
@@ -371,8 +455,7 @@ class EventRepositoryTest {
 			//then
 			assertThat(events).hasSize(2)
 				.extracting("event.storeName", "likeId", "bookmarkId")
-				.containsExactly(Tuple.tuple("event1", null, null),
-					Tuple.tuple("event2", null, null));
+				.containsExactly(Tuple.tuple("event1", null, null), Tuple.tuple("event2", null, null));
 
 			assertThat(events.getTotalElements()).isEqualTo(3);
 			assertThat(events.getTotalPages()).isEqualTo(2);

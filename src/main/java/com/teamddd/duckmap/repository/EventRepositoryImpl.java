@@ -5,8 +5,10 @@ import static com.teamddd.duckmap.entity.QEventArtist.*;
 import static com.teamddd.duckmap.entity.QEventBookmark.*;
 import static com.teamddd.duckmap.entity.QEventLike.*;
 import static com.teamddd.duckmap.entity.QMember.*;
+import static com.teamddd.duckmap.entity.QReview.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,13 +16,19 @@ import javax.persistence.EntityManager;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
 
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.teamddd.duckmap.dto.event.event.EventLikeBookmarkDto;
+import com.teamddd.duckmap.dto.event.event.EventLikeReviewCountDto;
 import com.teamddd.duckmap.dto.event.event.QEventLikeBookmarkDto;
+import com.teamddd.duckmap.dto.event.event.QEventLikeReviewCountDto;
 
 public class EventRepositoryImpl implements EventRepositoryCustom {
 
@@ -125,6 +133,46 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
 				betweenDate(date));
 
 		return PageableExecutionUtils.getPage(events, pageable, countQuery::fetchOne);
+	}
+
+	@Override
+	public Page<EventLikeReviewCountDto> findForMap(LocalDate date, Pageable pageable) {
+		List<EventLikeReviewCountDto> events = queryFactory.select(new QEventLikeReviewCountDto(
+				event,
+				eventLike.countDistinct().as("likeCount"),
+				review.countDistinct().as("reviewCount")
+			)).from(event)
+			.leftJoin(eventLike).on(event.eq(eventLike.event))
+			.leftJoin(review).on(event.eq(review.event))
+			.join(eventArtist).on(event.eq(eventArtist.event))
+			.join(eventArtist.artist)
+			.where(betweenDate(date))
+			.groupBy(event)
+			.orderBy(itemOrderBySort(pageable.getSort()))
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.fetch();
+
+		JPAQuery<Long> countQuery = queryFactory.select(event.countDistinct())
+			.from(event)
+			.join(eventArtist).on(event.eq(eventArtist.event))
+			.join(eventArtist.artist)
+			.where(betweenDate(date));
+
+		return PageableExecutionUtils.getPage(events, pageable, countQuery::fetchOne);
+	}
+
+	private OrderSpecifier[] itemOrderBySort(Sort sort) {
+		List<OrderSpecifier> orderSpecifiers = new ArrayList<>();
+
+		PathBuilder pathBuilder;
+		for (Sort.Order order : sort) {
+			Order sortBy = order.isAscending() ? Order.ASC : Order.DESC;
+			pathBuilder = new PathBuilder(EventLikeReviewCountDto.class, order.getProperty());
+			orderSpecifiers.add(new OrderSpecifier(sortBy, pathBuilder));
+		}
+
+		return orderSpecifiers.toArray(OrderSpecifier[]::new);
 	}
 
 	private BooleanExpression eventLikeMemberEqMemberId(Long memberId) {
