@@ -21,9 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.teamddd.duckmap.dto.PageReq;
 import com.teamddd.duckmap.dto.event.event.CreateEventReq;
 import com.teamddd.duckmap.dto.event.event.CreateEventRes;
+import com.teamddd.duckmap.dto.event.event.EventPageReq;
 import com.teamddd.duckmap.dto.event.event.EventRes;
 import com.teamddd.duckmap.dto.event.event.EventSearchParam;
 import com.teamddd.duckmap.dto.event.event.EventSearchServiceReq;
+import com.teamddd.duckmap.dto.event.event.EventsMapRes;
 import com.teamddd.duckmap.dto.event.event.EventsRes;
 import com.teamddd.duckmap.dto.event.event.HashtagRes;
 import com.teamddd.duckmap.dto.event.event.MyEventsServiceReq;
@@ -136,6 +138,14 @@ public class EventController {
 			.build();
 
 		return eventService.getMyLikeEventsRes(request);
+	}
+
+	@Operation(summary = "지도 표기용 이벤트 목록 조회")
+	@GetMapping("/map")
+	public Page<EventsMapRes> getEventsForMap(EventPageReq pageable) {
+		LocalDate now = LocalDate.now();
+
+		return eventService.getEventsForMap(now, pageable.toPageable());
 	}
 
 	@Operation(summary = "오늘 진행중인 이벤트 해시태그 목록 조회")
