@@ -28,6 +28,7 @@ import com.teamddd.duckmap.dto.event.event.EventRes;
 import com.teamddd.duckmap.dto.event.event.EventSearchServiceReq;
 import com.teamddd.duckmap.dto.event.event.EventsMapRes;
 import com.teamddd.duckmap.dto.event.event.EventsRes;
+import com.teamddd.duckmap.dto.event.event.HashtagRes;
 import com.teamddd.duckmap.dto.event.event.MyEventsServiceReq;
 import com.teamddd.duckmap.dto.event.event.MyLikeEventsServiceReq;
 import com.teamddd.duckmap.dto.event.event.UpdateEventServiceReq;
@@ -514,6 +515,50 @@ class EventServiceTest {
 			.containsExactly(
 				Tuple.tuple("event5", 6L, 7L),
 				Tuple.tuple("event3", 4L, 9L));
+	}
+
+	@DisplayName("날짜 기준 진행중인 Event의 HashtagsRes 목록 조회")
+	@Test
+	void getHashtagResListByDate() throws Exception {
+		//given
+		LocalDate date = LocalDate.now();
+
+		Event event1 = createEvent(null, "event1", date.minusDays(10), date.minusDays(6), "#hashtag1");
+		Event event2 = createEvent(null, "event2", date.minusDays(1), date, "#hashtag2");
+		Event event3 = createEvent(null, "event3", date, date.plusDays(1), "#hashtag3");
+		Event event4 = createEvent(null, "event4", date, date.plusDays(4), "#hashtag4");
+		em.persist(event1);
+		em.persist(event2);
+		em.persist(event3);
+		em.persist(event4);
+
+		Artist artist1 = Artist.builder().build();
+		Artist artist2 = Artist.builder().build();
+		em.persist(artist1);
+		em.persist(artist2);
+
+		EventArtist eventArtist1 = createEventArtist(event1, artist1);
+		EventArtist eventArtist2 = createEventArtist(event1, artist2);
+		EventArtist eventArtist3 = createEventArtist(event2, artist1);
+		EventArtist eventArtist4 = createEventArtist(event2, artist2);
+		EventArtist eventArtist5 = createEventArtist(event3, artist2);
+		EventArtist eventArtist6 = createEventArtist(event4, Artist.builder().id(100L).build());
+		em.persist(eventArtist1);
+		em.persist(eventArtist2);
+		em.persist(eventArtist3);
+		em.persist(eventArtist4);
+		em.persist(eventArtist5);
+		em.persist(eventArtist6);
+
+		//when
+		List<HashtagRes> hashtagResList = eventService.getHashtagResListByDate(date);
+
+		//then
+		assertThat(hashtagResList).hasSize(2)
+			.extracting("eventId", "hashtag")
+			.containsExactly(
+				Tuple.tuple(event2.getId(), event2.getHashtag()),
+				Tuple.tuple(event3.getId(), event3.getHashtag()));
 	}
 
 	@DisplayName("이벤트를 수정한다")

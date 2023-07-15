@@ -151,23 +151,8 @@ public class EventController {
 	@Operation(summary = "오늘 진행중인 이벤트 해시태그 목록 조회")
 	@GetMapping("/hashtags/today")
 	public List<HashtagRes> getTodayHashtags() {
-		return List.of(
-			HashtagRes.builder()
-				.eventId(1L)
-				.hashtag("#뫄뫄 #생일_축하해")
-				.build(),
-			HashtagRes.builder()
-				.eventId(2L)
-				.hashtag("#소녀시대 #10주년")
-				.build(),
-			HashtagRes.builder()
-				.eventId(3L)
-				.hashtag("#뫄뫄_탄신 #벌써10000일")
-				.build(),
-			HashtagRes.builder()
-				.eventId(4L)
-				.hashtag("#드라마 #대박나자")
-				.build()
-		);
+		LocalDate now = LocalDate.now();
+
+		return eventService.getHashtagResListByDate(now);
 	}
 }
