@@ -77,9 +77,9 @@ class EventRepositoryTest {
 		assertThat(myEvents.getTotalPages()).isEqualTo(1);
 	}
 
-	@DisplayName("날짜 기준 진행중인 event hashtag 목록 조회")
+	@DisplayName("날짜 기준 진행중이고 Artist가 존재하는 Event hashtag 목록 조회")
 	@Test
-	void findHashtagsByFromDateAndToDate() throws Exception {
+	void findByArtistAndDate() throws Exception {
 		//given
 		LocalDate date = LocalDate.now();
 
@@ -89,7 +89,7 @@ class EventRepositoryTest {
 		Event event1 = createEvent(member, "event1", date.minusDays(10), date.minusDays(6), "#hashtag1");
 		Event event2 = createEvent(member, "event2", date.minusDays(1), date, "#hashtag2");
 		Event event3 = createEvent(member, "event3", date, date.plusDays(1), "#hashtag3");
-		Event event4 = createEvent(member, "event4", date.plusDays(2), date.plusDays(4), "#hashtag4");
+		Event event4 = createEvent(member, "event4", date, date.plusDays(4), "#hashtag4");
 		em.persist(event1);
 		em.persist(event2);
 		em.persist(event3);
@@ -103,28 +103,23 @@ class EventRepositoryTest {
 		EventArtist eventArtist1 = createEventArtist(event1, artist1);
 		EventArtist eventArtist2 = createEventArtist(event1, artist2);
 		EventArtist eventArtist3 = createEventArtist(event2, artist1);
-		EventArtist eventArtist4 = createEventArtist(event3, artist2);
-		EventArtist eventArtist5 = createEventArtist(event4, artist1);
+		EventArtist eventArtist4 = createEventArtist(event2, artist2);
+		EventArtist eventArtist5 = createEventArtist(event3, artist2);
+		EventArtist eventArtist6 = createEventArtist(event4, Artist.builder().id(100L).build());
 		em.persist(eventArtist1);
 		em.persist(eventArtist2);
 		em.persist(eventArtist3);
 		em.persist(eventArtist4);
 		em.persist(eventArtist5);
-
-		EventLike eventLike1 = createEventLike(member, event1);
-		EventLike eventLike2 = createEventLike(member, event2);
-		EventBookmark eventBookmark2 = createEventBookmark(member, event2);
-		EventBookmark eventBookmark3 = createEventBookmark(member, event3);
-		em.persist(eventLike1);
-		em.persist(eventLike2);
-		em.persist(eventBookmark2);
-		em.persist(eventBookmark3);
+		em.persist(eventArtist6);
 
 		//when
-		List<String> hashtags = eventRepository.findHashtagsByFromDateAndToDate(date);
+		List<Event> hashtags = eventRepository.findByArtistAndDate(date);
 
 		//then
-		assertThat(hashtags).hasSize(2).containsExactly("#hashtag2", "#hashtag3");
+		assertThat(hashtags).hasSize(2)
+			.extracting("hashtag")
+			.containsExactly("#hashtag2", "#hashtag3");
 	}
 
 	@DisplayName("member fk가 좋아요한 event 목록 조회")

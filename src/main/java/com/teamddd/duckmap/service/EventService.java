@@ -22,6 +22,7 @@ import com.teamddd.duckmap.dto.event.event.EventRes;
 import com.teamddd.duckmap.dto.event.event.EventSearchServiceReq;
 import com.teamddd.duckmap.dto.event.event.EventsMapRes;
 import com.teamddd.duckmap.dto.event.event.EventsRes;
+import com.teamddd.duckmap.dto.event.event.HashtagRes;
 import com.teamddd.duckmap.dto.event.event.MyEventsServiceReq;
 import com.teamddd.duckmap.dto.event.event.MyLikeEventsServiceReq;
 import com.teamddd.duckmap.dto.event.event.UpdateEventServiceReq;
@@ -191,6 +192,12 @@ public class EventService {
 		Page<EventLikeReviewCountDto> events = eventRepository.findForMap(date, pageable);
 
 		return events.map(EventsMapRes::of);
+	}
+
+	public List<HashtagRes> getHashtagResListByDate(LocalDate date) {
+		return eventRepository.findByArtistAndDate(date).stream()
+			.map(HashtagRes::of)
+			.collect(Collectors.toList());
 	}
 
 	@Transactional
