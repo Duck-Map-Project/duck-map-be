@@ -11,6 +11,7 @@ import com.teamddd.duckmap.entity.Event;
 
 public interface EventRepository extends JpaRepository<Event, Long>, EventRepositoryCustom {
 
-	@Query("select e.hashtag from Event e where e.fromDate <= :date and e.toDate >= :date")
-	List<String> findHashtagsByFromDateAndToDate(@Param("date") LocalDate date);
+	@Query("select DISTINCT e from Event e join EventArtist ea on e = ea.event join ea.artist a "
+		+ "where e.fromDate <= :date and e.toDate >= :date")
+	List<Event> findByArtistAndDate(@Param("date") LocalDate date);
 }

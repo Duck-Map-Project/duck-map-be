@@ -19,13 +19,16 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.teamddd.duckmap.dto.event.event.CreateEventReq;
 import com.teamddd.duckmap.dto.event.event.EventRes;
 import com.teamddd.duckmap.dto.event.event.EventSearchServiceReq;
+import com.teamddd.duckmap.dto.event.event.EventsMapRes;
 import com.teamddd.duckmap.dto.event.event.EventsRes;
+import com.teamddd.duckmap.dto.event.event.HashtagRes;
 import com.teamddd.duckmap.dto.event.event.MyEventsServiceReq;
 import com.teamddd.duckmap.dto.event.event.MyLikeEventsServiceReq;
 import com.teamddd.duckmap.dto.event.event.UpdateEventServiceReq;
@@ -39,6 +42,7 @@ import com.teamddd.duckmap.entity.EventImage;
 import com.teamddd.duckmap.entity.EventInfoCategory;
 import com.teamddd.duckmap.entity.EventLike;
 import com.teamddd.duckmap.entity.Member;
+import com.teamddd.duckmap.entity.Review;
 import com.teamddd.duckmap.entity.Role;
 import com.teamddd.duckmap.repository.EventInfoCategoryRepository;
 import com.teamddd.duckmap.repository.EventLikeRepository;
@@ -430,6 +434,133 @@ class EventServiceTest {
 				Tuple.tuple("event4", eventLike3.getId()));
 	}
 
+	@DisplayName("좋아요, 리뷰 수로 정렬하여 EventsMapRes 목록 조회한다")
+	@Test
+	void getEventsForMap() throws Exception {
+		//given
+		LocalDate now = LocalDate.now();
+
+		Event event1 = createEvent(null, "event1", now.minusDays(2), now.minusDays(1), null);
+		Event event2 = createEvent(null, "event2", now.minusDays(2), now, null);
+		Event event3 = createEvent(null, "event3", now.minusDays(1), now, null);
+		Event event4 = createEvent(null, "event4", now.minusDays(1), now.plusDays(1), null);
+		Event event5 = createEvent(null, "event5", now.minusDays(1), now.plusDays(2), null);
+		Event event6 = createEvent(null, "event6", now, now.plusDays(2), null);
+		eventRepository.saveAll(List.of(event1, event2, event3, event4, event5, event6));
+
+		Artist artist1 = createArtist("artist1", null);
+		Artist artist2 = createArtist("artist2", null);
+		em.persist(artist1);
+		em.persist(artist2);
+
+		EventArtist eventArtist1 = createEventArtist(event1, artist1);
+		EventArtist eventArtist2 = createEventArtist(event2, artist1);
+		EventArtist eventArtist3 = createEventArtist(event3, artist2);
+		EventArtist eventArtist4 = createEventArtist(event4, artist2);
+		EventArtist eventArtist5 = createEventArtist(event5, artist1);
+		EventArtist eventArtist6 = createEventArtist(event6, Artist.builder().id(100L).build());
+		em.persist(eventArtist1);
+		em.persist(eventArtist2);
+		em.persist(eventArtist3);
+		em.persist(eventArtist4);
+		em.persist(eventArtist5);
+		em.persist(eventArtist6);
+
+		for (int i = 0; i < 2; i++) {
+			em.persist(createEventLike(event1, null));
+		}
+		for (int i = 0; i < 8; i++) {
+			em.persist(createEventLike(event2, null));
+		}
+		for (int i = 0; i < 4; i++) {
+			em.persist(createEventLike(event3, null));
+		}
+		for (int i = 0; i < 10; i++) {
+			em.persist(createEventLike(event4, null));
+		}
+		for (int i = 0; i < 6; i++) {
+			em.persist(createEventLike(event5, null));
+		}
+		for (int i = 0; i < 12; i++) {
+			em.persist(createEventLike(event6, null));
+		}
+
+		for (int i = 0; i < 11; i++) {
+			em.persist(createReview(event1));
+		}
+		for (int i = 0; i < 5; i++) {
+			em.persist(createReview(event2));
+		}
+		for (int i = 0; i < 9; i++) {
+			em.persist(createReview(event3));
+		}
+		for (int i = 0; i < 3; i++) {
+			em.persist(createReview(event4));
+		}
+		for (int i = 0; i < 7; i++) {
+			em.persist(createReview(event5));
+		}
+		em.persist(createReview(event6));
+
+		em.flush();
+		em.clear();
+
+		Pageable pageable = PageRequest.of(1, 2, Sort.Direction.DESC, "likeCount");
+		//when
+		Page<EventsMapRes> events = eventService.getEventsForMap(now, pageable);
+
+		//then
+		assertThat(events).hasSize(2)
+			.extracting("storeName", "likeCount", "reviewCount")
+			.containsExactly(
+				Tuple.tuple("event5", 6L, 7L),
+				Tuple.tuple("event3", 4L, 9L));
+	}
+
+	@DisplayName("날짜 기준 진행중인 Event의 HashtagsRes 목록 조회")
+	@Test
+	void getHashtagResListByDate() throws Exception {
+		//given
+		LocalDate date = LocalDate.now();
+
+		Event event1 = createEvent(null, "event1", date.minusDays(10), date.minusDays(6), "#hashtag1");
+		Event event2 = createEvent(null, "event2", date.minusDays(1), date, "#hashtag2");
+		Event event3 = createEvent(null, "event3", date, date.plusDays(1), "#hashtag3");
+		Event event4 = createEvent(null, "event4", date, date.plusDays(4), "#hashtag4");
+		em.persist(event1);
+		em.persist(event2);
+		em.persist(event3);
+		em.persist(event4);
+
+		Artist artist1 = Artist.builder().build();
+		Artist artist2 = Artist.builder().build();
+		em.persist(artist1);
+		em.persist(artist2);
+
+		EventArtist eventArtist1 = createEventArtist(event1, artist1);
+		EventArtist eventArtist2 = createEventArtist(event1, artist2);
+		EventArtist eventArtist3 = createEventArtist(event2, artist1);
+		EventArtist eventArtist4 = createEventArtist(event2, artist2);
+		EventArtist eventArtist5 = createEventArtist(event3, artist2);
+		EventArtist eventArtist6 = createEventArtist(event4, Artist.builder().id(100L).build());
+		em.persist(eventArtist1);
+		em.persist(eventArtist2);
+		em.persist(eventArtist3);
+		em.persist(eventArtist4);
+		em.persist(eventArtist5);
+		em.persist(eventArtist6);
+
+		//when
+		List<HashtagRes> hashtagResList = eventService.getHashtagResListByDate(date);
+
+		//then
+		assertThat(hashtagResList).hasSize(2)
+			.extracting("eventId", "hashtag")
+			.containsExactly(
+				Tuple.tuple(event2.getId(), event2.getHashtag()),
+				Tuple.tuple(event3.getId(), event3.getHashtag()));
+	}
+
 	@DisplayName("이벤트를 수정한다")
 	@Test
 	void updateEvent() throws Exception {
@@ -603,6 +734,12 @@ class EventServiceTest {
 			.toDate(toDate)
 			.hashtag(hashtag)
 			.eventImages(List.of())
+			.build();
+	}
+
+	Review createReview(Event event) {
+		return Review.builder()
+			.event(event)
 			.build();
 	}
 

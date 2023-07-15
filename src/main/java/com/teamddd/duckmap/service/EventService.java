@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -16,9 +17,12 @@ import com.teamddd.duckmap.dto.artist.ArtistRes;
 import com.teamddd.duckmap.dto.event.category.EventCategoryRes;
 import com.teamddd.duckmap.dto.event.event.CreateEventReq;
 import com.teamddd.duckmap.dto.event.event.EventLikeBookmarkDto;
+import com.teamddd.duckmap.dto.event.event.EventLikeReviewCountDto;
 import com.teamddd.duckmap.dto.event.event.EventRes;
 import com.teamddd.duckmap.dto.event.event.EventSearchServiceReq;
+import com.teamddd.duckmap.dto.event.event.EventsMapRes;
 import com.teamddd.duckmap.dto.event.event.EventsRes;
+import com.teamddd.duckmap.dto.event.event.HashtagRes;
 import com.teamddd.duckmap.dto.event.event.MyEventsServiceReq;
 import com.teamddd.duckmap.dto.event.event.MyLikeEventsServiceReq;
 import com.teamddd.duckmap.dto.event.event.UpdateEventServiceReq;
@@ -182,6 +186,18 @@ public class EventService {
 			request.getPageable());
 
 		return myLikeEvents.map(eventLikeBookmarkDto -> EventsRes.of(eventLikeBookmarkDto, request.getDate()));
+	}
+
+	public Page<EventsMapRes> getEventsForMap(LocalDate date, Pageable pageable) {
+		Page<EventLikeReviewCountDto> events = eventRepository.findForMap(date, pageable);
+
+		return events.map(EventsMapRes::of);
+	}
+
+	public List<HashtagRes> getHashtagResListByDate(LocalDate date) {
+		return eventRepository.findByArtistAndDate(date).stream()
+			.map(HashtagRes::of)
+			.collect(Collectors.toList());
 	}
 
 	@Transactional
