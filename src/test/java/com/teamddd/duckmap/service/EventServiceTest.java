@@ -11,6 +11,7 @@ import javax.persistence.EntityManager;
 
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,12 +42,14 @@ import com.teamddd.duckmap.entity.EventCategory;
 import com.teamddd.duckmap.entity.EventImage;
 import com.teamddd.duckmap.entity.EventInfoCategory;
 import com.teamddd.duckmap.entity.EventLike;
+import com.teamddd.duckmap.entity.LastSearchArtist;
 import com.teamddd.duckmap.entity.Member;
 import com.teamddd.duckmap.entity.Review;
 import com.teamddd.duckmap.entity.Role;
 import com.teamddd.duckmap.repository.EventInfoCategoryRepository;
 import com.teamddd.duckmap.repository.EventLikeRepository;
 import com.teamddd.duckmap.repository.EventRepository;
+import com.teamddd.duckmap.repository.LastSearchArtistRepository;
 import com.teamddd.duckmap.repository.ReviewRepository;
 
 @Transactional
@@ -68,6 +71,8 @@ class EventServiceTest {
 	EventLikeRepository eventLikeRepository;
 	@Autowired
 	EventInfoCategoryRepository eventInfoCategoryRepository;
+	@Autowired
+	LastSearchArtistRepository lastSearchArtistRepository;
 
 	@DisplayName("이벤트를 생성한다")
 	@Test
@@ -165,80 +170,6 @@ class EventServiceTest {
 			.containsExactlyInAnyOrder(Tuple.tuple("artist1", "artist_type"), Tuple.tuple("artist2", "artist_type"));
 		assertThat(eventRes.getCategories()).extracting("category")
 			.containsExactlyInAnyOrder("event_category1", "event_category2");
-	}
-
-	@DisplayName("Artist id, date로 EventsRes 목록 조회")
-	@Test
-	void getEventsResList() throws Exception {
-		//given
-		LocalDate now = LocalDate.now();
-
-		// save Artist
-		ArtistType artistType = createArtistType();
-		em.persist(artistType);
-		Artist artist1 = createArtist("artist1", artistType);
-		Artist artist2 = createArtist("artist2", artistType);
-		em.persist(artist1);
-		em.persist(artist2);
-
-		// save EventCategory
-		EventCategory eventCategory1 = createEventCategory("event_category1");
-		EventCategory eventCategory2 = createEventCategory("event_category2");
-		em.persist(eventCategory1);
-		em.persist(eventCategory2);
-
-		//save Event
-		Event event1 = createEvent(null, "event1", now.minusDays(2), now.plusDays(1), "");
-		Event event2 = createEvent(null, "event2", now.plusDays(1), now.plusDays(1), "");
-		em.persist(event1);
-		em.persist(event2);
-
-		// Artist, EventCategory, EventImage -> event
-		EventArtist eventArtist1 = createEventArtist(event1, artist1);
-		EventArtist eventArtist2 = createEventArtist(event2, artist1);
-		EventArtist eventArtist3 = createEventArtist(event2, artist2);
-		em.persist(eventArtist1);
-		em.persist(eventArtist2);
-		em.persist(eventArtist3);
-		EventInfoCategory eventInfoCategory1 = createEventInfoCategory(event1, eventCategory1);
-		EventInfoCategory eventInfoCategory2 = createEventInfoCategory(event2, eventCategory2);
-		em.persist(eventInfoCategory1);
-		em.persist(eventInfoCategory2);
-		EventImage image1 = createEventImage(event1, "image1", false);
-		EventImage image2 = createEventImage(event1, "image2", true);
-		EventImage image3 = createEventImage(event2, "image3", true);
-		EventImage image4 = createEventImage(event2, "image4", false);
-		em.persist(image1);
-		em.persist(image2);
-		em.persist(image3);
-		em.persist(image4);
-
-		em.flush();
-		em.clear();
-
-		Artist searchArtist = artist1;
-
-		Pageable pageable = PageRequest.of(0, 3);
-
-		EventSearchServiceReq request = EventSearchServiceReq.builder()
-			.memberId(null)
-			.date(now)
-			.artistId(searchArtist.getId())
-			// .onlyInProgress(false) default == false
-			.pageable(pageable)
-			.build();
-
-		when(artistService.getArtist(any())).thenReturn(searchArtist);
-
-		//when
-		Page<EventsRes> eventsResList = eventService.getEventsResList(request);
-
-		//then
-		assertThat(eventsResList).hasSize(2)
-			.extracting("storeName", "likeId", "bookmarkId")
-			.containsExactly(
-				Tuple.tuple("event1", null, null),
-				Tuple.tuple("event2", null, null));
 	}
 
 	@DisplayName("Member Id로 EventsRes 목록 조회")
@@ -792,5 +723,177 @@ class EventServiceTest {
 			.password("member_password")
 			.role(Role.USER)
 			.build();
+	}
+
+	LastSearchArtist createLastSearchArtist(Member member, Artist artist) {
+		return LastSearchArtist.builder()
+			.member(member)
+			.artist(artist)
+			.build();
+	}
+
+	@DisplayName("Artist id, date로 EventsRes 목록 조회")
+	@Nested
+	class GetEventsResList {
+		@DisplayName("로그인한 Member가 없는 경우")
+		@Test
+		void getEventsResList1() throws Exception {
+			//given
+			LocalDate now = LocalDate.now();
+
+			// save Artist
+			ArtistType artistType = createArtistType();
+			em.persist(artistType);
+			Artist artist1 = createArtist("artist1", artistType);
+			Artist artist2 = createArtist("artist2", artistType);
+			em.persist(artist1);
+			em.persist(artist2);
+
+			// save EventCategory
+			EventCategory eventCategory1 = createEventCategory("event_category1");
+			EventCategory eventCategory2 = createEventCategory("event_category2");
+			em.persist(eventCategory1);
+			em.persist(eventCategory2);
+
+			//save Event
+			Event event1 = createEvent(null, "event1", now.minusDays(2), now.plusDays(1), "");
+			Event event2 = createEvent(null, "event2", now.plusDays(1), now.plusDays(1), "");
+			em.persist(event1);
+			em.persist(event2);
+
+			// Artist, EventCategory, EventImage -> event
+			EventArtist eventArtist1 = createEventArtist(event1, artist1);
+			EventArtist eventArtist2 = createEventArtist(event2, artist1);
+			EventArtist eventArtist3 = createEventArtist(event2, artist2);
+			em.persist(eventArtist1);
+			em.persist(eventArtist2);
+			em.persist(eventArtist3);
+			EventInfoCategory eventInfoCategory1 = createEventInfoCategory(event1, eventCategory1);
+			EventInfoCategory eventInfoCategory2 = createEventInfoCategory(event2, eventCategory2);
+			em.persist(eventInfoCategory1);
+			em.persist(eventInfoCategory2);
+			EventImage image1 = createEventImage(event1, "image1", false);
+			EventImage image2 = createEventImage(event1, "image2", true);
+			EventImage image3 = createEventImage(event2, "image3", true);
+			EventImage image4 = createEventImage(event2, "image4", false);
+			em.persist(image1);
+			em.persist(image2);
+			em.persist(image3);
+			em.persist(image4);
+
+			em.flush();
+			em.clear();
+
+			Artist searchArtist = artist1;
+
+			Pageable pageable = PageRequest.of(0, 3);
+
+			EventSearchServiceReq request = EventSearchServiceReq.builder()
+				.member(Optional.empty())
+				.date(now)
+				.artistId(searchArtist.getId())
+				// .onlyInProgress(false) default == false
+				.pageable(pageable)
+				.build();
+
+			when(artistService.getArtist(any())).thenReturn(searchArtist);
+
+			//when
+			Page<EventsRes> eventsResList = eventService.getEventsResList(request);
+
+			//then
+			assertThat(eventsResList).hasSize(2)
+				.extracting("storeName", "likeId", "bookmarkId")
+				.containsExactly(
+					Tuple.tuple("event1", null, null),
+					Tuple.tuple("event2", null, null));
+		}
+
+		@DisplayName("로그인한 Member가 있는 경우")
+		@Test
+		void getEventsResList2() throws Exception {
+			//given
+			LocalDate now = LocalDate.now();
+
+			Member member1 = createMember("member1");
+			em.persist(member1);
+
+			// save Artist
+			ArtistType artistType = createArtistType();
+			em.persist(artistType);
+			Artist artist1 = createArtist("artist1", artistType);
+			Artist artist2 = createArtist("artist2", artistType);
+			em.persist(artist1);
+			em.persist(artist2);
+
+			// save LastSearchArtist
+			LastSearchArtist lastSearchArtist1 = createLastSearchArtist(member1, artist2);
+			em.persist(lastSearchArtist1);
+
+			// save EventCategory
+			EventCategory eventCategory1 = createEventCategory("event_category1");
+			EventCategory eventCategory2 = createEventCategory("event_category2");
+			em.persist(eventCategory1);
+			em.persist(eventCategory2);
+
+			//save Event
+			Event event1 = createEvent(null, "event1", now.minusDays(2), now.plusDays(1), "");
+			Event event2 = createEvent(null, "event2", now.plusDays(1), now.plusDays(1), "");
+			em.persist(event1);
+			em.persist(event2);
+
+			// Artist, EventCategory, EventImage -> event
+			EventArtist eventArtist1 = createEventArtist(event1, artist1);
+			EventArtist eventArtist2 = createEventArtist(event2, artist1);
+			EventArtist eventArtist3 = createEventArtist(event2, artist2);
+			em.persist(eventArtist1);
+			em.persist(eventArtist2);
+			em.persist(eventArtist3);
+			EventInfoCategory eventInfoCategory1 = createEventInfoCategory(event1, eventCategory1);
+			EventInfoCategory eventInfoCategory2 = createEventInfoCategory(event2, eventCategory2);
+			em.persist(eventInfoCategory1);
+			em.persist(eventInfoCategory2);
+			EventImage image1 = createEventImage(event1, "image1", false);
+			EventImage image2 = createEventImage(event1, "image2", true);
+			EventImage image3 = createEventImage(event2, "image3", true);
+			EventImage image4 = createEventImage(event2, "image4", false);
+			em.persist(image1);
+			em.persist(image2);
+			em.persist(image3);
+			em.persist(image4);
+
+			em.flush();
+			em.clear();
+
+			Artist searchArtist = artist1;
+
+			Pageable pageable = PageRequest.of(0, 3);
+
+			EventSearchServiceReq request = EventSearchServiceReq.builder()
+				.member(Optional.of(member1))
+				.date(now)
+				.artistId(searchArtist.getId())
+				// .onlyInProgress(false) default == false
+				.pageable(pageable)
+				.build();
+
+			when(artistService.getArtist(any())).thenReturn(searchArtist);
+
+			//when
+			Page<EventsRes> eventsResList = eventService.getEventsResList(request);
+
+			//then
+			assertThat(eventsResList).hasSize(2)
+				.extracting("storeName", "likeId", "bookmarkId")
+				.containsExactly(
+					Tuple.tuple("event1", null, null),
+					Tuple.tuple("event2", null, null));
+
+			Optional<LastSearchArtist> findLastSearch = lastSearchArtistRepository.findByMember(member1);
+			assertThat(findLastSearch).isNotEmpty();
+			assertThat(findLastSearch.get()).extracting("member.email", "artist.name")
+				.containsExactly("member1", "artist1");
+
+		}
 	}
 }

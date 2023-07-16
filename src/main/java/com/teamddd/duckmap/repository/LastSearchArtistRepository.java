@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.teamddd.duckmap.entity.LastSearchArtist;
+import com.teamddd.duckmap.entity.Member;
 
 public interface LastSearchArtistRepository extends JpaRepository<LastSearchArtist, Long> {
 	Optional<LastSearchArtist> findByMemberId(Long memberId);
@@ -15,4 +16,6 @@ public interface LastSearchArtistRepository extends JpaRepository<LastSearchArti
 	@Modifying(clearAutomatically = true)
 	@Query("delete from LastSearchArtist lsa where lsa.artist.id = :artistId")
 	int deleteByArtistId(@Param("artistId") Long artistId);
+
+	Optional<LastSearchArtist> findByMember(Member member);
 }

@@ -55,6 +55,7 @@ public class EventService {
 	private final EventRepository eventRepository;
 	private final ArtistService artistService;
 	private final EventCategoryService eventCategoryService;
+	private final LastSearchArtistService lastSearchArtistService;
 	private final ReviewRepository reviewRepository;
 	private final EventLikeRepository eventLikeRepository;
 	private final BookmarkRepository eventBookmarkRepository;
@@ -162,12 +163,16 @@ public class EventService {
 
 	public Page<EventsRes> getEventsResList(EventSearchServiceReq request) {
 		if (request.getArtistId() != null) {
-			artistService.getArtist(request.getArtistId());
+			Artist searchArtist = artistService.getArtist(request.getArtistId());
+
+			request.getMember()
+				.ifPresent(member -> lastSearchArtistService.saveLastSearchArtist(member, searchArtist));
 		}
 
 		LocalDate searchDate = request.isOnlyInProgress() ? request.getDate() : null;
 		Page<EventLikeBookmarkDto> eventLikeBookmarkDtos = eventRepository.findByArtistAndDate(request.getArtistId(),
-			searchDate, request.getMemberId(),
+			searchDate,
+			request.getMember().map(Member::getId).orElse(null),
 			request.getPageable());
 
 		return eventLikeBookmarkDtos
