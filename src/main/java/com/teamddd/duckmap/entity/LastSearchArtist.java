@@ -25,11 +25,14 @@ public class LastSearchArtist extends BaseTimeEntity {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "member_id")
+	@JoinColumn(name = "member_id", unique = true)
 	private Member member;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "artist_id")
 	private Artist artist;
 
+	public void changeSearchArtist(Artist artist) {
+		this.artist = artist;
+	}
 }

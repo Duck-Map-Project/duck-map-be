@@ -92,15 +92,12 @@ public class EventController {
 	@Operation(summary = "이벤트 목록 조회")
 	@GetMapping
 	public Page<EventsRes> getEvents(PageReq pageReq, @ModelAttribute EventSearchParam eventSearchParam) {
-
-		Long memberId = MemberUtils.getMember()
-			.map(Member::getId)
-			.orElse(null);
-
 		LocalDate today = LocalDate.now();
+
 		Pageable pageable = PageRequest.of(pageReq.getPageNumber(), pageReq.getPageSize());
+
 		EventSearchServiceReq request = EventSearchServiceReq.builder()
-			.memberId(memberId)
+			.member(MemberUtils.getMember())
 			.date(today)
 			.artistId(eventSearchParam.getArtistId())
 			.onlyInProgress(BooleanUtils.isTrue(eventSearchParam.getOnlyInProgress()))
