@@ -71,6 +71,9 @@ public class MemberService {
 		Member member = memberRepository.findByEmail(MemberUtils.getAuthMember().getUsername())
 			.orElseThrow(InvalidMemberException::new);
 
+		//닉네임 중복 체크
+		checkDuplicateUsername(username);
+
 		//기존 프로필 image
 		String oldImage = member.getImage();
 
