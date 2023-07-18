@@ -2,6 +2,7 @@ package com.teamddd.duckmap.repository;
 
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -18,4 +19,7 @@ public interface LastSearchArtistRepository extends JpaRepository<LastSearchArti
 	int deleteByArtistId(@Param("artistId") Long artistId);
 
 	Optional<LastSearchArtist> findByMember(Member member);
+
+	@EntityGraph(attributePaths = {"artist"})
+	Optional<LastSearchArtist> findWithArtistByMember(Member member);
 }

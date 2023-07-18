@@ -37,7 +37,7 @@ public class LastSearchArtistService {
 	}
 
 	public LastSearchArtistRes getLastSearchArtistRes(Member member) {
-		return lastSearchArtistRepository.findByMember(member)
+		return lastSearchArtistRepository.findWithArtistByMember(member)
 			.map(LastSearchArtistRes::of)
 			.orElse(
 				LastSearchArtistRes.builder()
