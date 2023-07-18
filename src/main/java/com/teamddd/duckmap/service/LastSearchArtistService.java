@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.teamddd.duckmap.dto.user.LastSearchArtistRes;
 import com.teamddd.duckmap.entity.Artist;
 import com.teamddd.duckmap.entity.LastSearchArtist;
 import com.teamddd.duckmap.entity.Member;
@@ -33,5 +34,15 @@ public class LastSearchArtistService {
 					.build()
 			)
 		);
+	}
+
+	public LastSearchArtistRes getLastSearchArtistRes(Member member) {
+		return lastSearchArtistRepository.findWithArtistByMember(member)
+			.map(LastSearchArtistRes::of)
+			.orElse(
+				LastSearchArtistRes.builder()
+					.memberId(member.getId())
+					.build()
+			);
 	}
 }

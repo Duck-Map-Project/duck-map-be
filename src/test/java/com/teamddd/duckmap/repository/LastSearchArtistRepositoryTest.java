@@ -50,7 +50,7 @@ class LastSearchArtistRepositoryTest {
 		assertThat(deleteCount).isEqualTo(2);
 
 		List<LastSearchArtist> findLastSearchArtists = lastSearchArtistRepository.findAll();
-		assertThat(findLastSearchArtists).hasSize(0);
+		assertThat(findLastSearchArtists).isEmpty();
 	}
 
 	@DisplayName("Member로 LastSearchArtist 조회")
@@ -79,6 +79,37 @@ class LastSearchArtistRepositoryTest {
 		assertThat(findLastSearch).isNotEmpty();
 		assertThat(findLastSearch.get()).extracting("member.email", "artist.name")
 			.containsExactly("member1", "artist1");
+	}
+
+	@DisplayName("Member로 LastSearchArtist 조회 시 Artist fetch join")
+	@Test
+	void findWithArtistByMember() throws Exception {
+		//given
+		Member member1 = createMember("member1");
+		Member member2 = createMember("member2");
+		em.persist(member1);
+		em.persist(member2);
+
+		Artist artist1 = createArtist("artist1");
+		Artist artist2 = createArtist("artist2");
+		em.persist(artist1);
+		em.persist(artist2);
+
+		LastSearchArtist lastSearchArtist1 = createLastSearchArtist(member1, artist1);
+		LastSearchArtist lastSearchArtist2 = createLastSearchArtist(member2, artist2);
+		em.persist(lastSearchArtist1);
+		em.persist(lastSearchArtist2);
+
+		em.flush();
+		em.clear();
+
+		//when
+		Optional<LastSearchArtist> findLastSearch = lastSearchArtistRepository.findWithArtistByMember(member1);
+
+		//then
+		assertThat(findLastSearch).isNotEmpty();
+		assertThat(findLastSearch.get()).extracting("member.id", "artist.name")
+			.containsExactly(member1.getId(), "artist1");
 	}
 
 	Member createMember(String email) {
