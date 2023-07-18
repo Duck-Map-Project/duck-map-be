@@ -15,13 +15,16 @@ import org.springframework.web.bind.annotation.RestController;
 import com.teamddd.duckmap.dto.user.CreateMemberReq;
 import com.teamddd.duckmap.dto.user.CreateMemberRes;
 import com.teamddd.duckmap.dto.user.DeleteMemberReq;
+import com.teamddd.duckmap.dto.user.LastSearchArtistRes;
 import com.teamddd.duckmap.dto.user.MemberRes;
 import com.teamddd.duckmap.dto.user.ResetPasswordReq;
 import com.teamddd.duckmap.dto.user.UpdateMemberReq;
 import com.teamddd.duckmap.dto.user.UpdatePasswordReq;
 import com.teamddd.duckmap.entity.Member;
 import com.teamddd.duckmap.service.AuthService;
+import com.teamddd.duckmap.service.LastSearchArtistService;
 import com.teamddd.duckmap.service.MemberService;
+import com.teamddd.duckmap.util.MemberUtils;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 public class MemberController {
 	private final MemberService memberService;
 	private final AuthService authService;
+	private final LastSearchArtistService lastSearchArtistService;
 
 	@Operation(summary = "회원 가입")
 	@PostMapping("/join")
@@ -76,6 +80,14 @@ public class MemberController {
 	public void resetPassword(@PathVariable("id") String uuid,
 		@Validated @RequestBody ResetPasswordReq resetPasswordReq) {
 		memberService.resetPassword(uuid, resetPasswordReq.getNewPassword());
+	}
+
+	@Operation(summary = "로그인한 회원의 마지막 검색 아티스트 조회")
+	@GetMapping("/me/last-search-artist")
+	public LastSearchArtistRes getLastSearchArtist() {
+		Member member = MemberUtils.getAuthMember().getUser();
+
+		return lastSearchArtistService.getLastSearchArtistRes(member);
 	}
 
 }

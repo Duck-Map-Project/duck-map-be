@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.teamddd.duckmap.dto.user.LastSearchArtistRes;
 import com.teamddd.duckmap.entity.Artist;
 import com.teamddd.duckmap.entity.LastSearchArtist;
 import com.teamddd.duckmap.entity.Member;
@@ -96,6 +97,48 @@ class LastSearchArtistServiceTest {
 			assertThat(findLastSearch).isNotEmpty();
 			assertThat(findLastSearch.get()).extracting("member.email", "artist.name")
 				.containsExactly("member1", "after");
+		}
+	}
+
+	@DisplayName("Member로 LastSearchArtistRes를 조회한다")
+	@Nested
+	class GetLastSearchArtistRes {
+		@DisplayName("Member의 LastSearchArtist가 있는 경우")
+		@Test
+		void getLastSearchArtistRes1() throws Exception {
+			//given
+			Member member1 = createMember("member1");
+			em.persist(member1);
+
+			Artist artist1 = createArtist("artist1");
+			em.persist(artist1);
+
+			LastSearchArtist lastSearchArtist1 = createLastSearchArtist(member1, artist1);
+			em.persist(lastSearchArtist1);
+
+			//when
+			LastSearchArtistRes lastSearchArtistRes = lastSearchArtistService.getLastSearchArtistRes(member1);
+
+			//then
+			assertThat(lastSearchArtistRes)
+				.extracting("memberId", "artistId")
+				.containsExactly(member1.getId(), artist1.getId());
+		}
+
+		@DisplayName("Member의 LastSearchArtist가 없는 경우")
+		@Test
+		void getLastSearchArtistRes2() throws Exception {
+			//given
+			Member member1 = createMember("member1");
+			em.persist(member1);
+
+			//when
+			LastSearchArtistRes lastSearchArtistRes = lastSearchArtistService.getLastSearchArtistRes(member1);
+
+			//then
+			assertThat(lastSearchArtistRes)
+				.extracting("memberId", "artistId")
+				.containsExactly(member1.getId(), null);
 		}
 	}
 }
