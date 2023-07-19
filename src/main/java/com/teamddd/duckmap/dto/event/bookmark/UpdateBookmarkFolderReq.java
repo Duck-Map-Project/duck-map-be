@@ -9,4 +9,5 @@ public class UpdateBookmarkFolderReq {
 	@NotBlank
 	private String name;
 	private String image;
+	private String color;
 }

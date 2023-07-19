@@ -12,12 +12,14 @@ public class BookmarkFolderRes {
 	private Long id;
 	private String name;
 	private String image;
+	private String color;
 
 	public static BookmarkFolderRes of(EventBookmarkFolder eventBookmarkFolder) {
 		return BookmarkFolderRes.builder()
 			.id(eventBookmarkFolder.getId())
 			.name(eventBookmarkFolder.getName())
 			.image(ApiUrl.IMAGE + eventBookmarkFolder.getImage())
+			.color(eventBookmarkFolder.getColor())
 			.build();
 	}
 }

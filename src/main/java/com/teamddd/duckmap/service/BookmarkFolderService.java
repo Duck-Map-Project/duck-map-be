@@ -36,12 +36,13 @@ public class BookmarkFolderService {
 	private final BookmarkRepository bookmarkRepository;
 
 	@Transactional
-	public Long createBookmarkFolder(CreateBookmarkFolderReq createBookmarkFolderReq, Member member) {
+	public Long createBookmarkFolder(CreateBookmarkFolderReq request, Member member) {
 
 		EventBookmarkFolder bookmarkFolder = EventBookmarkFolder.builder()
 			.member(member)
-			.name(createBookmarkFolderReq.getName())
-			.image(createBookmarkFolderReq.getImage())
+			.name(request.getName())
+			.image(request.getImage())
+			.color(request.getColor())
 			.build();
 
 		bookmarkFolderRepository.save(bookmarkFolder);
@@ -50,17 +51,17 @@ public class BookmarkFolderService {
 	}
 
 	@Transactional
-	public void updateBookmarkFolder(Long bookmarkFolderId, UpdateBookmarkFolderReq updateBookmarkFolderReq) {
+	public void updateBookmarkFolder(Long bookmarkFolderId, UpdateBookmarkFolderReq request) {
 		EventBookmarkFolder bookmarkFolder = bookmarkFolderRepository.findById(bookmarkFolderId)
 			.orElseThrow(NonExistentBookmarkFolderException::new);
 
 		//기존 북마크 폴더 image
 		String oldImage = bookmarkFolder.getImage();
 
-		bookmarkFolder.updateEventBookmarkFolder(updateBookmarkFolderReq.getName(), updateBookmarkFolderReq.getImage());
+		bookmarkFolder.updateEventBookmarkFolder(request.getName(), request.getImage(), request.getColor());
 
 		//북마크 폴더 image가 변경되었다면 서버에서 기존 북마크 폴더 image 삭제
-		if (StringUtils.hasText(oldImage) && !oldImage.equals(updateBookmarkFolderReq.getImage())) {
+		if (StringUtils.hasText(oldImage) && !oldImage.equals(request.getImage())) {
 			FileUtils.deleteFile(props.getImageDir(), oldImage);
 		}
 	}
@@ -89,8 +90,10 @@ public class BookmarkFolderService {
 			.id(bookmarkFolderId)
 			.name(bookmarkFolderMemberDto.getBookmarkFolder().getName())
 			.image(ApiUrl.IMAGE + bookmarkFolderMemberDto.getBookmarkFolder().getImage())
+			.color(bookmarkFolderMemberDto.getBookmarkFolder().getColor())
 			.memberId(bookmarkFolderMemberDto.getMemberId())
 			.username(bookmarkFolderMemberDto.getUsername())
+			.color(bookmarkFolderMemberDto.getBookmarkFolder().getColor())
 			.build();
 	}
 
