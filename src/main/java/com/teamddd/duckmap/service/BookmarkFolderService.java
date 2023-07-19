@@ -3,10 +3,8 @@ package com.teamddd.duckmap.service;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import com.teamddd.duckmap.common.ApiUrl;
-import com.teamddd.duckmap.common.Props;
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkEventDto;
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderMemberDto;
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderMemberRes;
@@ -21,7 +19,6 @@ import com.teamddd.duckmap.entity.Member;
 import com.teamddd.duckmap.exception.NonExistentBookmarkFolderException;
 import com.teamddd.duckmap.repository.BookmarkFolderRepository;
 import com.teamddd.duckmap.repository.BookmarkRepository;
-import com.teamddd.duckmap.util.FileUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,17 +28,17 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class BookmarkFolderService {
-	private final Props props;
 	private final BookmarkFolderRepository bookmarkFolderRepository;
 	private final BookmarkRepository bookmarkRepository;
 
 	@Transactional
-	public Long createBookmarkFolder(CreateBookmarkFolderReq createBookmarkFolderReq, Member member) {
+	public Long createBookmarkFolder(CreateBookmarkFolderReq request, Member member) {
 
 		EventBookmarkFolder bookmarkFolder = EventBookmarkFolder.builder()
 			.member(member)
-			.name(createBookmarkFolderReq.getName())
-			.image(createBookmarkFolderReq.getImage())
+			.name(request.getName())
+			.image(request.getImage())
+			.color(request.getColor())
 			.build();
 
 		bookmarkFolderRepository.save(bookmarkFolder);
@@ -50,19 +47,11 @@ public class BookmarkFolderService {
 	}
 
 	@Transactional
-	public void updateBookmarkFolder(Long bookmarkFolderId, UpdateBookmarkFolderReq updateBookmarkFolderReq) {
+	public void updateBookmarkFolder(Long bookmarkFolderId, UpdateBookmarkFolderReq request) {
 		EventBookmarkFolder bookmarkFolder = bookmarkFolderRepository.findById(bookmarkFolderId)
 			.orElseThrow(NonExistentBookmarkFolderException::new);
 
-		//기존 북마크 폴더 image
-		String oldImage = bookmarkFolder.getImage();
-
-		bookmarkFolder.updateEventBookmarkFolder(updateBookmarkFolderReq.getName(), updateBookmarkFolderReq.getImage());
-
-		//북마크 폴더 image가 변경되었다면 서버에서 기존 북마크 폴더 image 삭제
-		if (StringUtils.hasText(oldImage) && !oldImage.equals(updateBookmarkFolderReq.getImage())) {
-			FileUtils.deleteFile(props.getImageDir(), oldImage);
-		}
+		bookmarkFolder.updateEventBookmarkFolder(request.getName(), request.getImage(), request.getColor());
 	}
 
 	@Transactional
@@ -73,10 +62,6 @@ public class BookmarkFolderService {
 		//관련 북마크 삭제
 		bookmarkRepository.deleteByBookmarkFolderId(bookmarkFolderId);
 
-		//서버에서 북마크폴더 이미지 삭제
-		if (StringUtils.hasText(bookmarkFolder.getImage())) {
-			FileUtils.deleteFile(props.getImageDir(), bookmarkFolder.getImage());
-		}
 		bookmarkFolderRepository.deleteById(bookmarkFolderId);
 	}
 
@@ -89,6 +74,7 @@ public class BookmarkFolderService {
 			.id(bookmarkFolderId)
 			.name(bookmarkFolderMemberDto.getBookmarkFolder().getName())
 			.image(ApiUrl.IMAGE + bookmarkFolderMemberDto.getBookmarkFolder().getImage())
+			.color(bookmarkFolderMemberDto.getBookmarkFolder().getColor())
 			.memberId(bookmarkFolderMemberDto.getMemberId())
 			.username(bookmarkFolderMemberDto.getUsername())
 			.build();
