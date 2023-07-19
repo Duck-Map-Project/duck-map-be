@@ -93,7 +93,6 @@ public class BookmarkFolderService {
 			.color(bookmarkFolderMemberDto.getBookmarkFolder().getColor())
 			.memberId(bookmarkFolderMemberDto.getMemberId())
 			.username(bookmarkFolderMemberDto.getUsername())
-			.color(bookmarkFolderMemberDto.getBookmarkFolder().getColor())
 			.build();
 	}
 
