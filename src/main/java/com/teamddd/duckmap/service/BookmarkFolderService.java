@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.teamddd.duckmap.common.ApiUrl;
-import com.teamddd.duckmap.common.Props;
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkEventDto;
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderMemberDto;
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderMemberRes;
@@ -29,7 +28,6 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class BookmarkFolderService {
-	private final Props props;
 	private final BookmarkFolderRepository bookmarkFolderRepository;
 	private final BookmarkRepository bookmarkRepository;
 
