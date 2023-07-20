@@ -33,6 +33,7 @@ public class ArtistRepositoryImpl implements ArtistRepositoryCustom {
 			.where(eqArtistTypeId(artistTypeId),
 				containsArtistOrGroupName(name)
 			)
+			.orderBy(artist.artistType.id.asc(), artist.name.asc())
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetch();

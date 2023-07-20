@@ -176,7 +176,7 @@ class ArtistRepositoryTest {
 			//then
 			assertThat(findArtists).hasSize(3)
 				.extracting("name")
-				.containsExactlyInAnyOrder("group1", "group2", "artist2");
+				.containsExactly("group1", "group2", "artist2");
 
 			assertThat(findArtists.getTotalElements()).isEqualTo(7);
 			assertThat(findArtists.getTotalPages()).isEqualTo(3);
@@ -216,7 +216,7 @@ class ArtistRepositoryTest {
 			//then
 			assertThat(findArtists).hasSize(3)
 				.extracting("name", "group.name")
-				.containsExactlyInAnyOrder(Tuple.tuple("group2", null), Tuple.tuple("artist2", "group1"),
+				.containsExactly(Tuple.tuple("group2", null), Tuple.tuple("artist2", "group1"),
 					Tuple.tuple("artist4", "group2"));
 
 			assertThat(findArtists.getTotalElements()).isEqualTo(3);
@@ -257,7 +257,7 @@ class ArtistRepositoryTest {
 			//then
 			assertThat(findArtists).hasSize(2)
 				.extracting("name", "artistType.id")
-				.containsExactlyInAnyOrder(
+				.containsExactly(
 					Tuple.tuple("artist2", type2.getId()),
 					Tuple.tuple("artist3", type2.getId()));
 
@@ -299,7 +299,7 @@ class ArtistRepositoryTest {
 			//then
 			assertThat(findArtists).hasSize(2)
 				.extracting("name", "group.name", "artistType.id")
-				.containsExactlyInAnyOrder(
+				.containsExactly(
 					Tuple.tuple("artist2", "group1", type2.getId()),
 					Tuple.tuple("artist3", "group1", type2.getId()));
 
