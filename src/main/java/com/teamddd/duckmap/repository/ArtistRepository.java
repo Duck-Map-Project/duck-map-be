@@ -20,5 +20,5 @@ public interface ArtistRepository extends JpaRepository<Artist, Long>, ArtistRep
 
 	@Modifying(clearAutomatically = true)
 	@Query("update Artist a set a.group = null where a.group.id = :groupId")
-	int bulkGroupToNull(@Param("groupId") Long groupId);
+	int updateGroupToNull(@Param("groupId") Long groupId);
 }

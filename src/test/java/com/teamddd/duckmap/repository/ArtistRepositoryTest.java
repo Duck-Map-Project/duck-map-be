@@ -109,7 +109,7 @@ class ArtistRepositoryTest {
 
 	@DisplayName("Artist group을 null로 변경한다")
 	@Test
-	void bulkGroupToNull() throws Exception {
+	void updateGroupToNull() throws Exception {
 		//given
 		Artist group = createArtist("group", null, null);
 		Artist artist1 = createArtist("artist1", null, group);
@@ -119,7 +119,7 @@ class ArtistRepositoryTest {
 		em.persist(artist2);
 
 		//when
-		int bulkCount = artistRepository.bulkGroupToNull(group.getId());
+		int bulkCount = artistRepository.updateGroupToNull(group.getId());
 
 		//then
 		assertThat(bulkCount).isEqualTo(2);
