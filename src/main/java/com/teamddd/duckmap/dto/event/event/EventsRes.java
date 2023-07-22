@@ -2,6 +2,7 @@ package com.teamddd.duckmap.dto.event.event;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.teamddd.duckmap.common.ApiUrl;
@@ -41,6 +42,7 @@ public class EventsRes {
 			.artists(
 				event.getEventArtists().stream()
 					.map(EventArtist::getArtist)
+					.filter(Objects::nonNull)
 					.map(ArtistRes::of)
 					.collect(Collectors.toList())
 			)
