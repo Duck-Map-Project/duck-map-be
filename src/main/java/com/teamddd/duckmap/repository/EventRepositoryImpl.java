@@ -1,5 +1,6 @@
 package com.teamddd.duckmap.repository;
 
+import static com.teamddd.duckmap.entity.QArtist.*;
 import static com.teamddd.duckmap.entity.QEvent.*;
 import static com.teamddd.duckmap.entity.QEventArtist.*;
 import static com.teamddd.duckmap.entity.QEventBookmark.*;
@@ -102,18 +103,15 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
 	@Override
 	public Page<EventLikeBookmarkDto> findByArtistAndDate(Long artistId, LocalDate date, Long memberId,
 		Pageable pageable) {
-		JPAQuery<EventLikeBookmarkDto> eventsQuery = queryFactory.selectDistinct(
+		List<EventLikeBookmarkDto> events = queryFactory.selectDistinct(
 				new QEventLikeBookmarkDto(
 					event,
 					eventLike.id,
 					eventBookmark.id
 				))
-			.from(event);
-		if (artistId != null) {
-			eventsQuery
-				.leftJoin(event.eventArtists, eventArtist);
-		}
-		List<EventLikeBookmarkDto> events = eventsQuery
+			.from(event)
+			.join(event.eventArtists, eventArtist)
+			.join(eventArtist.artist, artist)
 			.leftJoin(eventLike).on(event.eq(eventLike.event).and(eventLikeMemberEqMemberId(memberId)))
 			.leftJoin(eventBookmark).on(event.eq(eventBookmark.event).and(eventBookmarkMemberEqMemberId(memberId)))
 			.where(eqArtistId(artistId),
@@ -123,12 +121,9 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
 			.fetch();
 
 		JPAQuery<Long> countQuery = queryFactory.select(event.countDistinct())
-			.from(event);
-		if (artistId != null) {
-			countQuery
-				.leftJoin(event.eventArtists, eventArtist);
-		}
-		countQuery
+			.from(event)
+			.join(event.eventArtists, eventArtist)
+			.join(eventArtist.artist, artist)
 			.where(eqArtistId(artistId),
 				betweenDate(date));
 
@@ -144,8 +139,8 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
 			)).from(event)
 			.leftJoin(eventLike).on(event.eq(eventLike.event))
 			.leftJoin(review).on(event.eq(review.event))
-			.join(eventArtist).on(event.eq(eventArtist.event))
-			.join(eventArtist.artist)
+			.join(event.eventArtists, eventArtist)
+			.join(eventArtist.artist, artist)
 			.where(betweenDate(date))
 			.groupBy(event)
 			.orderBy(itemOrderBySort(pageable.getSort()))
@@ -155,8 +150,8 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
 
 		JPAQuery<Long> countQuery = queryFactory.select(event.countDistinct())
 			.from(event)
-			.join(eventArtist).on(event.eq(eventArtist.event))
-			.join(eventArtist.artist)
+			.join(event.eventArtists, eventArtist)
+			.join(eventArtist.artist, artist)
 			.where(betweenDate(date));
 
 		return PageableExecutionUtils.getPage(events, pageable, countQuery::fetchOne);
