@@ -105,7 +105,7 @@ class EventRepositoryTest {
 		EventArtist eventArtist3 = createEventArtist(event2, artist1);
 		EventArtist eventArtist4 = createEventArtist(event2, artist2);
 		EventArtist eventArtist5 = createEventArtist(event3, artist2);
-		EventArtist eventArtist6 = createEventArtist(event4, Artist.builder().id(100L).build());
+		EventArtist eventArtist6 = createEventArtist(event4, null);
 		em.persist(eventArtist1);
 		em.persist(eventArtist2);
 		em.persist(eventArtist3);
@@ -226,7 +226,7 @@ class EventRepositoryTest {
 		EventArtist eventArtist3 = createEventArtist(event3, artist1);
 		EventArtist eventArtist4 = createEventArtist(event4, artist1);
 		EventArtist eventArtist5 = createEventArtist(event5, artist1);
-		EventArtist eventArtist6 = createEventArtist(event6, Artist.builder().id(100L).build());
+		EventArtist eventArtist6 = createEventArtist(event6, null);
 		em.persist(eventArtist1);
 		em.persist(eventArtist2);
 		em.persist(eventArtist3);
