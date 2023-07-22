@@ -21,6 +21,7 @@ import com.teamddd.duckmap.entity.Artist;
 import com.teamddd.duckmap.entity.ArtistType;
 import com.teamddd.duckmap.exception.NonExistentArtistException;
 import com.teamddd.duckmap.repository.ArtistRepository;
+import com.teamddd.duckmap.repository.EventArtistRepository;
 import com.teamddd.duckmap.repository.LastSearchArtistRepository;
 import com.teamddd.duckmap.util.FileUtils;
 
@@ -37,6 +38,7 @@ public class ArtistService {
 	private final ArtistRepository artistRepository;
 	private final ArtistTypeService artistTypeService;
 	private final LastSearchArtistRepository lastSearchArtistRepository;
+	private final EventArtistRepository eventArtistRepository;
 
 	@Transactional
 	public Long createArtist(CreateArtistReq createArtistReq) {
@@ -121,6 +123,8 @@ public class ArtistService {
 
 		// update group fk to null
 		artistRepository.bulkGroupToNull(artist.getId());
+		// update artist fk to null
+		eventArtistRepository.updateArtistToNull(artist.getId());
 		// delete artist fk
 		lastSearchArtistRepository.deleteByArtistId(artist.getId());
 		// delete image
