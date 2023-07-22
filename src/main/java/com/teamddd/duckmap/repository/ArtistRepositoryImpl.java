@@ -1,6 +1,7 @@
 package com.teamddd.duckmap.repository;
 
 import static com.teamddd.duckmap.entity.QArtist.*;
+import static com.teamddd.duckmap.entity.QArtistType.*;
 
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class ArtistRepositoryImpl implements ArtistRepositoryCustom {
 	public Page<Artist> findByTypeAndName(Long artistTypeId, String name, Pageable pageable) {
 		List<Artist> artists = queryFactory.selectFrom(artist)
 			.leftJoin(artist.group, group).fetchJoin()
+			.leftJoin(artist.artistType, artistType).fetchJoin()
 			.where(eqArtistTypeId(artistTypeId),
 				containsArtistOrGroupName(name)
 			)
