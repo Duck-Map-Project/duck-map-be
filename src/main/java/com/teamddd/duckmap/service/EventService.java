@@ -175,22 +175,21 @@ public class EventService {
 			request.getMember().map(Member::getId).orElse(null),
 			request.getPageable());
 
-		return eventLikeBookmarkDtos
-			.map(eventLikeBookmarkDto -> EventsRes.of(eventLikeBookmarkDto, request.getDate()));
+		return convertEventLikeBookmarkToEventsRes(eventLikeBookmarkDtos, request.getDate());
 	}
 
 	public Page<EventsRes> getMyEventsRes(MyEventsServiceReq request) {
 		Page<EventLikeBookmarkDto> myEvents = eventRepository.findMyEvents(request.getMemberId(),
 			request.getPageable());
 
-		return myEvents.map(eventLikeBookmarkDto -> EventsRes.of(eventLikeBookmarkDto, request.getDate()));
+		return convertEventLikeBookmarkToEventsRes(myEvents, request.getDate());
 	}
 
 	public Page<EventsRes> getMyLikeEventsRes(MyLikeEventsServiceReq request) {
 		Page<EventLikeBookmarkDto> myLikeEvents = eventRepository.findMyLikeEvents(request.getMemberId(),
 			request.getPageable());
 
-		return myLikeEvents.map(eventLikeBookmarkDto -> EventsRes.of(eventLikeBookmarkDto, request.getDate()));
+		return convertEventLikeBookmarkToEventsRes(myLikeEvents, request.getDate());
 	}
 
 	public Page<EventsMapRes> getEventsForMap(LocalDate date, Pageable pageable) {
@@ -293,5 +292,36 @@ public class EventService {
 				FileUtils.deleteFile(props.getImageDir(), filename);
 			}
 		}
+	}
+
+	private Page<EventsRes> convertEventLikeBookmarkToEventsRes(Page<EventLikeBookmarkDto> eventDtos, LocalDate date) {
+		List<Long> artistIds = eventDtos.stream()
+			.flatMap(dto -> dto.getEvent().getEventArtists().stream())
+			.map(eventArtist -> eventArtist.getArtist().getId())
+			.collect(Collectors.toList());
+
+		return eventDtos.map(dto -> EventsRes.builder()
+			.id(dto.getEvent().getId())
+			.storeName(dto.getEvent().getStoreName())
+			.inProgress(dto.getEvent().isInProgress(date))
+			.address(dto.getEvent().getAddress())
+			.artists(artistService.getArtistResListByIds(artistIds))
+			.categories(
+				dto.getEvent().getEventInfoCategories().stream()
+					.map(EventInfoCategory::getEventCategory)
+					.map(EventCategoryRes::of)
+					.collect(Collectors.toList())
+			)
+			.image(
+				dto.getEvent().getEventImages().stream()
+					.filter(EventImage::isThumbnail)
+					.map(EventImage::getImage)
+					.map(image -> ApiUrl.IMAGE + image)
+					.findFirst()
+					.orElse(null)
+			)
+			.likeId(dto.getLikeId())
+			.bookmarkId(dto.getBookmarkId())
+			.build());
 	}
 }
