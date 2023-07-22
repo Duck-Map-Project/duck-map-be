@@ -119,7 +119,7 @@ class ArtistRepositoryTest {
 		em.persist(artist2);
 
 		//when
-		int bulkCount = artistRepository.bulkGroupToNull(group.getId());
+		int bulkCount = artistRepository.updateGroupToNull(group.getId());
 
 		//then
 		assertThat(bulkCount).isEqualTo(2);

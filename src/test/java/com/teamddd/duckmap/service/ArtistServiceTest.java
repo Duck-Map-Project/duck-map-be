@@ -147,7 +147,7 @@ class ArtistServiceTest {
 		Artist artist1 = createArtist(null, "artist1", null);
 		em.persist(artist1);
 
-		when(artistRepository.bulkGroupToNull(anyLong())).thenReturn(0);
+		when(artistRepository.updateGroupToNull(anyLong())).thenReturn(0);
 		when(eventArtistRepository.updateArtistToNull(anyLong())).thenReturn(0);
 		when(lastSearchArtistRepository.deleteByArtistId(anyLong())).thenReturn(0);
 

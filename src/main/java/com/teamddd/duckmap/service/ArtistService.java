@@ -122,7 +122,7 @@ public class ArtistService {
 		Artist artist = getArtist(id);
 
 		// update group fk to null
-		artistRepository.bulkGroupToNull(artist.getId());
+		artistRepository.updateGroupToNull(artist.getId());
 		// update artist fk to null
 		eventArtistRepository.updateArtistToNull(artist.getId());
 		// delete artist fk
