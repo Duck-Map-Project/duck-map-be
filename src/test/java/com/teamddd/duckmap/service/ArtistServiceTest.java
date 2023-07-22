@@ -12,6 +12,7 @@ import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -117,18 +118,23 @@ class ArtistServiceTest {
 		//given
 		ArtistType type1 = createArtistType("type1");
 		ArtistType type2 = createArtistType("type2");
+		em.persist(type1);
+		em.persist(type2);
 
 		Artist artist1 = createArtist(type1, "group1", null);
 		Artist artist2 = createArtist(type2, "artist2", artist1);
 		Artist artist3 = createArtist(type2, "artist3", artist1);
 		Artist artist4 = createArtist(type2, "artist4", artist1);
-		List<Artist> artists = List.of(artist2, artist3, artist4);
+		List<Artist> artists = List.of(artist1, artist2, artist3, artist4);
+		artistRepository.saveAll(artists);
+
+		em.flush();
+		em.clear();
 
 		Long groupId = 1L;
 		Artist group = Artist.builder().id(groupId).build();
 
-		when(artistRepository.findById(groupId)).thenReturn(Optional.of(group));
-		when(artistRepository.findByGroup(group)).thenReturn(artists);
+		Mockito.doReturn(Optional.of(artist1)).when(artistRepository).findById(anyLong());
 
 		//when
 		List<ArtistRes> artistResList = artistService.getArtistsByGroup(groupId);

@@ -91,9 +91,7 @@ public class ArtistService {
 	public List<ArtistRes> getArtistsByGroup(Long groupId) {
 		Artist group = getArtist(groupId);
 
-		List<Artist> artists = artistRepository.findByGroup(group);
-
-		return artists.stream()
+		return artistRepository.findByGroup(group).stream()
 			.map(ArtistRes::of)
 			.collect(Collectors.toList());
 	}
