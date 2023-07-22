@@ -80,13 +80,13 @@ class ArtistServiceTest {
 		ArtistType type1 = createArtistType("type1");
 		ArtistType type2 = createArtistType("type2");
 
-		Artist artist1 = createArtist(type1, "group1", null);
-		Artist artist2 = createArtist(type1, "group2", null);
-		Artist artist3 = createArtist(type2, "artist3", artist1);
-		Artist artist4 = createArtist(type2, "artist4", artist1);
-		Artist artist5 = createArtist(type2, "artist5", artist2);
-		Artist artist6 = createArtist(type2, "artist6", artist2);
-		Artist artist7 = createArtist(type2, "artist7", artist2);
+		Artist artist1 = createArtist("group1", type1, null);
+		Artist artist2 = createArtist("group2", type1, null);
+		Artist artist3 = createArtist("artist3", type2, artist1);
+		Artist artist4 = createArtist("artist4", type2, artist1);
+		Artist artist5 = createArtist("artist5", type2, artist2);
+		Artist artist6 = createArtist("artist6", type2, artist2);
+		Artist artist7 = createArtist("artist7", type2, artist2);
 		List<Artist> artists = List.of(artist1, artist2, artist3, artist4, artist5, artist6, artist7);
 
 		ArtistSearchParam param = ArtistSearchParam.builder().build();
@@ -115,10 +115,10 @@ class ArtistServiceTest {
 		ArtistType type1 = createArtistType("type1");
 		ArtistType type2 = createArtistType("type2");
 
-		Artist artist1 = createArtist(type1, "group1", null);
-		Artist artist2 = createArtist(type2, "artist2", artist1);
-		Artist artist3 = createArtist(type2, "artist3", artist1);
-		Artist artist4 = createArtist(type2, "artist4", artist1);
+		Artist artist1 = createArtist("group1", type1, null);
+		Artist artist2 = createArtist("artist2", type2, artist1);
+		Artist artist3 = createArtist("artist3", type2, artist1);
+		Artist artist4 = createArtist("artist4", type2, artist1);
 		List<Artist> artists = List.of(artist2, artist3, artist4);
 
 		Long groupId = 1L;
@@ -141,7 +141,7 @@ class ArtistServiceTest {
 	@Test
 	void deleteArtist() throws Exception {
 		//given
-		Artist artist1 = createArtist(null, "artist1", null);
+		Artist artist1 = createArtist("artist1", null, null);
 		em.persist(artist1);
 
 		when(artistRepository.bulkGroupToNull(anyLong())).thenReturn(0);
@@ -158,11 +158,43 @@ class ArtistServiceTest {
 		assertThat(findArtist).isEmpty();
 	}
 
+	@DisplayName("pk목록으로 ArtistRes 목록을 조회한다")
+	@Test
+	void getArtistResListByIds() throws Exception {
+		//given
+		ArtistType type1 = createArtistType("type1");
+		ArtistType type2 = createArtistType("type2");
+		em.persist(type1);
+		em.persist(type2);
+
+		Artist artist1 = createArtist("artist1", type1, null);
+		Artist artist2 = createArtist("artist2", type2, artist1);
+		Artist artist3 = createArtist("artist3", type2, null);
+		em.persist(artist1);
+		em.persist(artist2);
+		em.persist(artist3);
+
+		em.flush();
+		em.clear();
+
+		//when
+		List<ArtistRes> artistResList = artistService.getArtistResListByIds(
+			List.of(artist1.getId(), artist2.getId(), artist3.getId()));
+
+		//then
+		assertThat(artistResList).hasSize(3)
+			.extracting("name", "artistType.type", "groupName")
+			.containsExactly(
+				Tuple.tuple("artist1", "type1", null),
+				Tuple.tuple("artist2", "type2", "artist1"),
+				Tuple.tuple("artist3", "type2", null));
+	}
+
 	ArtistType createArtistType(String type) {
 		return ArtistType.builder().type(type).build();
 	}
 
-	Artist createArtist(ArtistType type, String name, Artist group) {
+	Artist createArtist(String name, ArtistType type, Artist group) {
 		return Artist.builder().artistType(type).name(name).group(group).image("image").build();
 	}
 
@@ -173,9 +205,9 @@ class ArtistServiceTest {
 		@Test
 		void getArtistsByIds1() throws Exception {
 			//given
-			Artist artist1 = createArtist(null, "artist1", null);
-			Artist artist2 = createArtist(null, "artist2", null);
-			Artist artist3 = createArtist(null, "artist3", null);
+			Artist artist1 = createArtist("artist1", null, null);
+			Artist artist2 = createArtist("artist2", null, null);
+			Artist artist3 = createArtist("artist3", null, null);
 			artistRepository.saveAll(List.of(artist1, artist2, artist3));
 
 			List<Long> inIds = List.of(artist2.getId(), artist3.getId());
@@ -191,9 +223,9 @@ class ArtistServiceTest {
 		@Test
 		void getArtistsByIds2() throws Exception {
 			//given
-			Artist artist1 = createArtist(null, "artist1", null);
-			Artist artist2 = createArtist(null, "artist2", null);
-			Artist artist3 = createArtist(null, "artist3", null);
+			Artist artist1 = createArtist("artist1", null, null);
+			Artist artist2 = createArtist("artist2", null, null);
+			Artist artist3 = createArtist("artist3", null, null);
 			artistRepository.saveAll(List.of(artist1, artist2, artist3));
 
 			List<Long> inIds = List.of(artist2.getId(), 100L);
@@ -214,8 +246,8 @@ class ArtistServiceTest {
 			ArtistType type = createArtistType("type");
 			em.persist(type);
 
-			Artist group = createArtist(null, "group", null);
-			Artist artist = createArtist(null, "artist", group);
+			Artist group = createArtist("group", null, null);
+			Artist artist = createArtist("artist", null, group);
 			em.persist(group);
 			em.persist(artist);
 
@@ -251,8 +283,8 @@ class ArtistServiceTest {
 			ArtistType type = createArtistType("type");
 			em.persist(type);
 
-			Artist group = createArtist(null, "group", null);
-			Artist artist = createArtist(null, "artist", null);
+			Artist group = createArtist("group", null, null);
+			Artist artist = createArtist("artist", null, null);
 			em.persist(group);
 			em.persist(artist);
 

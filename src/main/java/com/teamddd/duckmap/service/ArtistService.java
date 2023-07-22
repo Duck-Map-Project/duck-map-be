@@ -73,6 +73,12 @@ public class ArtistService {
 		throw new NonExistentArtistException();
 	}
 
+	public List<ArtistRes> getArtistResListByIds(List<Long> ids) {
+		return artistRepository.findWithTypeAndGroupByIdIn(ids).stream()
+			.map(ArtistRes::of)
+			.collect(Collectors.toList());
+	}
+
 	public Page<ArtistRes> getArtistResPageByTypeAndName(ArtistSearchParam artistSearchParam, Pageable pageable) {
 		Page<Artist> artistPage = artistRepository.findByTypeAndName(
 			artistSearchParam.getArtistTypeId(),

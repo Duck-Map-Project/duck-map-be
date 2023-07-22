@@ -86,6 +86,38 @@ class ArtistRepositoryTest {
 			.containsExactlyInAnyOrder("artist2", "artist4");
 	}
 
+	@DisplayName("pk 목록으로 artist 목록 조회 시 Group, Type fetch join")
+	@Test
+	void findWithTypeAndGroupByIdIn() throws Exception {
+		//given
+		ArtistType type1 = createArtistType("type1");
+		ArtistType type2 = createArtistType("type2");
+		em.persist(type1);
+		em.persist(type2);
+
+		Artist artist1 = createArtist("artist1", type1, null);
+		Artist artist2 = createArtist("artist2", type2, artist1);
+		Artist artist3 = createArtist("artist3", type2, null);
+		em.persist(artist1);
+		em.persist(artist2);
+		em.persist(artist3);
+
+		em.flush();
+		em.clear();
+
+		//when
+		List<Artist> artists = artistRepository.findWithTypeAndGroupByIdIn(
+			List.of(artist1.getId(), artist2.getId(), artist3.getId()));
+
+		//then
+		assertThat(artists).hasSize(3)
+			.extracting("name", "artistType.type", "group.name")
+			.containsExactly(
+				Tuple.tuple("artist1", "type1", null),
+				Tuple.tuple("artist2", "type2", "artist1"),
+				Tuple.tuple("artist3", "type2", null));
+	}
+
 	@DisplayName("아티스트 구분으로 아티스트 수 조회")
 	@Test
 	void countByArtistType() throws Exception {
