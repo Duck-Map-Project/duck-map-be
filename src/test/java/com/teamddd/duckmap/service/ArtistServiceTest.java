@@ -130,7 +130,7 @@ class ArtistServiceTest {
 		em.flush();
 		em.clear();
 
-		Long groupId = 1L;
+		Long groupId = artist1.getId();
 		Artist group = Artist.builder().id(groupId).build();
 
 		doReturn(Optional.of(group)).when(artistRepository).findById(anyLong());
