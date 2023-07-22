@@ -31,6 +31,7 @@ import com.teamddd.duckmap.entity.Artist;
 import com.teamddd.duckmap.entity.ArtistType;
 import com.teamddd.duckmap.exception.NonExistentArtistException;
 import com.teamddd.duckmap.repository.ArtistRepository;
+import com.teamddd.duckmap.repository.EventArtistRepository;
 import com.teamddd.duckmap.repository.LastSearchArtistRepository;
 
 @Transactional
@@ -45,6 +46,8 @@ class ArtistServiceTest {
 	ArtistTypeService artistTypeService;
 	@MockBean
 	LastSearchArtistRepository lastSearchArtistRepository;
+	@MockBean
+	EventArtistRepository eventArtistRepository;
 	@Autowired
 	Props props;
 	@Autowired
@@ -144,7 +147,8 @@ class ArtistServiceTest {
 		Artist artist1 = createArtist(null, "artist1", null);
 		em.persist(artist1);
 
-		when(artistRepository.bulkGroupToNull(anyLong())).thenReturn(0);
+		when(artistRepository.updateGroupToNull(anyLong())).thenReturn(0);
+		when(eventArtistRepository.updateArtistToNull(anyLong())).thenReturn(0);
 		when(lastSearchArtistRepository.deleteByArtistId(anyLong())).thenReturn(0);
 
 		Long deleteArtistId = artist1.getId();
