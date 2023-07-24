@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderMemberRes;
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderRes;
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkedEventRes;
-import com.teamddd.duckmap.dto.event.bookmark.BookmarkedEventsServiceReq;
 import com.teamddd.duckmap.dto.event.bookmark.CreateBookmarkFolderReq;
 import com.teamddd.duckmap.dto.event.bookmark.MyBookmarkFolderServiceReq;
 import com.teamddd.duckmap.dto.event.bookmark.UpdateBookmarkFolderReq;
@@ -162,27 +161,57 @@ public class BookmarkFolderServiceTest {
 	@DisplayName("북마크 폴더 pk로 북마크 폴더 조회한다")
 	@Nested
 	class GetReview {
-		@DisplayName("유효한 값으로 북마크 폴더 조회한다")
+		@DisplayName("북마크 폴더를 외부로 공유할때 북마크 폴더 pk로 폴더의 정보를 조회한다.")
 		@Test
 		void getBookmarkFolder() throws Exception {
 			//given
-			CreateBookmarkFolderReq request = new CreateBookmarkFolderReq();
-			ReflectionTestUtils.setField(request, "name", "bookmarkFolder1");
-			ReflectionTestUtils.setField(request, "image", "image1");
-
 			Member member = Member.builder()
 				.username("member1")
 				.build();
 			em.persist(member);
-			Long bookmarkFolderId = bookmarkFolderService.createBookmarkFolder(request, member);
+
+			Event event = createEvent(member, "event1");
+			Event event2 = createEvent(member, "event2");
+			Event event3 = createEvent(member, "event3");
+			em.persist(event);
+			em.persist(event2);
+			em.persist(event3);
+
+			EventImage image1 = createEventImage(event, "image1", false);
+			EventImage image2 = createEventImage(event, "image2", true);
+			EventImage image3 = createEventImage(event2, "image3", true);
+			EventImage image4 = createEventImage(event2, "image4", false);
+			EventImage image5 = createEventImage(event3, "image5", true);
+			em.persist(image1);
+			em.persist(image2);
+			em.persist(image3);
+			em.persist(image4);
+			em.persist(image5);
+
+			EventBookmarkFolder eventBookmarkFolder = createEventBookmarkFolder(member, "folder1");
+			em.persist(eventBookmarkFolder);
+
+			EventBookmark eventBookmark = createEventBookmark(member, event, eventBookmarkFolder);
+			EventBookmark eventBookmark2 = createEventBookmark(member, event2, eventBookmarkFolder);
+			EventBookmark eventBookmark3 = createEventBookmark(member, event3, eventBookmarkFolder);
+			em.persist(eventBookmark);
+			em.persist(eventBookmark2);
+			em.persist(eventBookmark3);
 
 			//when
 			BookmarkFolderMemberRes bookmarkFolderMemberRes = bookmarkFolderService
-				.getBookmarkFolderMemberRes(bookmarkFolderId);
+				.getBookmarkFolderMemberRes(eventBookmarkFolder.getId());
+			Page<BookmarkedEventRes> bookmarkedEventResPage = bookmarkFolderMemberRes.getBookmarkedEventResPage();
 
 			//then
 			assertThat(bookmarkFolderMemberRes).extracting("name", "id", "username")
-				.containsOnly("bookmarkFolder1", bookmarkFolderId, "member1");
+				.containsOnly("folder1", eventBookmarkFolder.getId(), "member1");
+			assertThat(bookmarkedEventResPage).hasSize(3)
+				.extracting("eventId", "storeName", "id", "image")
+				.containsExactlyInAnyOrder(
+					Tuple.tuple(event.getId(), "event1", eventBookmark.getId(), "/images/image2"),
+					Tuple.tuple(event2.getId(), "event2", eventBookmark2.getId(), "/images/image3"),
+					Tuple.tuple(event3.getId(), "event3", eventBookmark3.getId(), "/images/image5"));
 		}
 
 		@DisplayName("잘못된 값으로 북마크 폴더 조회할 수 없다")
@@ -295,14 +324,9 @@ public class BookmarkFolderServiceTest {
 
 		Pageable pageable = PageRequest.of(0, 4);
 
-		BookmarkedEventsServiceReq request = BookmarkedEventsServiceReq.builder()
-			.bookmarkFolderId(eventBookmarkFolder.getId())
-			.pageable(pageable)
-			.build();
-
 		//when
 		Page<BookmarkedEventRes> bookmarkedEvents = bookmarkFolderService
-			.getBookmarkedEventResList(request);
+			.getBookmarkedEventResList(eventBookmarkFolder.getId(), pageable);
 
 		//then
 		assertThat(bookmarkedEvents).hasSize(3)
