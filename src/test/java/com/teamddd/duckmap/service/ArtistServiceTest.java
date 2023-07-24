@@ -17,12 +17,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.teamddd.duckmap.common.Props;
 import com.teamddd.duckmap.dto.artist.ArtistRes;
 import com.teamddd.duckmap.dto.artist.ArtistSearchParam;
 import com.teamddd.duckmap.dto.artist.CreateArtistReq;
@@ -38,7 +36,7 @@ import com.teamddd.duckmap.repository.LastSearchArtistRepository;
 @SpringBootTest
 class ArtistServiceTest {
 
-	@SpyBean
+	@Autowired
 	ArtistService artistService;
 	@SpyBean
 	ArtistRepository artistRepository;
@@ -48,8 +46,6 @@ class ArtistServiceTest {
 	LastSearchArtistRepository lastSearchArtistRepository;
 	@MockBean
 	EventArtistRepository eventArtistRepository;
-	@Autowired
-	Props props;
 	@Autowired
 	EntityManager em;
 
@@ -82,6 +78,8 @@ class ArtistServiceTest {
 		//given
 		ArtistType type1 = createArtistType("type1");
 		ArtistType type2 = createArtistType("type2");
+		em.persist(type1);
+		em.persist(type2);
 
 		Artist artist1 = createArtist(type1, "group1", null);
 		Artist artist2 = createArtist(type1, "group2", null);
@@ -91,24 +89,22 @@ class ArtistServiceTest {
 		Artist artist6 = createArtist(type2, "artist6", artist2);
 		Artist artist7 = createArtist(type2, "artist7", artist2);
 		List<Artist> artists = List.of(artist1, artist2, artist3, artist4, artist5, artist6, artist7);
+		artistRepository.saveAll(artists);
+
+		em.flush();
+		em.clear();
 
 		ArtistSearchParam param = ArtistSearchParam.builder().build();
-		PageRequest pageRequest = PageRequest.of(0, artists.size());
-
-		when(
-			artistRepository.findByTypeAndName(param.getArtistTypeId(), param.getArtistName(), pageRequest)).thenReturn(
-			new PageImpl<>(artists, pageRequest, artists.size()));
+		PageRequest pageRequest = PageRequest.of(1, 2);
 
 		//when
 		Page<ArtistRes> artistResPage = artistService.getArtistResPageByTypeAndName(param, pageRequest);
 
 		//then
-		assertThat(artistResPage).hasSize(7)
+		assertThat(artistResPage).hasSize(2)
 			.extracting("artistType.type", "name", "groupName")
-			.containsExactlyInAnyOrder(Tuple.tuple("type1", "group1", null), Tuple.tuple("type1", "group2", null),
-				Tuple.tuple("type2", "artist3", "group1"), Tuple.tuple("type2", "artist4", "group1"),
-				Tuple.tuple("type2", "artist5", "group2"), Tuple.tuple("type2", "artist6", "group2"),
-				Tuple.tuple("type2", "artist7", "group2"));
+			.containsExactlyInAnyOrder(
+				Tuple.tuple("type2", "artist3", "group1"), Tuple.tuple("type2", "artist4", "group1"));
 	}
 
 	@DisplayName("소속 아티스트 목록을 조회한다")
@@ -117,18 +113,23 @@ class ArtistServiceTest {
 		//given
 		ArtistType type1 = createArtistType("type1");
 		ArtistType type2 = createArtistType("type2");
+		em.persist(type1);
+		em.persist(type2);
 
 		Artist artist1 = createArtist(type1, "group1", null);
 		Artist artist2 = createArtist(type2, "artist2", artist1);
 		Artist artist3 = createArtist(type2, "artist3", artist1);
 		Artist artist4 = createArtist(type2, "artist4", artist1);
-		List<Artist> artists = List.of(artist2, artist3, artist4);
+		List<Artist> artists = List.of(artist1, artist2, artist3, artist4);
+		artistRepository.saveAll(artists);
 
-		Long groupId = 1L;
+		em.flush();
+		em.clear();
+
+		Long groupId = artist1.getId();
 		Artist group = Artist.builder().id(groupId).build();
 
-		when(artistRepository.findById(groupId)).thenReturn(Optional.of(group));
-		when(artistRepository.findByGroup(group)).thenReturn(artists);
+		doReturn(Optional.of(group)).when(artistRepository).findById(anyLong());
 
 		//when
 		List<ArtistRes> artistResList = artistService.getArtistsByGroup(groupId);

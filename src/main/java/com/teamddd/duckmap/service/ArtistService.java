@@ -6,7 +6,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -76,24 +75,17 @@ public class ArtistService {
 	}
 
 	public Page<ArtistRes> getArtistResPageByTypeAndName(ArtistSearchParam artistSearchParam, Pageable pageable) {
-		Page<Artist> artistPage = artistRepository.findByTypeAndName(
-			artistSearchParam.getArtistTypeId(),
-			artistSearchParam.getArtistName(),
-			pageable);
-
-		List<ArtistRes> artistResList = artistPage.getContent().stream()
-			.map(ArtistRes::of)
-			.collect(Collectors.toList());
-
-		return new PageImpl<>(artistResList, artistPage.getPageable(), artistPage.getTotalElements());
+		return artistRepository.findByTypeAndName(
+				artistSearchParam.getArtistTypeId(),
+				artistSearchParam.getArtistName(),
+				pageable)
+			.map(ArtistRes::of);
 	}
 
 	public List<ArtistRes> getArtistsByGroup(Long groupId) {
 		Artist group = getArtist(groupId);
 
-		List<Artist> artists = artistRepository.findByGroup(group);
-
-		return artists.stream()
+		return artistRepository.findByGroup(group).stream()
 			.map(ArtistRes::of)
 			.collect(Collectors.toList());
 	}

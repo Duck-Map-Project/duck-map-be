@@ -2,6 +2,7 @@ package com.teamddd.duckmap.repository;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,6 +13,7 @@ import com.teamddd.duckmap.entity.ArtistType;
 
 public interface ArtistRepository extends JpaRepository<Artist, Long>, ArtistRepositoryCustom {
 
+	@EntityGraph(attributePaths = {"group", "artistType"})
 	List<Artist> findByGroup(Artist group);
 
 	List<Artist> findByIdIn(List<Long> id);
