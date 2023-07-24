@@ -1,16 +1,16 @@
 package com.teamddd.duckmap.service;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.teamddd.duckmap.common.ApiUrl;
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkEventDto;
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderMemberDto;
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderMemberRes;
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderRes;
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkedEventRes;
-import com.teamddd.duckmap.dto.event.bookmark.BookmarkedEventsServiceReq;
 import com.teamddd.duckmap.dto.event.bookmark.CreateBookmarkFolderReq;
 import com.teamddd.duckmap.dto.event.bookmark.MyBookmarkFolderServiceReq;
 import com.teamddd.duckmap.dto.event.bookmark.UpdateBookmarkFolderReq;
@@ -70,13 +70,16 @@ public class BookmarkFolderService {
 			.findBookmarkFolderAndMemberById(bookmarkFolderId)
 			.orElseThrow(NonExistentBookmarkFolderException::new);
 
+		//북마크된 이벤트 페이지를 가져온다.
+		Pageable pageable = PageRequest.of(0, 20);
+		Page<BookmarkedEventRes> bookmarkedEventResPage = getBookmarkedEventResList(bookmarkFolderId, pageable);
+
 		return BookmarkFolderMemberRes.builder()
 			.id(bookmarkFolderId)
 			.name(bookmarkFolderMemberDto.getBookmarkFolder().getName())
-			.image(ApiUrl.IMAGE + bookmarkFolderMemberDto.getBookmarkFolder().getImage())
-			.color(bookmarkFolderMemberDto.getBookmarkFolder().getColor())
 			.memberId(bookmarkFolderMemberDto.getMemberId())
 			.username(bookmarkFolderMemberDto.getUsername())
+			.bookmarkedEventResPage(bookmarkedEventResPage)
 			.build();
 	}
 
@@ -92,10 +95,10 @@ public class BookmarkFolderService {
 		return myBookmarkFolders.map(BookmarkFolderRes::of);
 	}
 
-	public Page<BookmarkedEventRes> getBookmarkedEventResList(BookmarkedEventsServiceReq request) {
+	public Page<BookmarkedEventRes> getBookmarkedEventResList(Long bookmarkFolderId, Pageable pageable) {
 		Page<BookmarkEventDto> bookmarkedEvents = bookmarkFolderRepository.findBookmarkedEvents(
-			request.getBookmarkFolderId(),
-			request.getPageable());
+			bookmarkFolderId,
+			pageable);
 		return bookmarkedEvents.map(BookmarkedEventRes::of);
 	}
 }

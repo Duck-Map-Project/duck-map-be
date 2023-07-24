@@ -1,5 +1,7 @@
 package com.teamddd.duckmap.dto.event.bookmark;
 
+import org.springframework.data.domain.Page;
+
 import lombok.Builder;
 import lombok.Getter;
 
@@ -8,8 +10,7 @@ import lombok.Getter;
 public class BookmarkFolderMemberRes {
 	private Long id;
 	private String name;
-	private String image;
-	private String color;
 	private Long memberId;
 	private String username;
+	private Page<BookmarkedEventRes> bookmarkedEventResPage;
 }
