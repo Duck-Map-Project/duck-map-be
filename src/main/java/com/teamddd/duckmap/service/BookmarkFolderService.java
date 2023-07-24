@@ -48,16 +48,13 @@ public class BookmarkFolderService {
 
 	@Transactional
 	public void updateBookmarkFolder(Long bookmarkFolderId, UpdateBookmarkFolderReq request) {
-		EventBookmarkFolder bookmarkFolder = bookmarkFolderRepository.findById(bookmarkFolderId)
-			.orElseThrow(NonExistentBookmarkFolderException::new);
-
+		EventBookmarkFolder bookmarkFolder = getEventBookmarkFolder(bookmarkFolderId);
 		bookmarkFolder.updateEventBookmarkFolder(request.getName(), request.getImage(), request.getColor());
 	}
 
 	@Transactional
 	public void deleteBookmarkFolder(Long bookmarkFolderId) {
-		EventBookmarkFolder bookmarkFolder = bookmarkFolderRepository.findById(bookmarkFolderId)
-			.orElseThrow(NonExistentBookmarkFolderException::new);
+		EventBookmarkFolder bookmarkFolder = getEventBookmarkFolder(bookmarkFolderId);
 
 		//관련 북마크 삭제
 		bookmarkRepository.deleteByBookmarkFolderId(bookmarkFolderId);
@@ -72,7 +69,9 @@ public class BookmarkFolderService {
 
 		//북마크된 이벤트 페이지를 가져온다.
 		Pageable pageable = PageRequest.of(0, 20);
-		Page<BookmarkedEventRes> bookmarkedEventResPage = getBookmarkedEventResList(bookmarkFolderId, pageable);
+		Page<BookmarkedEventRes> bookmarkedEventResPage = bookmarkFolderRepository.findBookmarkedEvents(
+				bookmarkFolderId, pageable)
+			.map(BookmarkedEventRes::of);
 
 		return BookmarkFolderMemberRes.builder()
 			.id(bookmarkFolderId)
