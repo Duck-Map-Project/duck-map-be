@@ -1,24 +1,39 @@
 package com.teamddd.duckmap.config.test;
 
-import java.util.List;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithSecurityContextFactory;
 
+import com.teamddd.duckmap.config.security.SecurityUserDetailsService;
+import com.teamddd.duckmap.entity.Member;
+import com.teamddd.duckmap.entity.Role;
+import com.teamddd.duckmap.repository.MemberRepository;
+
 public class WithMockAuthUserSecurityContextFactory implements WithSecurityContextFactory<WithMockAuthUser> {
+	@Autowired
+	MemberRepository memberRepository;
+	@Autowired
+	SecurityUserDetailsService securityUserDetailsService;
 
 	@Override
-	public SecurityContext createSecurityContext(WithMockAuthUser annotation) {
+	public SecurityContext createSecurityContext(WithMockAuthUser withAccount) {
+		String email = withAccount.email();
 
-		final SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+		Member member = Member.builder().email(email).username("member1")
+			.password("@Aaaa1234").role(Role.USER).build();
+		memberRepository.save(member);
 
-		final UsernamePasswordAuthenticationToken authenticationToken
-			= new UsernamePasswordAuthenticationToken(annotation.username(), null,
-			List.of(new SimpleGrantedAuthority(annotation.role())));
-		securityContext.setAuthentication(authenticationToken);
+		UserDetails principal = securityUserDetailsService.loadUserByUsername(email);
+		Authentication authentication = new UsernamePasswordAuthenticationToken(principal
+			, principal.getPassword()
+			, principal.getAuthorities());
+		SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+		securityContext.setAuthentication(authentication);
+
 		return securityContext;
 	}
 }
