@@ -17,7 +17,6 @@ import com.teamddd.duckmap.dto.PageReq;
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderMemberRes;
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkFolderRes;
 import com.teamddd.duckmap.dto.event.bookmark.BookmarkedEventRes;
-import com.teamddd.duckmap.dto.event.bookmark.BookmarkedEventsServiceReq;
 import com.teamddd.duckmap.dto.event.bookmark.CreateBookmarkFolderReq;
 import com.teamddd.duckmap.dto.event.bookmark.CreateBookmarkFolderRes;
 import com.teamddd.duckmap.dto.event.bookmark.MyBookmarkFolderServiceReq;
@@ -61,7 +60,7 @@ public class BookmarkFolderController {
 		return bookmarkFolderService.getMyBookmarkFolderResList(request);
 	}
 
-	@Operation(summary = "북마크 폴더 pk로 북마크 폴더,사용자 정보 조회", description = "북마크 폴더 외부 공유용 api")
+	@Operation(summary = "북마크 폴더 외부 공유용", description = "북마크 폴더명, 북마크 폴더 생성자 닉네임, 북마크 된 이벤트 목록을 반환")
 	@GetMapping("/{id}")
 	public BookmarkFolderMemberRes getBookmarkFolder(@PathVariable Long id) {
 		return bookmarkFolderService.getBookmarkFolderMemberRes(id);
@@ -71,11 +70,7 @@ public class BookmarkFolderController {
 	@GetMapping("/{id}/events")
 	public Page<BookmarkedEventRes> getAllBookmarks(@PathVariable Long id, PageReq pageReq) {
 		Pageable pageable = PageRequest.of(pageReq.getPageNumber(), pageReq.getPageSize());
-		BookmarkedEventsServiceReq request = BookmarkedEventsServiceReq.builder()
-			.bookmarkFolderId(id)
-			.pageable(pageable)
-			.build();
-		return bookmarkFolderService.getBookmarkedEventResList(request);
+		return bookmarkFolderService.getBookmarkedEventResList(id, pageable);
 	}
 
 	@Operation(summary = "북마크 폴더명, 이미지 변경 요청")
