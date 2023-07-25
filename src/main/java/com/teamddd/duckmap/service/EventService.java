@@ -286,6 +286,8 @@ public class EventService {
 		eventLikeRepository.deleteByEventId(id);
 		eventBookmarkRepository.deleteByEventId(id);
 
+		reviewRepository.updateEventToNull(id);
+
 		eventRepository.deleteById(id);
 
 		for (String filename : filenames) {
