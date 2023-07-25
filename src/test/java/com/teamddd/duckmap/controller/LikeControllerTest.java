@@ -4,8 +4,6 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import javax.persistence.EntityManager;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +22,6 @@ import com.teamddd.duckmap.util.MemberUtils;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-
 public class LikeControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
@@ -32,12 +29,10 @@ public class LikeControllerTest {
 	private EventLikeService likeService;
 	@MockBean
 	private EventService eventService;
-	@Autowired
-	EntityManager em;
 
 	@DisplayName("이벤트 좋아요")
 	@Test
-	@WithMockAuthUser
+	@WithMockAuthUser(email = "test2@email.com")
 	void likeEvent() throws Exception {
 
 		Member member = MemberUtils.getAuthMember().getUser();
@@ -64,4 +59,34 @@ public class LikeControllerTest {
 			.andExpect(jsonPath("$.id").value(eventLike.getId()));
 
 	}
+
+	@DisplayName("이벤트 좋아요 취소")
+	@Test
+	@WithMockAuthUser
+	void deleteLikeEvent() throws Exception {
+
+		Member member = MemberUtils.getAuthMember().getUser();
+		Member mockMember = Member.builder()
+			.username("member1")
+			.build();
+
+		Event event = Event.builder()
+			.storeName("store")
+			.member(mockMember)
+			.build();
+
+		EventLike eventLike = EventLike.builder()
+			.event(event)
+			.member(member)
+			.build();
+
+		Long eventId = 1L;
+		when(eventService.getEvent(eventId)).thenReturn(event);
+		when(likeService.likeEvent(eventId, member)).thenReturn(eventLike);
+
+		mockMvc.perform(delete("/events/{id}/likes", eventId))
+			.andExpect(status().isOk());
+
+	}
+
 }
