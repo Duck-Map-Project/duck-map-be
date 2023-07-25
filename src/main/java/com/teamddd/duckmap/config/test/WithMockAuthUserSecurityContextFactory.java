@@ -28,9 +28,9 @@ public class WithMockAuthUserSecurityContextFactory implements WithSecurityConte
 		memberRepository.save(member);
 
 		UserDetails principal = securityUserDetailsService.loadUserByUsername(email);
-		Authentication authentication = new UsernamePasswordAuthenticationToken(principal
-			, principal.getPassword()
-			, principal.getAuthorities());
+		Authentication authentication = new UsernamePasswordAuthenticationToken(principal,
+			principal.getPassword(),
+			principal.getAuthorities());
 		SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
 		securityContext.setAuthentication(authentication);
 
