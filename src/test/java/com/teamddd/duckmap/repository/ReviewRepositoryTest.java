@@ -3,6 +3,7 @@ package com.teamddd.duckmap.repository;
 import static org.assertj.core.api.Assertions.*;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
@@ -290,6 +291,37 @@ class ReviewRepositoryTest {
 			.event(event)
 			.artist(artist)
 			.build();
+	}
+
+	@DisplayName("Event fk를 null로 update")
+	@Test
+	void updateEventToNull() throws Exception {
+		//given
+		Event event1 = createEvent("event1");
+		Event event2 = createEvent("event2");
+		em.persist(event1);
+		em.persist(event2);
+
+		Review review1 = createReview(null, event1, "review1", 0);
+		Review review2 = createReview(null, event2, "review2", 0);
+		Review review3 = createReview(null, event1, "review3", 0);
+		em.persist(review1);
+		em.persist(review2);
+		em.persist(review3);
+
+		//when
+		int count = reviewRepository.updateEventToNull(event1.getId());
+
+		//then
+		assertThat(count).isEqualTo(2);
+
+		List<Review> findReviews = reviewRepository.findAll();
+		assertThat(findReviews).hasSize(3)
+			.extracting("content", "event.storeName")
+			.containsExactlyInAnyOrder(
+				Tuple.tuple("review1", null),
+				Tuple.tuple("review2", "event2"),
+				Tuple.tuple("review3", null));
 	}
 
 	@Nested
