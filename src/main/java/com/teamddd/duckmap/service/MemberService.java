@@ -17,7 +17,6 @@ import com.teamddd.duckmap.exception.InvalidPasswordException;
 import com.teamddd.duckmap.exception.InvalidUuidException;
 import com.teamddd.duckmap.repository.MemberRepository;
 import com.teamddd.duckmap.util.FileUtils;
-import com.teamddd.duckmap.util.MemberUtils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -60,15 +59,15 @@ public class MemberService {
 		memberRepository.findByEmail(email).orElseThrow(InvalidMemberException::new);
 	}
 
-	public MemberRes getMyInfoBySecurity() {
-		return memberRepository.findByEmail(MemberUtils.getAuthMember().getUsername())
+	public MemberRes getMyInfoBySecurity(String email) {
+		return memberRepository.findByEmail(email)
 			.map(MemberRes::of)
 			.orElseThrow(InvalidMemberException::new);
 	}
 
 	@Transactional
-	public void updateMemberInfo(String username, String image) {
-		Member member = memberRepository.findByEmail(MemberUtils.getAuthMember().getUsername())
+	public void updateMemberInfo(String email, String username, String image) {
+		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(InvalidMemberException::new);
 
 		//닉네임 중복 체크
@@ -86,8 +85,8 @@ public class MemberService {
 	}
 
 	@Transactional
-	public void updatePassword(String currentPassword, String newPassword) {
-		Member member = validatePassword(currentPassword);
+	public void updatePassword(String email, String currentPassword, String newPassword) {
+		Member member = validatePassword(email, currentPassword);
 		member.updatePassword(passwordEncoder.encode((newPassword)));
 	}
 
@@ -104,8 +103,8 @@ public class MemberService {
 		memberRepository.deleteById(id);
 	}
 
-	public Member validatePassword(String password) {
-		Member member = memberRepository.findByEmail(MemberUtils.getAuthMember().getUsername())
+	public Member validatePassword(String email, String password) {
+		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(InvalidMemberException::new);
 		if (!passwordEncoder.matches(password, member.getPassword())) {
 			throw new InvalidPasswordException();
