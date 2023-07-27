@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.Optional;
 
+import javax.persistence.EntityManager;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,8 @@ public class MemberServiceTest {
 	MemberService memberService;
 	@Autowired
 	MemberRepository memberRepository;
+	@Autowired
+	EntityManager em;
 
 	@DisplayName("생성된 회원 확인")
 	@Test
@@ -41,4 +45,21 @@ public class MemberServiceTest {
 			.extracting("username")
 			.isEqualTo("user1");
 	}
+
+	@DisplayName("회원 탈퇴 확인")
+	@Test
+	void deleteMember() throws Exception {
+		//given
+		Member member = Member.builder()
+			.username("member1")
+			.build();
+		em.persist(member);
+
+		//when
+		memberService.deleteMember(member.getId());
+		//then
+		Optional<Member> findMember = memberRepository.findById(member.getId());
+		assertThat(findMember).isEmpty();
+	}
+
 }
