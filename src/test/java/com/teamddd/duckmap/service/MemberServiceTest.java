@@ -15,6 +15,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.teamddd.duckmap.dto.user.CreateMemberReq;
+import com.teamddd.duckmap.dto.user.MemberRes;
 import com.teamddd.duckmap.entity.Member;
 import com.teamddd.duckmap.exception.NonExistentMemberException;
 import com.teamddd.duckmap.repository.MemberRepository;
@@ -78,6 +79,25 @@ public class MemberServiceTest {
 			.hasMessage("잘못된 사용자 정보입니다");
 	}
 
+	@DisplayName("로그인한 회원 정보 조회")
+	@Test
+	void getMyInfoBySecurity() throws Exception {
+		//given
+		Member member = Member.builder()
+			.email("email@email.com")
+			.username("member1")
+			.build();
+		em.persist(member);
+
+		//when
+		MemberRes findMember = memberService.getMyInfoBySecurity(member.getEmail());
+
+		//then
+		assertThat(findMember).isNotNull();
+		assertThat(findMember).extracting("email", "username")
+			.containsExactly(member.getEmail(), member.getUsername());
+	}
+
 	@DisplayName("회원의 비밀번호 검증")
 	@Test
 	void validatePassword() throws Exception {
@@ -118,6 +138,29 @@ public class MemberServiceTest {
 		Optional<Member> findMember = memberRepository.findById(member.getId());
 		assertThat(findMember).isNotEmpty();
 		assertThat(passwordEncoder.matches(newPassword, findMember.get().getPassword())).isTrue();
+	}
+
+	@DisplayName("회원의 정보 변경")
+	@Test
+	void updateMemberInfo() throws Exception {
+		//given
+		Member member = Member.builder()
+			.email("email@email.com")
+			.username("member1")
+			.image("image.png")
+			.build();
+		em.persist(member);
+
+		//when
+		memberService.updateMemberInfo(member.getEmail(), "member2", member.getImage());
+
+		//then
+		em.flush();
+		em.clear();
+		Optional<Member> findMember = memberRepository.findById(member.getId());
+		assertThat(findMember).isNotNull();
+		assertThat(findMember.get()).extracting("email", "username")
+			.containsExactly(member.getEmail(), "member2");
 	}
 
 }
