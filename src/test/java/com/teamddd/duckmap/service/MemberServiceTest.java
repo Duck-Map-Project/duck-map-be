@@ -1,7 +1,6 @@
 package com.teamddd.duckmap.service;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 import java.util.Optional;
 
@@ -9,7 +8,6 @@ import javax.persistence.EntityManager;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,8 +29,8 @@ public class MemberServiceTest {
 	MemberRepository memberRepository;
 	@Autowired
 	EntityManager em;
-	@Mock
-	private PasswordEncoder passwordEncoder;
+	@Autowired
+	PasswordEncoder passwordEncoder;
 
 	@DisplayName("생성된 회원 확인")
 	@Test
@@ -84,18 +82,42 @@ public class MemberServiceTest {
 	@Test
 	void validatePassword() throws Exception {
 		//given
-		String password = passwordEncoder.encode("@Aaaa1234");
+		String password = "@Aaaa1234";
 		Member member = Member.builder()
 			.email("email@email.com")
-			.password(password)
+			.password(passwordEncoder.encode(password))
 			.build();
 		em.persist(member);
-		when(passwordEncoder.matches(password, member.getPassword())).thenReturn(true);
+
 		//when
-		Member findMember = memberService.validatePassword(member.getEmail(), member.getPassword());
+		Member findMember = memberService.validatePassword(member.getEmail(), password);
+
 		//then
 		assertThat(findMember).isNotNull();
 		assertThat(findMember).extracting("email").isEqualTo(member.getEmail());
+	}
+
+	@DisplayName("회원의 비밀번호 변경")
+	@Test
+	void updatePassword() throws Exception {
+		//given
+		String currentPassword = "@Aaaa1234";
+		String newPassword = "@Bbbb1234";
+		Member member = Member.builder()
+			.email("email@email.com")
+			.password(passwordEncoder.encode(currentPassword))
+			.build();
+		em.persist(member);
+
+		//when
+		memberService.updatePassword(member.getEmail(), currentPassword, newPassword);
+
+		//then
+		em.flush();
+		em.clear();
+		Optional<Member> findMember = memberRepository.findById(member.getId());
+		assertThat(findMember).isNotEmpty();
+		assertThat(passwordEncoder.matches(newPassword, findMember.get().getPassword())).isTrue();
 	}
 
 }
