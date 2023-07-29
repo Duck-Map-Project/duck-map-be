@@ -51,26 +51,30 @@ public class MemberController {
 	@Operation(summary = "회원 정보 조회", description = "로그인한 회원 정보 조회")
 	@GetMapping("/me")
 	public MemberRes getMemberInfo() {
-		return memberService.getMyInfoBySecurity();
+		String email = MemberUtils.getAuthMember().getUsername();
+		return memberService.getMyInfoBySecurity(email);
 	}
 
 	@Operation(summary = "회원정보 수정", description = "로그인한 회원의 닉네임, 프로필 사진 변경 요청")
 	@PutMapping("/me")
 	public void updateMember(@Validated @RequestBody UpdateMemberReq updateMemberReq) {
-		memberService.updateMemberInfo(updateMemberReq.getUsername(), updateMemberReq.getImage());
+		String email = MemberUtils.getAuthMember().getUsername();
+		memberService.updateMemberInfo(email, updateMemberReq.getUsername(), updateMemberReq.getImage());
 	}
 
 	@Operation(summary = "비밀번호 변경", description = "로그인한 회원 비밀번호 변경")
 	@PatchMapping("/me/password")
 	public void updatePassword(@Validated @RequestBody UpdatePasswordReq updatePasswordReq) {
-		memberService.updatePassword(updatePasswordReq.getCurrentPassword(), updatePasswordReq.getNewPassword());
+		String email = MemberUtils.getAuthMember().getUsername();
+		memberService.updatePassword(email, updatePasswordReq.getCurrentPassword(), updatePasswordReq.getNewPassword());
 	}
 
 	@Operation(summary = "회원 탈퇴")
 	@DeleteMapping("/me")
 	public void deleteMember(@RequestHeader("Authorization") String requestAccessToken,
 		@Validated @RequestBody DeleteMemberReq deleteMemberReq) {
-		Member member = memberService.validatePassword(deleteMemberReq.getPassword());
+		String email = MemberUtils.getAuthMember().getUsername();
+		Member member = memberService.validatePassword(email, deleteMemberReq.getPassword());
 		authService.logout(requestAccessToken);
 		memberService.deleteMember(member.getId());
 	}

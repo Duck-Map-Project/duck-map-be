@@ -12,12 +12,11 @@ import com.teamddd.duckmap.entity.Member;
 import com.teamddd.duckmap.entity.Role;
 import com.teamddd.duckmap.exception.DuplicateEmailException;
 import com.teamddd.duckmap.exception.DuplicateUsernameException;
-import com.teamddd.duckmap.exception.InvalidMemberException;
 import com.teamddd.duckmap.exception.InvalidPasswordException;
 import com.teamddd.duckmap.exception.InvalidUuidException;
+import com.teamddd.duckmap.exception.NonExistentMemberException;
 import com.teamddd.duckmap.repository.MemberRepository;
 import com.teamddd.duckmap.util.FileUtils;
-import com.teamddd.duckmap.util.MemberUtils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -57,19 +56,19 @@ public class MemberService {
 	}
 
 	public void checkMemberByEmail(String email) {
-		memberRepository.findByEmail(email).orElseThrow(InvalidMemberException::new);
+		memberRepository.findByEmail(email).orElseThrow(NonExistentMemberException::new);
 	}
 
-	public MemberRes getMyInfoBySecurity() {
-		return memberRepository.findByEmail(MemberUtils.getAuthMember().getUsername())
+	public MemberRes getMyInfoBySecurity(String email) {
+		return memberRepository.findByEmail(email)
 			.map(MemberRes::of)
-			.orElseThrow(InvalidMemberException::new);
+			.orElseThrow(NonExistentMemberException::new);
 	}
 
 	@Transactional
-	public void updateMemberInfo(String username, String image) {
-		Member member = memberRepository.findByEmail(MemberUtils.getAuthMember().getUsername())
-			.orElseThrow(InvalidMemberException::new);
+	public void updateMemberInfo(String email, String username, String image) {
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(NonExistentMemberException::new);
 
 		//닉네임 중복 체크
 		checkDuplicateUsername(username);
@@ -86,15 +85,15 @@ public class MemberService {
 	}
 
 	@Transactional
-	public void updatePassword(String currentPassword, String newPassword) {
-		Member member = validatePassword(currentPassword);
+	public void updatePassword(String email, String currentPassword, String newPassword) {
+		Member member = validatePassword(email, currentPassword);
 		member.updatePassword(passwordEncoder.encode((newPassword)));
 	}
 
 	@Transactional
 	public void deleteMember(Long id) {
 		Member member = memberRepository.findById(id)
-			.orElseThrow(InvalidMemberException::new);
+			.orElseThrow(NonExistentMemberException::new);
 
 		//서버에서 프로필 이미지 삭제
 		if (StringUtils.hasText(member.getImage())) {
@@ -104,9 +103,9 @@ public class MemberService {
 		memberRepository.deleteById(id);
 	}
 
-	public Member validatePassword(String password) {
-		Member member = memberRepository.findByEmail(MemberUtils.getAuthMember().getUsername())
-			.orElseThrow(InvalidMemberException::new);
+	public Member validatePassword(String email, String password) {
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(NonExistentMemberException::new);
 		if (!passwordEncoder.matches(password, member.getPassword())) {
 			throw new InvalidPasswordException();
 		}
@@ -123,7 +122,7 @@ public class MemberService {
 
 		//redis에서 uuid로 email을 찾아온다.
 		Member member = memberRepository.findByEmail(email)
-			.orElseThrow(InvalidMemberException::new);
+			.orElseThrow(NonExistentMemberException::new);
 
 		//비밀번호 재설정
 		member.updatePassword(passwordEncoder.encode((newPassword)));
