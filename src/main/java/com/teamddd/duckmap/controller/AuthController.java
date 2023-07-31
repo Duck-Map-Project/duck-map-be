@@ -45,7 +45,10 @@ public class AuthController {
 		// RT 저장
 		HttpCookie httpCookie = ResponseCookie.from("refresh-token", tokenDto.getRefreshToken())
 			.maxAge(COOKIE_EXPIRATION)
-			.httpOnly(true)
+			.path("/")
+			.sameSite("None")
+			.httpOnly(false)
+			.secure(true)
 			.build();
 		return ResponseEntity.ok()
 			.header(HttpHeaders.SET_COOKIE, httpCookie.toString())
