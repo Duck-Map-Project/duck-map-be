@@ -47,6 +47,8 @@ public class AuthController {
 			.maxAge(COOKIE_EXPIRATION)
 			.path("/")
 			.httpOnly(true)
+			.sameSite("None")
+			.secure(true)
 			.build();
 		return ResponseEntity.ok()
 			.header(HttpHeaders.SET_COOKIE, httpCookie.toString())
