@@ -49,12 +49,12 @@ jobs:
           touch ./application.yml
           echo "${{ secrets.YAML_TEST }}" > ./application.yml
 
-      ## copy keystore.p12
-      - name: Copy keystore.p12
-        run: |
-          cd ./src/main/resources
-          touch ./keystore.p12
-          echo "${{ secrets.KEYSTORE }}" | base64 --decode > ./keystore.p12 
+      #      ## copy keystore.p12
+      #      - name: Copy keystore.p12
+      #        run: |
+      #          cd ./src/main/resources
+      #          touch ./keystore.p12
+      #          echo "${{ secrets.KEYSTORE }}" | base64 --decode > ./keystore.p12
 
       ## gradle build
       - name: Build with Gradle
