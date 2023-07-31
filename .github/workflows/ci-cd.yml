@@ -2,7 +2,7 @@ name: CI/CD
 
 on:
   push:
-    branches: 
+    branches:
       - main
     paths-ignore:
       - '.git**'
@@ -17,29 +17,29 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    
-    ## jdk setting
-    - uses: actions/checkout@v3
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        
-    ## gradle caching
-    - name: Gradle Caching
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-
-    
-    ## create application.yml
-    - name: make application.yml
-      run: |
+
+      ## jdk setting
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      ## gradle caching
+      - name: Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      ## create application.yml
+      - name: make application.yml
+        run: |
           cd ./src/main/resources
           touch ./application-prod.yml
           echo "${{ secrets.YAML_PROD }}" > ./application-prod.yml
@@ -48,28 +48,35 @@ jobs:
           cd ./src/test/resources
           touch ./application.yml
           echo "${{ secrets.YAML_TEST }}" > ./application.yml
-          
-    ## gradle build
-    - name: Build with Gradle
-      run: ./gradlew build
+
+      ## copy keystore.p12
+      - name: Copy keystore.p12
+        run: |
+          cd ./src/main/resources
+          touch ./keystore.p12
+          echo "${{ secrets.KEYSTORE }}" | base64 --decode > ./keystore.p12 
+
+      ## gradle build
+      - name: Build with Gradle
+        run: ./gradlew build
       
-    ## docker build & push to production
-    - name: Docker build & push to prod
-      run: |
+      ## docker build & push to production
+      - name: Docker build & push to prod
+        run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker build -t ${{ secrets.DOCKER_REPO }} .
           docker push ${{ secrets.DOCKER_REPO }}
-          
-    ## deploy to production
-    - name: Deploy to prod
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.AWS_HOST }}
-        username: ${{ secrets.AWS_USERNAME }}
-        key: ${{ secrets.AWS_PRIVATE_KEY }}
-#         password: ${{ secrets.AWS_PASSWORD }}
-        port: ${{ secrets.AWS_PORT }}
-        script: |
+
+      ## deploy to production
+      - name: Deploy to prod
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AWS_HOST }}
+          username: ${{ secrets.AWS_USERNAME }}
+          key: ${{ secrets.AWS_PRIVATE_KEY }}
+          #         password: ${{ secrets.AWS_PASSWORD }}
+          port: ${{ secrets.AWS_PORT }}
+          script: |
             sudo docker rm -f $(sudo docker ps -qa)
             sudo docker pull ${{ secrets.DOCKER_REPO }}
             sudo docker image prune -f
@@ -80,21 +87,21 @@ jobs:
             -p 8080:8080 \
             --name duckmap-container \
             ${{ secrets.DOCKER_REPO }}
-            
-    # 테스트 결과를 Action summary에 남긴다
-    - name: GitHub Actions job summary
-      uses: EnricoMi/publish-unit-test-result-action@v2.8.0
-      if: always()
-      with:
-        files: '**/build/test-results/test/TEST-*.xml'
-        comment_mode: off
-      
+
+      # 테스트 결과를 Action summary에 남긴다
+      - name: GitHub Actions job summary
+        uses: EnricoMi/publish-unit-test-result-action@v2.8.0
+        if: always()
+        with:
+          files: '**/build/test-results/test/TEST-*.xml'
+          comment_mode: off
+
   ## discord
   action-discord:
     needs: CI-CD
     if: always()
     runs-on: ubuntu-latest
-    steps: 
+    steps:
       - name: Discord notification
         uses: sarisia/actions-status-discord@v1.12.0
         if: always()
