@@ -43,3 +43,6 @@ out/
 
 ### data.sql ###
 **/src/main/resources/data.sql
+
+### .p12 ###
+**/src/main/resources/keystore.p12
