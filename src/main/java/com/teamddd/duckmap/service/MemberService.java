@@ -70,8 +70,10 @@ public class MemberService {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(NonExistentMemberException::new);
 
-		//닉네임 중복 체크
-		checkDuplicateUsername(username);
+		//닉네임이 변경됐다면 닉네임 중복 체크
+		if (!member.getUsername().equals(username)) {
+			checkDuplicateUsername(username);
+		}
 
 		//기존 프로필 image
 		String oldImage = member.getImage();
