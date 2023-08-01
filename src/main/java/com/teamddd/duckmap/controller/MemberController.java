@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,7 +56,7 @@ public class MemberController {
 	}
 
 	@Operation(summary = "회원정보 수정", description = "로그인한 회원의 닉네임, 프로필 사진 변경 요청")
-	@PatchMapping("/me")
+	@PutMapping("/me")
 	public void updateMember(@Validated @RequestBody UpdateMemberReq updateMemberReq) {
 		String email = MemberUtils.getAuthMember().getUsername();
 		memberService.updateMemberInfo(email, updateMemberReq.getUsername(), updateMemberReq.getImage());
