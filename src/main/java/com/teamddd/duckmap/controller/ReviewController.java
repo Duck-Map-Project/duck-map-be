@@ -109,7 +109,7 @@ public class ReviewController {
 	}
 
 	@Operation(summary = "이벤트의 리뷰 목록 조회")
-	@GetMapping("/{eventId}")
+	@GetMapping("/event-review-list/{eventId}")
 	public Page<EventReviewsRes> getEventReviews(@PathVariable Long eventId, PageReq pageReq) {
 		Pageable pageable = PageRequest.of(pageReq.getPageNumber(), pageReq.getPageSize());
 		EventReviewServiceReq request = EventReviewServiceReq.builder()
