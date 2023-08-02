@@ -6,10 +6,10 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.teamddd.duckmap.common.ApiUrl;
-import com.teamddd.duckmap.dto.artist.ArtistRes;
-import com.teamddd.duckmap.dto.event.category.EventCategoryRes;
+import com.teamddd.duckmap.entity.Artist;
 import com.teamddd.duckmap.entity.Event;
 import com.teamddd.duckmap.entity.EventArtist;
+import com.teamddd.duckmap.entity.EventCategory;
 import com.teamddd.duckmap.entity.EventInfoCategory;
 import com.teamddd.duckmap.entity.Review;
 import com.teamddd.duckmap.entity.ReviewImage;
@@ -24,8 +24,8 @@ public class ReviewsRes {
 	private boolean inProgress;
 	private int score;
 	private String image;
-	private List<ArtistRes> artists;
-	private List<EventCategoryRes> categories;
+	private List<String> artists;
+	private List<String> categories;
 
 	public static ReviewsRes of(Review review, LocalDate date) {
 		Event event = review.getEvent();
@@ -44,13 +44,13 @@ public class ReviewsRes {
 				event.getEventArtists().stream()
 					.map(EventArtist::getArtist)
 					.filter(Objects::nonNull)
-					.map(ArtistRes::of)
+					.map(Artist::getName)
 					.collect(Collectors.toList())
 			)
 			.categories(
 				event.getEventInfoCategories().stream()
 					.map(EventInfoCategory::getEventCategory)
-					.map(EventCategoryRes::of)
+					.map(EventCategory::getCategory)
 					.collect(Collectors.toList())
 			)
 			.build();
