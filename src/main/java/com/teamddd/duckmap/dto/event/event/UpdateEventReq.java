@@ -17,7 +17,6 @@ public class UpdateEventReq {
 	private LocalDate fromDate;
 	@NotNull
 	private LocalDate toDate;
-	@NotBlank
 	private String address;
 	private String businessHour;
 	private String hashtag;
