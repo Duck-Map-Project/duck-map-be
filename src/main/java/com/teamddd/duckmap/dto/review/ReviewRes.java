@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.teamddd.duckmap.common.ApiUrl;
+import com.teamddd.duckmap.entity.Event;
 import com.teamddd.duckmap.entity.Review;
 import com.teamddd.duckmap.entity.ReviewImage;
 
@@ -21,8 +22,12 @@ public class ReviewRes {
 	private int score;
 	private String content;
 	private List<String> photos;
+	private Long eventId;
+	private String eventStoreName;
+	private String hashtag;
 
 	public static ReviewRes of(Review review) {
+		Event event = review.getEvent();
 		List<String> imageResList = review.getReviewImages().stream()
 			.map(ReviewImage::getImage)
 			.map(image -> ApiUrl.IMAGE + image)
@@ -36,6 +41,9 @@ public class ReviewRes {
 			.score(review.getScore())
 			.content(review.getContent())
 			.photos(imageResList)
+			.eventId(event.getId())
+			.eventStoreName(event.getStoreName())
+			.hashtag(event.getHashtag())
 			.build();
 	}
 }
