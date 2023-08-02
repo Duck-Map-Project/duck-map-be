@@ -1,7 +1,6 @@
 package com.teamddd.duckmap.dto.event.event;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.teamddd.duckmap.entity.Artist;
 import com.teamddd.duckmap.entity.EventArtist;
@@ -14,6 +13,7 @@ import lombok.Getter;
 public class EventsMapRes {
 	private Long id;
 	private String storeName;
+	private String address;
 	private Long likeCount;
 	private Long reviewCount;
 	private List<String> artists;
@@ -21,13 +21,14 @@ public class EventsMapRes {
 	public static EventsMapRes of(EventLikeReviewCountDto dto) {
 		return EventsMapRes.builder()
 			.storeName(dto.getEvent().getStoreName())
+			.address(dto.getEvent().getAddress())
 			.likeCount(dto.getLikeCount())
 			.reviewCount(dto.getReviewCount())
 			.artists(
 				dto.getEvent().getEventArtists().stream()
 					.map(EventArtist::getArtist)
 					.map(Artist::getName)
-					.collect(Collectors.toList())
+					.toList()
 			)
 			.build();
 	}
