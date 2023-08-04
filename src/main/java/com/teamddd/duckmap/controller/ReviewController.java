@@ -75,6 +75,7 @@ public class ReviewController {
 	@Operation(summary = "리뷰 목록 조회", description = "artist, 날짜 기준 리뷰 목록 조회 기능 구현")
 	@GetMapping
 	public Page<ReviewsRes> getReviews(PageReq pageReq, @ModelAttribute ReviewSearchParam reviewSearchParam) {
+
 		LocalDate today = LocalDate.now();
 
 		Pageable pageable = PageRequest.of(pageReq.getPageNumber(), pageReq.getPageSize());
