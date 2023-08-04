@@ -1,8 +1,11 @@
 package com.teamddd.duckmap.dto.review;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
+
+import com.teamddd.duckmap.entity.Member;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -14,4 +17,5 @@ public class ReviewSearchServiceReq {
 	private Long artistId;
 	private boolean onlyInProgress;
 	private Pageable pageable;
+	private Optional<Member> member;
 }

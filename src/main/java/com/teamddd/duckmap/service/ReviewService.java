@@ -21,6 +21,7 @@ import com.teamddd.duckmap.dto.review.ReviewRes;
 import com.teamddd.duckmap.dto.review.ReviewSearchServiceReq;
 import com.teamddd.duckmap.dto.review.ReviewsRes;
 import com.teamddd.duckmap.dto.review.UpdateReviewReq;
+import com.teamddd.duckmap.entity.Artist;
 import com.teamddd.duckmap.entity.Event;
 import com.teamddd.duckmap.entity.Member;
 import com.teamddd.duckmap.entity.Review;
@@ -40,6 +41,7 @@ public class ReviewService {
 	private final Props props;
 	private final EventService eventService;
 	private final ArtistService artistService;
+	private final LastSearchArtistService lastSearchArtistService;
 	private final ReviewRepository reviewRepository;
 
 	@Transactional
@@ -105,9 +107,13 @@ public class ReviewService {
 
 	public Page<ReviewsRes> getReviewsResList(ReviewSearchServiceReq request) {
 		if (request.getArtistId() != null) {
-			artistService.getArtist(request.getArtistId());
+			Artist searchArtist = artistService.getArtist(request.getArtistId());
+
+			request.getMember()
+				.ifPresent(member -> lastSearchArtistService.saveLastSearchArtist(member, searchArtist));
 		}
 		LocalDate searchDate = request.isOnlyInProgress() ? request.getDate() : null;
+
 		Page<Review> reviews = reviewRepository.findByArtistAndDate(request.getArtistId(),
 			searchDate, request.getPageable());
 
