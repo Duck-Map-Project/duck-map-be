@@ -21,6 +21,9 @@
 | [API 서버](https://duckmap.shop:8080/swagger-ui/index.html#) | [배포 서버](http://duck-map.s3-website.ap-northeast-2.amazonaws.com)|
 
 <br>
+## Figma
+[대동덕지도 디자인] (https://www.figma.com/file/LNisCtmO4ope7kllZgEUpq/대동덕지도-디자인-진행?type=design&node-id=0-1&mode=design&t=hAtoFo31fsfAWLna-0)
+<br>
 
 ## ERD
 <p align="center">
@@ -45,9 +48,9 @@
 <br>
 
 ## 팀 소개
-| <img src="https://github.com/duck-map-project/duck-map-be/assets/100250055/83aa0ce2-69a8-4afd-8fee-9146a0269e55" width="100"><br>[@busymidnight](https://github.com/busymidnight) | [@LeeRim](https://github.com/LeeRim) | [@sabit1997](https://github.com/sabit1997) |  [@vnfdusdl](https://github.com/vnfdusdl)   | 
-| :--------: | :--------: | :------: | :-----: |
-| Back-end | Back-end | Front-end  | Front-end  |
+| <img src="https://github.com/duck-map-project/duck-map-be/assets/100250055/83aa0ce2-69a8-4afd-8fee-9146a0269e55" width="100"><br>[@busymidnight](https://github.com/busymidnight) | [@LeeRim](https://github.com/LeeRim) | [@sabit1997](https://github.com/sabit1997) |  [@vnfdusdl](https://github.com/vnfdusdl)   | Rena | 
+| :--------: | :--------: | :------: | :-----: |:-----: |
+| Back-end | Back-end | Front-end  | Front-end  | Design |
 
 <br>
 
