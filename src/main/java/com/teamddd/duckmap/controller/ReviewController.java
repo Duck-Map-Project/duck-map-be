@@ -81,6 +81,7 @@ public class ReviewController {
 		Pageable pageable = PageRequest.of(pageReq.getPageNumber(), pageReq.getPageSize());
 
 		ReviewSearchServiceReq request = ReviewSearchServiceReq.builder()
+			.member(MemberUtils.getMember())
 			.date(today)
 			.artistId(reviewSearchParam.getArtistId())
 			.onlyInProgress(BooleanUtils.isTrue(reviewSearchParam.getOnlyInProgress()))
