@@ -29,7 +29,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
 
 	@Override
 	public Page<Review> findByArtistAndDate(Long artistId, LocalDate date, Pageable pageable) {
-		List<Review> reviews = queryFactory.select(review)
+		List<Review> reviews = queryFactory.selectDistinct(review)
 			.from(review)
 			.leftJoin(review.event, event).fetchJoin()
 			.join(eventArtist).on(event.eq(eventArtist.event))
