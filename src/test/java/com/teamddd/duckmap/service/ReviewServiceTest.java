@@ -339,6 +339,7 @@ public class ReviewServiceTest {
 
 		ReviewSearchServiceReq request = ReviewSearchServiceReq.builder()
 			.date(now)
+			.member(Optional.ofNullable(member1))
 			.artistId(artist1.getId())
 			.onlyInProgress(false)
 			.pageable(pageable)
