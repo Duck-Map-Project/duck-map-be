@@ -161,6 +161,7 @@ public class EventService {
 			.build();
 	}
 
+	@Transactional
 	public Page<EventsRes> getEventsResList(EventSearchServiceReq request) {
 		if (request.getArtistId() != null) {
 			Artist searchArtist = artistService.getArtist(request.getArtistId());
