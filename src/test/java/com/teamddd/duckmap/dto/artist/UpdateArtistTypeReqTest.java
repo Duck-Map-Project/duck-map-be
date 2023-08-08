@@ -9,6 +9,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
+import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -42,7 +43,7 @@ class UpdateArtistTypeReqTest {
 
 		//then
 		assertThat(validate).hasSize(1)
-			.extracting(ConstraintViolation::getMessage)
-			.containsOnly("공백일 수 없습니다");
+			.extracting(violation -> violation.getPropertyPath().toString(), ConstraintViolation::getMessageTemplate)
+			.containsExactlyInAnyOrder(Tuple.tuple("type", "{javax.validation.constraints.NotBlank.message}"));
 	}
 }
