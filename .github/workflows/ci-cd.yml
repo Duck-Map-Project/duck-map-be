@@ -84,6 +84,8 @@ jobs:
             --add-host=host.docker.internal:host-gateway \
             -v /home/${{ secrets.AWS_USERNAME }}/app/log:/var/log \
             -v /home/${{ secrets.AWS_USERNAME }}/app/image:/image \
+            -v /etc/localtime:/etc/localtime:ro \
+            -e TZ=Asia/Seoul \
             -p 8080:8080 \
             --name duckmap-container \
             ${{ secrets.DOCKER_REPO }}
