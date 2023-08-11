@@ -16,7 +16,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
-class CreateArtistReqTest {
+class UpdateArtistReqTest {
 
 	static ValidatorFactory validatorFactory;
 	static Validator validator;
@@ -32,14 +32,14 @@ class CreateArtistReqTest {
 		validatorFactory.close();
 	}
 
-	@DisplayName("아티스트 구분은 필수값이다")
+	@DisplayName("artistTypeId는 필수값이다")
 	@Test
 	void notNullArtistTypeId() throws Exception {
 		//given
-		CreateArtistReq req = new CreateArtistReq();
+		UpdateArtistReq req = new UpdateArtistReq();
 
 		//when
-		Set<ConstraintViolation<CreateArtistReq>> validate = validator.validateProperty(req, "artistTypeId");
+		Set<ConstraintViolation<UpdateArtistReq>> validate = validator.validateProperty(req, "artistTypeId");
 
 		//then
 		assertThat(validate).hasSize(1)
@@ -51,11 +51,11 @@ class CreateArtistReqTest {
 	@Test
 	void notBlankName() throws Exception {
 		//given
-		CreateArtistReq req = new CreateArtistReq();
+		UpdateArtistReq req = new UpdateArtistReq();
 		ReflectionTestUtils.setField(req, "name", " ");
 
 		//when
-		Set<ConstraintViolation<CreateArtistReq>> validate = validator.validateProperty(req, "name");
+		Set<ConstraintViolation<UpdateArtistReq>> validate = validator.validateProperty(req, "name");
 
 		//then
 		assertThat(validate).hasSize(1)
@@ -67,15 +67,16 @@ class CreateArtistReqTest {
 	@Test
 	void notBlankImage() throws Exception {
 		//given
-		CreateArtistReq req = new CreateArtistReq();
+		UpdateArtistReq req = new UpdateArtistReq();
 		ReflectionTestUtils.setField(req, "image", " ");
 
 		//when
-		Set<ConstraintViolation<CreateArtistReq>> validate = validator.validateProperty(req, "image");
+		Set<ConstraintViolation<UpdateArtistReq>> validate = validator.validateProperty(req, "image");
 
 		//then
 		assertThat(validate).hasSize(1)
 			.extracting(violation -> violation.getPropertyPath().toString(), ConstraintViolation::getMessageTemplate)
 			.containsExactlyInAnyOrder(Tuple.tuple("image", "{javax.validation.constraints.NotBlank.message}"));
 	}
+
 }

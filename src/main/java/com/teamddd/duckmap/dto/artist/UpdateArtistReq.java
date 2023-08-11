@@ -10,7 +10,7 @@ public class UpdateArtistReq {
 	private Long groupId;
 	@NotBlank
 	private String name;
-	@NotNull
+	@NotBlank
 	private String image;
 	@NotNull
 	private Long artistTypeId;
