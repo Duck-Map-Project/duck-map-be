@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.teamddd.duckmap.dto.artist.ArtistTypeRes;
 import com.teamddd.duckmap.dto.artist.CreateArtistTypeReq;
 import com.teamddd.duckmap.dto.artist.UpdateArtistTypeServiceReq;
-import com.teamddd.duckmap.entity.Artist;
 import com.teamddd.duckmap.entity.ArtistType;
 import com.teamddd.duckmap.exception.NonExistentArtistTypeException;
 import com.teamddd.duckmap.exception.UnableToDeleteArtistTypeInUseException;
@@ -111,13 +110,6 @@ class ArtistTypeServiceTest {
 			.build();
 	}
 
-	Artist createArtist(ArtistType type, String name) {
-		return Artist.builder()
-			.artistType(type)
-			.name(name)
-			.build();
-	}
-
 	@DisplayName("아티스트 타입을 조회한다")
 	@Nested
 	class GetArtistType {
@@ -170,6 +162,8 @@ class ArtistTypeServiceTest {
 
 			//when
 			artistTypeService.deleteArtistType(deleteArtistTypeId);
+			em.flush();
+			em.clear();
 
 			//then
 			Optional<ArtistType> findArtistType = artistTypeRepository.findById(deleteArtistTypeId);
@@ -183,17 +177,13 @@ class ArtistTypeServiceTest {
 			ArtistType type = createArtistType("type");
 			em.persist(type);
 
-			Artist artist1 = createArtist(type, "artist1");
-			Artist artist2 = createArtist(type, "artist2");
-			em.persist(artist1);
-			em.persist(artist2);
-
 			em.flush();
 			em.clear();
 
 			Long deleteArtistTypeId = type.getId();
 
-			when(artistRepository.countByArtistType(any())).thenReturn(2L);
+			doReturn(Optional.of(type)).when(artistTypeRepository).findById(anyLong());
+			when(artistRepository.countByArtistType(any(ArtistType.class))).thenReturn(2L);
 
 			//when //then
 			assertThatThrownBy(() -> artistTypeService.deleteArtistType(deleteArtistTypeId))

@@ -105,8 +105,6 @@ class ArtistTypeControllerTest {
 			UpdateArtistTypeReq request = new UpdateArtistTypeReq();
 			ReflectionTestUtils.setField(request, "type", "type1");
 
-			doNothing().when(artistTypeService).updateArtistType(any());
-
 			//when //then
 			mockMvc.perform(
 					put("/artists/types/1")
@@ -146,7 +144,6 @@ class ArtistTypeControllerTest {
 		@WithMockUser(roles = "ADMIN")
 		void deleteArtistType1() throws Exception {
 			//given
-			doNothing().when(artistTypeService).deleteArtistType(any());
 
 			//when //then
 			mockMvc.perform(
