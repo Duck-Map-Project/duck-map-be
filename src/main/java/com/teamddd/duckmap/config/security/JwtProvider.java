@@ -35,10 +35,10 @@ public class JwtProvider {
 	//access token 유효시간 30분
 	private final long ACCESS_TOKEN_VALID_TIME = 30 * 60 * 1000L;
 	private final long REFRESH_TOKEN_VALID_TIME = 60 * 60 * 24 * 7 * 1000L;
-	private final SecurityUserDetailsService userDetailsService;
+	private final UserDetailsServiceImpl userDetailsService;
 	private final RedisService redisService;
 
-	public JwtProvider(SecurityUserDetailsService userDetailsService, RedisService redisService) {
+	public JwtProvider(UserDetailsServiceImpl userDetailsService, RedisService redisService) {
 		this.userDetailsService = userDetailsService;
 		this.redisService = redisService;
 	}

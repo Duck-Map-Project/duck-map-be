@@ -9,7 +9,7 @@ import com.teamddd.duckmap.exception.InvalidMemberException;
 import com.teamddd.duckmap.repository.MemberRepository;
 
 @Service
-public class SecurityUserDetailsService implements UserDetailsService {
+public class UserDetailsServiceImpl implements UserDetailsService {
 	@Autowired
 	private MemberRepository memberRepository;
 
