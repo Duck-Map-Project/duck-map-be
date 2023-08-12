@@ -8,7 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithSecurityContextFactory;
 
-import com.teamddd.duckmap.config.security.SecurityUserDetailsService;
+import com.teamddd.duckmap.config.security.UserDetailsServiceImpl;
 import com.teamddd.duckmap.entity.Member;
 import com.teamddd.duckmap.entity.Role;
 import com.teamddd.duckmap.repository.MemberRepository;
@@ -17,7 +17,7 @@ public class WithMockAuthUserSecurityContextFactory implements WithSecurityConte
 	@Autowired
 	MemberRepository memberRepository;
 	@Autowired
-	SecurityUserDetailsService securityUserDetailsService;
+	UserDetailsServiceImpl securityUserDetailsService;
 
 	@Override
 	public SecurityContext createSecurityContext(WithMockAuthUser withAccount) {

@@ -34,11 +34,12 @@ public class JwtProvider {
 	private static final String EMAIL_KEY = "email";
 	//access token 유효시간 30분
 	private final long ACCESS_TOKEN_VALID_TIME = 30 * 60 * 1000L;
+	//refresh token 유효시간 7일
 	private final long REFRESH_TOKEN_VALID_TIME = 60 * 60 * 24 * 7 * 1000L;
-	private final SecurityUserDetailsService userDetailsService;
+	private final UserDetailsServiceImpl userDetailsService;
 	private final RedisService redisService;
 
-	public JwtProvider(SecurityUserDetailsService userDetailsService, RedisService redisService) {
+	public JwtProvider(UserDetailsServiceImpl userDetailsService, RedisService redisService) {
 		this.userDetailsService = userDetailsService;
 		this.redisService = redisService;
 	}
@@ -53,7 +54,7 @@ public class JwtProvider {
 
 	// JWT 토큰 생성
 	public TokenDto createToken(String email, String authorities) {
-		Long now = System.currentTimeMillis();
+		long now = System.currentTimeMillis();
 
 		String accessToken = Jwts.builder()
 			.setHeaderParam("typ", "JWT")
@@ -100,11 +101,11 @@ public class JwtProvider {
 
 	/**
 	 * Refresh 토큰으로부터 클레임을 만들고, 이를 통해 User 객체를 생성하여 Authentication 객체를 반환
-	 * @param refresh_token
+	 * @param refreshToken
 	 * @return
 	 */
-	public Authentication getAuthenticationByRefreshToken(String refresh_token) {
-		String userPrincipal = getClaims(refresh_token).get(EMAIL_KEY).toString();
+	public Authentication getAuthenticationByRefreshToken(String refreshToken) {
+		String userPrincipal = getClaims(refreshToken).get(EMAIL_KEY).toString();
 		UserDetailsImpl userDetails = userDetailsService.loadUserByUsername(userPrincipal);
 
 		return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
