@@ -36,23 +36,25 @@ public class UserDetailsImpl implements UserDetails {
 		return member.getEmail();
 	}
 
+	// == 세부 설정 == //
+
 	@Override
-	public boolean isAccountNonExpired() {
+	public boolean isAccountNonExpired() { // 계정의 만료 여부
 		return true;
 	}
 
 	@Override
-	public boolean isAccountNonLocked() {
+	public boolean isAccountNonLocked() { // 계정의 잠김 여부
 		return true;
 	}
 
 	@Override
-	public boolean isCredentialsNonExpired() {
+	public boolean isCredentialsNonExpired() { // 비밀번호 만료 여부
 		return true;
 	}
 
 	@Override
-	public boolean isEnabled() {
+	public boolean isEnabled() { // 계정의 활성화 여부
 		return true;
 	}
 }
