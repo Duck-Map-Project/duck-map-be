@@ -1,6 +1,5 @@
 package com.teamddd.duckmap.controller;
 
-import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -43,7 +42,7 @@ public class AuthController {
 		TokenDto tokenDto = authService.login(loginUserRQ);
 
 		// RT 저장
-		HttpCookie httpCookie = ResponseCookie.from("refresh-token", tokenDto.getRefreshToken())
+		ResponseCookie responseCookie = ResponseCookie.from("refresh-token", tokenDto.getRefreshToken())
 			.maxAge(COOKIE_EXPIRATION)
 			.path("/")
 			.httpOnly(true)
@@ -51,7 +50,7 @@ public class AuthController {
 			.secure(true)
 			.build();
 		return ResponseEntity.ok()
-			.header(HttpHeaders.SET_COOKIE, httpCookie.toString())
+			.header(HttpHeaders.SET_COOKIE, responseCookie.toString())
 			// AT 저장
 			.header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenDto.getAccessToken())
 			.build();
@@ -76,6 +75,7 @@ public class AuthController {
 			ResponseCookie responseCookie = ResponseCookie.from("refresh-token", reissuedTokenDto.getRefreshToken())
 				.maxAge(COOKIE_EXPIRATION)
 				.httpOnly(true)
+				.sameSite("None")
 				.secure(true)
 				.build();
 			return ResponseEntity
