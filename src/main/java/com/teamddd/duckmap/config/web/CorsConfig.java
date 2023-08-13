@@ -9,13 +9,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class CorsConfig implements WebMvcConfigurer {
 	@Value("${props.allowed-origin-url}")
 	private String allowedFrontUrl;
+	@Value("${props.allowed-origin-https-url}")
+	private String allowedFrontHttpsUrl;
 
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**")
 			.allowedOrigins(
 				allowedFrontUrl,
-				"https://d14wwtcgrsz6oh.cloudfront.net",
+				allowedFrontHttpsUrl,
 				"http://localhost:3000")
 			.allowCredentials(true)
 			.allowedHeaders("*")
