@@ -15,6 +15,7 @@ public class CorsConfig implements WebMvcConfigurer {
 		registry.addMapping("/**")
 			.allowedOrigins(
 				allowedFrontUrl,
+				"https://d14wwtcgrsz6oh.cloudfront.net",
 				"http://localhost:3000")
 			.allowCredentials(true)
 			.allowedHeaders("*")
