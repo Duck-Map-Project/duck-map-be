@@ -64,6 +64,7 @@
     - h2 database
 - CI/CD
     - Github Actions
+    - Docker
 - API Docs
     - Swagger
 - SCM
@@ -73,6 +74,9 @@
     - Spring Security
 - Dev Tool
     - IntelliJ
+- Cloud
+  - AWS EC2
+
 
 <br>
 
