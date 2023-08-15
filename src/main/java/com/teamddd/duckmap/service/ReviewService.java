@@ -93,6 +93,7 @@ public class ReviewService {
 		}
 	}
 
+	@Transactional
 	public void deleteReview(Long id) {
 		Review review = getReview(id);
 		List<ReviewImage> reviewImageList = review.getReviewImages();
