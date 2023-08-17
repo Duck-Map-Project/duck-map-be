@@ -126,7 +126,7 @@
 <br>
 
 ## 팀 소개
-| <img src="https://github.com/duck-map-project/duck-map-be/assets/100250055/83aa0ce2-69a8-4afd-8fee-9146a0269e55" width="100"><br>[@busymidnight](https://github.com/busymidnight) | [@LeeRim](https://github.com/LeeRim) | [@sabit1997](https://github.com/sabit1997) |  [@vnfdusdl](https://github.com/vnfdusdl)   | Rena | [@shaykk](https://github.com/shaykk) | 
+| <img src="https://github.com/duck-map-project/duck-map-be/assets/100250055/83aa0ce2-69a8-4afd-8fee-9146a0269e55" width="100"><br>[@busymidnight](https://github.com/busymidnight) | [@LeeRim](https://github.com/LeeRim) | [@sabit1997](https://github.com/sabit1997) |  [@vnfdusdl](https://github.com/vnfdusdl)   | [Rena](woneee_10@kakao.com) | [@shaykk](https://github.com/shaykk) | 
 | :--------: | :--------: | :------: | :-----: |:-----: | :-----: |
 | Back-end | Back-end | Front-end  | Front-end  | Design | 기획 단계 참여 |
 
