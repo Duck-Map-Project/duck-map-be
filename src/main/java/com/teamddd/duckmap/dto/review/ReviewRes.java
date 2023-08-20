@@ -19,6 +19,7 @@ public class ReviewRes {
 	private String userProfile;
 	private String username;
 	private LocalDateTime createdAt;
+	private LocalDateTime lastModifiedAt;
 	private int score;
 	private String content;
 	private List<String> photos;
@@ -38,6 +39,7 @@ public class ReviewRes {
 			.userProfile(ApiUrl.IMAGE + review.getMember().getImage())
 			.username(review.getMember().getUsername())
 			.createdAt(review.getCreatedAt())
+			.lastModifiedAt(review.getLastModifiedAt())
 			.score(review.getScore())
 			.content(review.getContent())
 			.photos(imageResList)
