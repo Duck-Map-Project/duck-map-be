@@ -1,7 +1,6 @@
 package com.teamddd.duckmap.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,7 +45,7 @@ public class ArtistTypeService {
 		List<ArtistType> types = artistTypeRepository.findAll();
 		return types.stream()
 			.map(ArtistTypeRes::of)
-			.collect(Collectors.toList());
+			.toList();
 	}
 
 	@Transactional

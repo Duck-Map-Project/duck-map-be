@@ -3,7 +3,6 @@ package com.teamddd.duckmap.service;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -87,7 +86,7 @@ public class ArtistService {
 
 		return artistRepository.findByGroup(group).stream()
 			.map(ArtistRes::of)
-			.collect(Collectors.toList());
+			.toList();
 	}
 
 	@Transactional
