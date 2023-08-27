@@ -3,7 +3,6 @@ package com.teamddd.duckmap.service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -140,19 +139,19 @@ public class EventService {
 				event.getEventArtists().stream()
 					.map(EventArtist::getArtist)
 					.map(ArtistRes::of)
-					.collect(Collectors.toList())
+					.toList()
 			)
 			.categories(
 				event.getEventInfoCategories().stream()
 					.map(EventInfoCategory::getEventCategory)
 					.map(EventCategoryRes::of)
-					.collect(Collectors.toList())
+					.toList()
 			)
 			.images(
 				event.getEventImages().stream()
 					.map(EventImage::getImage)
 					.map(image -> ApiUrl.IMAGE + image)
-					.collect(Collectors.toList())
+					.toList()
 			)
 			.score(score)
 			.likeId(likeId)
@@ -203,7 +202,7 @@ public class EventService {
 	public List<HashtagRes> getHashtagResListByDate(LocalDate date) {
 		return eventRepository.findByArtistAndDate(date).stream()
 			.map(HashtagRes::of)
-			.collect(Collectors.toList());
+			.toList();
 	}
 
 	@Transactional
@@ -220,7 +219,7 @@ public class EventService {
 
 		List<String> oldImages = event.getEventImages().stream()
 			.map(EventImage::getImage)
-			.collect(Collectors.toList());
+			.toList();
 
 		// EventArtist를 덮어쓴다
 		eventArtistRepository.deleteByEventId(event.getId());
@@ -231,7 +230,7 @@ public class EventService {
 						.event(event)
 						.artist(artist)
 						.build())
-				.collect(Collectors.toList())
+				.toList()
 		);
 
 		// EventInfoCategory를 덮어쓴다
@@ -242,7 +241,7 @@ public class EventService {
 					.event(event)
 					.eventCategory(category)
 					.build())
-				.collect(Collectors.toList())
+				.toList()
 		);
 
 		// EventImage를 덮어쓴다
@@ -278,7 +277,7 @@ public class EventService {
 
 		List<String> filenames = event.getEventImages().stream()
 			.map(EventImage::getImage)
-			.collect(Collectors.toList());
+			.toList();
 
 		eventArtistRepository.deleteByEventId(id);
 		eventInfoCategoryRepository.deleteByEventId(id);
