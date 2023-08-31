@@ -42,7 +42,11 @@
 <br>
 
 ## ERD
+
+- [현재 ERD Link (🛠️ 신규 기능 추가중)](https://dbdiagram.io/d/64ba1f6c02bd1c4a5e73fbc5)
+- 기존 ERD
 <p align="center">
+
   <br>
 <img src="https://github.com/duck-map-project/duck-map-be/assets/100250055/29ca9587-9181-40af-a89a-4d269612d7b9">
   <br>
