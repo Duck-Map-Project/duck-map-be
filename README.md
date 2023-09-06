@@ -121,9 +121,14 @@
 ### 아티스트 타입, 아티스트, 카테고리 CRUD
 - 이벤트의 주최인 아티스트를 아티스트 타입으로 크게 구분
   - 아티스트 타입 예시: 아이돌, 솔로, 배우, 예능인 등
+  - <img width="1512" alt="스크린샷 2023-09-06 오후 3 26 29" src="https://github.com/duck-map-project/duck-map-be/assets/100250055/52c717dc-928d-4ae5-be25-e2d6bd3dce30">
 - '그룹' 개념을 정의하여 그룹 내의 멤버를 추가할 수 있도록 설계
+  - <img width="1512" alt="스크린샷 2023-09-06 오후 3 26 47" src="https://github.com/duck-map-project/duck-map-be/assets/100250055/d08e1c1e-4156-40d2-bb0a-dde2d5e38e63">
 - 이벤트 특성에 맞는 카테고리를 정의 (예: 카페, 전시회, 전광판, 럭키드로우 등)
+  - <img width="1512" alt="스크린샷 2023-09-06 오후 3 26 36" src="https://github.com/duck-map-project/duck-map-be/assets/100250055/7f7356ae-097f-4f1e-83ec-7c7bbbe10ab1">
 - 아티스트의 경우 이미지 등록이 가능
+  - <img width="1512" alt="스크린샷 2023-09-06 오후 3 26 17" src="https://github.com/duck-map-project/duck-map-be/assets/100250055/c877a16d-95f7-4d5c-8f98-24987499587e">
+
 
 
 
