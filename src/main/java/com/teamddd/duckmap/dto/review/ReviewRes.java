@@ -16,6 +16,7 @@ import lombok.Getter;
 @Builder
 public class ReviewRes {
 	private Long id;
+	private Long userId;
 	private String userProfile;
 	private String username;
 	private LocalDateTime createdAt;
@@ -26,6 +27,7 @@ public class ReviewRes {
 	private Long eventId;
 	private String eventStoreName;
 	private String hashtag;
+	private boolean isBlind;
 
 	public static ReviewRes of(Review review) {
 		Event event = review.getEvent();
@@ -36,6 +38,7 @@ public class ReviewRes {
 
 		return ReviewRes.builder()
 			.id(review.getId())
+			.userId(review.getMember().getId())
 			.userProfile(ApiUrl.IMAGE + review.getMember().getImage())
 			.username(review.getMember().getUsername())
 			.createdAt(review.getCreatedAt())
@@ -46,6 +49,7 @@ public class ReviewRes {
 			.eventId(event.getId())
 			.eventStoreName(event.getStoreName())
 			.hashtag(event.getHashtag())
+			.isBlind(false)
 			.build();
 	}
 }
