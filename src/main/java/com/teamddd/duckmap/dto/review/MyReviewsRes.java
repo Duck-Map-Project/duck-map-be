@@ -19,6 +19,7 @@ public class MyReviewsRes {
 	private int score;
 	private String reviewImage;
 	private String content;
+	private boolean isBlind;
 
 	public static MyReviewsRes of(ReviewEventDto reviewEventDto) {
 		Review review = reviewEventDto.getReview();
@@ -38,6 +39,7 @@ public class MyReviewsRes {
 					.orElse(null)
 			)
 			.content(review.getContent())
+			.isBlind(false)
 			.build();
 	}
 }
