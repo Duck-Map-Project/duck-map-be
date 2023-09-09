@@ -135,8 +135,12 @@ class EventServiceTest {
 		em.persist(eventCategory1);
 		em.persist(eventCategory2);
 
+		// save Member(event creator)
+		Member member1 = createMember("member1");
+		em.persist(member1);
+
 		// save Event
-		Event event = createEvent(null, "event1", now, now.plusDays(2), "#hashtag");
+		Event event = createEvent(member1, "event1", now, now.plusDays(2), "#hashtag");
 		em.persist(event);
 		Long eventId = event.getId();
 

@@ -13,6 +13,7 @@ import lombok.Getter;
 @Getter
 public class EventRes {
 	private Long id;
+	private Long memberId;
 	private String storeName;
 	private boolean inProgress;
 	private LocalDate fromDate;
