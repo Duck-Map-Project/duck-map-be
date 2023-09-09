@@ -127,6 +127,7 @@ public class EventService {
 
 		return EventRes.builder()
 			.id(event.getId())
+			.memberId(event.getMember().getId())
 			.storeName(event.getStoreName())
 			.inProgress(event.isInProgress(date))
 			.fromDate(event.getFromDate())
