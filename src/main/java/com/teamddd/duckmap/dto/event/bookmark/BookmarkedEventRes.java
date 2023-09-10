@@ -13,12 +13,20 @@ public class BookmarkedEventRes {
 	private String storeName;
 	private String image;
 
+	public BookmarkedEventRes(Long id, Long eventId, String storeName, String image) {
+		this.id = id;
+		this.eventId = eventId;
+		this.storeName = storeName;
+		this.image = image;
+	}
+
 	public static BookmarkedEventRes of(BookmarkEventDto bookmarkEventDto) {
-		return BookmarkedEventRes.builder()
-			.id(bookmarkEventDto.getEventBookmarkId())
-			.eventId(bookmarkEventDto.getEventId())
-			.storeName(bookmarkEventDto.getEventStoreName())
-			.image(ApiUrl.IMAGE + bookmarkEventDto.getEventThumbnail())
-			.build();
+		return new BookmarkedEventRes(
+			bookmarkEventDto.eventBookmarkId(),
+			bookmarkEventDto.eventId(),
+			bookmarkEventDto.eventStoreName(),
+			ApiUrl.IMAGE + bookmarkEventDto.eventThumbnail()
+		);
 	}
 }
+
