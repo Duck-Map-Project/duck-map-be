@@ -23,10 +23,22 @@ public class Report extends BaseByEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private Long reporterId;
-	private Long memberId;
-	private Long reviewId;
-	private Long eventId;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "reporter_member_id")
+	private Member reporter;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "reported_member_id")
+	private Member reportedMember;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "review_id")
+	private Review review;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "event_id")
+	private Event event;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "report_code_id")
