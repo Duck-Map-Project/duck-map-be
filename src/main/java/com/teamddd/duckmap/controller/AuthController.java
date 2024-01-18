@@ -34,6 +34,8 @@ public class AuthController {
 	private final SendMailService mailService;
 	private static final long COOKIE_EXPIRATION = 604800;
 
+	//To-do:kakao login api
+
 	@Operation(summary = "로그인")
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@Validated @RequestBody LoginReq loginUserRQ) {
