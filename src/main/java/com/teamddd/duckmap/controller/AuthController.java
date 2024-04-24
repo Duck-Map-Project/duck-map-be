@@ -34,7 +34,7 @@ public class AuthController {
 	private final SendMailService mailService;
 	private static final long COOKIE_EXPIRATION = 604800;
 
-	//To-do:kakao login api
+	//To-do:kakao login api 카카오 로그인을 추가한다
 
 	@Operation(summary = "로그인")
 	@PostMapping("/login")
