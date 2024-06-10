@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.servers.Server;
 
 @ConfigurationPropertiesScan
-@OpenAPIDefinition(servers = {@Server(url = "https://duckmap.shop", description = "duckmap")})
+@OpenAPIDefinition(servers = {@Server(url = "https://duckmap.shop:8080", description = "duckmap")})
 @SpringBootApplication
 public class DuckmapApplication {
 
