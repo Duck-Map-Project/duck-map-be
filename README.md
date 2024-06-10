@@ -30,7 +30,7 @@
 ## Server
 | Back-end | Front-end |
 | :--------: | :--------: |
-|  [Swagger](http://duckmap.shop:8080/swagger-ui/index.html#) | [배포 서버](https://d14wwtcgrsz6oh.cloudfront.net/)|
+|  [Swagger](http://duckmap.shop:8080/swagger-ui/index.html#) | [배포 서버](https://d2hceo64jes9m4.cloudfront.net/)|
 
 
 <br>
